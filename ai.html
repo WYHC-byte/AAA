@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI骂人机器人</title>
+  <!-- 引入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入 Font Awesome 图标库 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-sVt+2pFwwHnKuz6w+KROFm5EfwjBs5K1+fBU4Djif0IxqzS2izBkXJr1xy4GryZk65+oUpR+jVJyTcS+8+Xqmw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+  <!-- 页面顶部标题区 -->
+  <header class="bg-blue-600 text-white p-4 text-center shadow-md">
+    <h1 class="text-3xl font-bold">AI骂人机器人</h1>
+    <p class="mt-1 text-sm">选择你的机器人，输入关键词，看看TA会如何回击！</p>
+  </header>
+
+  <!-- 主体内容 -->
+  <main class="flex-grow container mx-auto p-4">
+    <!-- 机器人选择区域 -->
+    <div class="mb-6 bg-white p-4 rounded shadow">
+      <label for="robotSelect" class="block text-lg font-medium text-gray-700 mb-2">
+        选择机器人：
+      </label>
+      <select id="robotSelect" class="block w-full p-2 border border-gray-300 rounded">
+        <option value="cold">冷酷机器人</option>
+        <option value="sarcastic">毒舌机器人</option>
+        <option value="wise">智慧机器人</option>
+      </select>
+    </div>
+
+    <!-- 聊天交互区域 -->
+    <div class="bg-white p-6 rounded shadow">
+      <!-- 显示对话记录 -->
+      <div id="chatLog" class="mb-4 h-48 overflow-y-auto p-3 border border-gray-200 rounded bg-gray-50">
+        <!-- 对话记录将显示在这里 -->
+      </div>
+      <!-- 输入区域 -->
+      <div class="flex">
+        <input type="text" id="userInput" class="flex-grow p-2 border border-gray-300 rounded-l focus:outline-none" placeholder="输入关键词或一句话">
+        <button id="sendBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-r">
+          发送
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <nav class="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 z-50">
+    <!-- 主页 -->
+    <a href="index.html" class="flex flex-col items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 01-2 2H3a2 2 0 01-2-2V9z" />
+      </svg>
+      <span class="text-sm">主页</span>
+    </a>
+    <!-- 福利 -->
+    <a href="ai.html" class="flex flex-col items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A4 4 0 001 9.87v4.263a4 4 0 005.555 3.664l3.197-2.132a4 4 0 000-6.232z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 9.87v4.263a4 4 0 01-5.555 3.664l-3.197-2.132a4 4 0 010-6.232l3.197-2.132A4 4 0 0123 9.87z" />
+      </svg>
+      <span class="text-sm">AI</span>
+    </a>
+    <!-- 我的 -->
+    <a href="my.html" class="flex flex-col items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      <span class="text-sm">我的</span>
+    </a>
+  </nav>
+
+
+  <!-- JavaScript 部分：关键词检测与回复 -->
+  <script>
+    const chatLog = document.getElementById('chatLog');
+    const sendBtn = document.getElementById('sendBtn');
+    const userInput = document.getElementById('userInput');
+    const robotSelect = document.getElementById('robotSelect');
+
+    // 添加对话消息，sender 可为 'user' 或 'robot'
+    function appendMessage(sender, message) {
+      const msgDiv = document.createElement('div');
+      msgDiv.classList.add('mb-2', 'px-2');
+      if (sender === 'user') {
+        msgDiv.classList.add('text-right');
+        msgDiv.innerHTML = `<span class="inline-block bg-blue-200 text-blue-800 p-2 rounded">${message}</span>`;
+      } else {
+        msgDiv.classList.add('text-left');
+        msgDiv.innerHTML = `<span class="inline-block bg-red-200 text-red-800 p-2 rounded">${message}</span>`;
+      }
+      chatLog.appendChild(msgDiv);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    // 根据机器人类型与用户输入关键词返回对应回答
+    function getAIResponse(robotType, input) {
+      // 将输入转换为小写以便检测关键词
+      input = input.toLowerCase();
+      let response = "";
+
+      if (robotType === "cold") {
+        if (input.includes("菜")) {
+          response = "哎呦，我草，这年头真是啥人都有啊！有些人就跟TM游戏里的NPC似的，走哪儿都自带一堆迷惑操作，还觉得自己贼牛逼。你说你菜就菜吧，非得出来秀智商，秀得跟个峡谷里的河道蟹一样，横着走还以为自己是大龙呢！";
+        } else if (input.includes("董哥")) {
+          response = "还有那种天天在网上指点江山的懂哥，键盘敲得比放鞭炮还响，结果一问现实啥也不是，活脱脱一个“网络战神，现实蹲神”。咋的，你家WIFI能给你加Buff是吧？真当自己是赛博坦来的钢铁侠啊？";
+        } else {
+          response = "行了行了，都收敛点吧，别把互联网当自家厕所，随地喷粪还嫌别人不给你递纸。真那么能，不如去村口帮大妈掰玉米，好歹也算为社会做点贡献了！（手动狗头）";
+        }
+      } else if (robotType === "sarcastic") {
+        if (input.includes("傻")) {
+          response = "哇，你竟然发现自己傻，真是自知之明！";
+        } else if (input.includes("笨")) {
+          response = "笨？那是你唯一的优点了！";
+        } else {
+          response = "你的话让我觉得，你可能需要一个辞典来补补脑子。";
+        }
+      } else if (robotType === "wise") {
+        if (input.includes("傻")) {
+          response = "智慧始于自省，也许你应该先审视自己。";
+        } else if (input.includes("笨")) {
+          response = "愚者千虑，必有一失，而你正是最佳案例。";
+        } else {
+          response = "你的话语，映射出一片混沌，不妨先静思己过。";
+        }
+      }
+      return response;
+    }
+
+    // 发送按钮点击事件
+    sendBtn.addEventListener('click', () => {
+      const userText = userInput.value.trim();
+      if (!userText) return;
+      
+      // 显示用户输入消息
+      appendMessage('user', userText);
+      
+      // 获取选择的机器人类型
+      const robotType = robotSelect.value;
+      // 根据输入内容生成机器人回复
+      const response = getAIResponse(robotType, userText);
+      // 模拟机器人回复延时 500ms
+      setTimeout(() => {
+        appendMessage('robot', response);
+      }, 500);
+
+      userInput.value = "";
+    });
+
+    // 支持回车键发送消息
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        sendBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
