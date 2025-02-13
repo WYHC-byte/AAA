@@ -1,112 +1,218 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>骂人语录生成器</title>
-  <!-- 引入 Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- 引入 Font Awesome 图标库（6.4.0版本） -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-sVt+2pFwwHnKuz6w+KROFm5EfwjBs5K1+fBU4Djif0IxqzS2izBkXJr1xy4GryZk65+oUpR+jVJyTcS+8+Xqmw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- 自定义样式 -->
-  <style>
-    /* 为整个网站添加背景图 */
-    body {
-      background: url('1.jpg') no-repeat center center fixed;
-      background-size: cover;
-    }
-    /* 新闻栏滚动动画 */
-    @keyframes scroll-left {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-    .animate-scroll {
-      animation: scroll-left 15s linear infinite;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人简历网站</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="flex flex-col min-h-screen">
-  <!-- 顶部新闻栏 -->
-  <header class="bg-blue-500 text-white p-2 overflow-hidden">
-    <div class="whitespace-nowrap inline-block animate-scroll">
-      <span class="mx-4">注：网站内容仅为模仿特定网络语言风格，请勿在现实生活中对他人进行人身攻击或恶意嘲讽，理性交流，互相尊重。</span>
-    </div>
-  </header>
+<body class="bg-gray-50">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-white shadow-md z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="text-xl font-bold text-blue-600">吴屹虎</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-gray-600 hover:text-blue-600">首页</a>
+                    <a href="#about" class="text-gray-600 hover:text-blue-600">关于我</a>
+                    <a href="#skills" class="text-gray-600 hover:text-blue-600">技能</a>
+                    <a href="#certificates" class="text-gray-600 hover:text-blue-600">证书</a>
+                    <a href="#projects" class="text-gray-600 hover:text-blue-600">项目经历</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-  <!-- Hero 区 -->
-  <section class="bg-cover bg-center h-64 flex items-center justify-center" style="background-image: url('1.jpg');">
-    <div class="bg-black bg-opacity-50 p-4 rounded">
-      <h1 class="text-white text-4xl font-bold">欢迎来到骂人语录生成器</h1>
-      <p class="text-white mt-2">有些人啊，活得像拼多多砍一刀的链接——又长又臭还TM没人想点！</p>
-    </div>
-  </section>
+    <!-- Hero 区域 -->
+    <section id="home" class="relative h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+        <div class="absolute inset-0">
+            <img src="/api/placeholder/1920/1080" alt="背景图片" class="w-full h-full object-cover opacity-20">
+        </div>
+        <div class="relative z-10 text-center px-4">
+            <h1 class="text-5xl font-bold mb-4">吴屹虎</h1>
+            <p class="text-xl mb-8">学生 | 未来的追梦者</p>
+            <button class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition">了解更多</button>
+        </div>
+    </section>
 
-  <!-- 主内容区：语录生成区 -->
-  <main class="flex-grow container mx-auto p-4 bg-white bg-opacity-80 rounded my-4">
-    <h2 class="text-2xl font-bold mb-4">生成你的语录</h2>
-    <!-- 生成语录的按钮 -->
-    <button id="generateQuote" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-      生成语录
-    </button>
-    <!-- 用于显示生成的语录 -->
-    <div id="quoteDisplay" class="mt-4 p-4 bg-white rounded shadow">
-      <!-- 生成的语录将显示在这里 -->
-    </div>
-  </main>
+    <!-- 个人简介 -->
+    <section id="about" class="py-20 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">关于我</h2>
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <div class="md:w-1/3">
+                    <img src="myphoto.jpg" alt="个人照片" class="rounded-lg shadow-lg">
+                </div>
+                <div class="md:w-2/3">
+                    <p class="text-gray-600 leading-relaxed">
+                        Hi! 我是来自北京的"港漂小老虎"吴屹虎！哎别急着翻学生证，我的名字真不是爸妈打错字——您看2011年属兔的孩子叫"屹虎"，就像给棉花糖配了双拳击手套，这反差萌是不是很上头？
 
-  <nav class="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 z-50">
-    <!-- 主页 -->
-    <a href="index.html" class="flex flex-col items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 01-2 2H3a2 2 0 01-2-2V9z" />
-      </svg>
-      <span class="text-sm">主页</span>
-    </a>
-    <!-- 福利 -->
-    <a href="ai.html" class="flex flex-col items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A4 4 0 001 9.87v4.263a4 4 0 005.555 3.664l3.197-2.132a4 4 0 000-6.232z" />
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 9.87v4.263a4 4 0 01-5.555 3.664l-3.197-2.132a4 4 0 010-6.232l3.197-2.132A4 4 0 0123 9.87z" />
-      </svg>
-      <span class="text-sm">AI</span>
-    </a>
-    <!-- 我的 -->
-    <a href="my.html" class="flex flex-col items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-      <span class="text-sm">我的</span>
-    </a>
-  </nav>
+                        三年前我带着京片子和香港的云吞面展开激烈辩论，结果现在能用粤语精准区分"虾饺"和"学霸"的发音——当然这要感谢我的三位语言导师：茶餐厅阿姐的咆哮式教学、地铁站阿叔的俚语小课堂，以及Minecraft里国际队友的跨服方言特训。说到这个像素世界，我可是用红石电路搭建过等比复刻的故宫模型，这大概就是我既能当建筑大师又能稳居年级前十的秘诀——毕竟在游戏里搭错一块砖整个宫殿都会塌，这和数学最后一道大题做错步骤的惨状简直异曲同工！
 
+                        最后偷偷告诉各位老师个小秘密：我的生日1月31日刚好卡在摩羯和水瓶交界，所以您眼前这个少年，是能用摩羯的严谨算出Minecraft最优建造方案，又用水瓶的脑洞把三角函数题解成rap的天选之子哦！
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <!-- JavaScript 逻辑：点击按钮随机生成语录 -->
-  <script>
-    // 定义几条示例骂人语录
-    const quotes = [
-      "天天搁那指点江山，现实里点个外卖都选半小时优惠券，张嘴就是“格局小了”“你懂个屁”，结果自己兜比脸干净。咋的，您那键盘是盘古斧转世啊？敲两下能劈开天地混沌是不？",
-      "见人聊啥都要插一脚，从量子力学到母猪产后护理，没您不懂的。知道的以为您上知天文下知地理，不知道的还以为您家WiFi连的是百度百科呢！真当自己是人类进化漏网之鱼啊？",
-      "别人说“今天太阳挺大”，他非说“月亮表示不服”。您脖子上顶的是肿瘤啊？还是天生属ETC的——不自动抬杠浑身刺挠？建议直接应聘工地，您一人能扛十吨钢筋！",
-      "朋友圈天天晒方向盘，仔细一看是共享单车扫码界面；张口闭口“我朋友上市公司老总”，一问月薪3500。咋的，您的人生是PPT做的啊？全靠虚构动画撑排面？",
-      "哎呦，我草，这年头真是啥人都有啊！有些人就跟TM游戏里的NPC似的，走哪儿都自带一堆迷惑操作，还觉得自己贼牛逼。你说你菜就菜吧，非得出来秀智商，秀得跟个峡谷里的河道蟹一样，横着走还以为自己是大龙呢！",
-      "那种天天在网上指点江山的懂哥，键盘敲得比放鞭炮还响，结果一问现实啥也不是，活脱脱一个“网络战神，现实蹲神”。咋的，你家WIFI能给你加Buff是吧？真当自己是赛博坦来的钢铁侠啊？",
-      "最绝的是那些装逼犯，朋友圈P图P得妈都不认识，非得给自己加个“自律人设”——早上五点起床打卡，结果下午三点还在被窝里挺尸呢。咋的，你的一天是48小时啊？还是说你穿越到异世界练级去了？",
-      "有些人呐，活得像拼多多九块九包邮的劣质商品——价格低就算了，质量还烂得跟屎一样。天天在网上当“正义使者”，结果自己做人做事全是漏洞，跟漏勺成精似的，筛子都没你能漏！说你两句还急眼，咋的，你那玻璃心是义乌批发的啊？十块钱一斤包邮到家？",
-      "再说说某些“人间清醒”，张嘴闭嘴“看透社会黑暗”，实际兜里比脸干净，本事没有，酸劲儿冲天。你那不叫清醒，叫熬夜熬出幻觉了！真牛逼的人早闷声发财去了，就你搁这儿拿键盘当琵琶弹，真当自己是赛博白居易啊？",
-      "有些人，活得跟盗版 Windows 系统似的——天天弹窗提醒你“该充智商了”，自己却连个正版验证都过不去。一张嘴就是“我有个朋友如何如何”，结果你朋友知道你拿他当《故事会》素材吗？咋的，你是人形百度百科啊，还是专门给朋友圈生产二手牛逼的？",
-      "还有那些“丧文化”深度患者，整天“人间不值得”“活着没意思”，转头干饭干得比谁都快。咋的，你是玩川剧变脸的啊？emo 完记得把美团外卖好评给补上是吧？真要那么丧，建议去火葬场兼职，提前熟悉业务！",
-      "别跟老子扯什么“网络自由”，你自由得像菜市场里的苍蝇，嗡嗡乱飞还觉得自己是战斗机呢！真当互联网是法外之地啊？哪天网警顺着 ID 把你号封了，你哭得比孟姜女还惨信不信？"
-    ];
+    <!-- 技能展示 -->
+    <section id="skills" class="py-20 px-4 bg-white">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">专业技能</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 border rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4">编程技能</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>HTML/CSS</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>JavaScript</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 border rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4">语言能力</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>普通话</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>粤语</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span>英语</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    const generateBtn = document.getElementById('generateQuote');
-    const quoteDisplay = document.getElementById('quoteDisplay');
+    <!-- 证书区域 -->
+    <section id="certificates" class="py-20 px-4 bg-gray-100">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">证书与成就</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- 证书1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition">
+                    <img src="zw.jpg" alt="证书1" class="w-full mb-4 rounded">
+                    <h3 class="text-xl font-semibold mb-2">中文作文比赛 金奖</h3>
+                    <p class="text-gray-600">2024年获得智慧之星儿童文化学会 青少年及儿童征文大赛 金奖</p>
+                </div>
+                <!-- 证书2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition">
+                    <img src="zw2.jpg" alt="证书2" class="w-full mb-4 rounded">
+                    <h3 class="text-xl font-semibold mb-2">获得Freecodecamp认证</h3>
+                    <p class="text-gray-600">获得Freecodecamp前端编程（HTML/CSS/JavaScript）认证</p>
+                </div>
+                <!-- 证书3 -->
+                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition">
+                    <img src="/api/placeholder/300/200" alt="证书3" class="w-full mb-4 rounded">
+                    <h3 class="text-xl font-semibold mb-2">aaa</h3>
+                    <p class="text-gray-600">aaaa</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    // 点击按钮时随机选取一句语录并显示
-    generateBtn.addEventListener('click', () => {
-      const randomIndex = Math.floor(Math.random() * quotes.length);
-      const randomQuote = quotes[randomIndex];
-      quoteDisplay.textContent = randomQuote;
-    });
-  </script>
+    <!-- 项目经历 -->
+    <section id="projects" class="py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">项目经历</h2>
+            <div class="space-y-12">
+                <!-- 项目1 -->
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/3">
+                            <img src="/api/placeholder/400/300" alt="项目1" class="rounded-lg w-full">
+                        </div>
+                        <div class="md:w-2/3">
+                            <h3 class="text-2xl font-semibold mb-4">科研项目名称</h3>
+                            <p class="text-gray-600 mb-4">
+                                详细描述您在项目中的角色、贡献和成果。包括项目背景、使用的技术、解决的问题等。
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full">Python</span>
+                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full">数据分析</span>
+                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full">机器学习</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 项目2 -->
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/3">
+                            <img src="/api/placeholder/400/300" alt="项目2" class="rounded-lg w-full">
+                        </div>
+                        <div class="md:w-2/3">
+                            <h3 class="text-2xl font-semibold mb-4">课外活动项目</h3>
+                            <p class="text-gray-600 mb-4">
+                                描述您参与的重要课外活动项目，包括您的领导经验、团队协作能力和项目成果。
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full">团队领导</span>
+                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full">项目管理</span>
+                                <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full">创新思维</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold">联系方式</h3>
+                    <p class="mt-2">邮箱：wuyihu7@gmail.com</p>
+                    <p>电话：+852 5599 1665</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="https://www.facebook.com/profile.php?id=61573056573539" class="hover:text-blue-400">Facebook</a>
+                    <a href="https://www.instagram.com/wyh5097/" class="hover:text-blue-400">instagram</a>
+                    <a href="https://www.douyin.com" class="hover:text-blue-400">Douyin</a>
+                </div>
+            </div>
+            <div class="mt-8 text-center text-gray-400">
+                <p>&copy; 2025 Wu Yihu. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
