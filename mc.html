@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商品详情 - 积分兑换</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+  <header class="fixed top-0 left-0 right-0 z-50">
+    <div class="container mx-auto flex items-center justify-between p-4">
+      <a href="index.html" class="text-blue-500 text-xl">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <h1 class="text-lg font-bold">商品详情</h1>
+      <div class="w-6"></div>
+    </div>
+  </header>
+
+  <main class="container mx-auto mt-20 mb-16 p-4">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <img src="https://via.placeholder.com/600x400" alt="商品图片" class="w-full h-80 object-cover">
+      <div class="p-4">
+        <h2 class="text-2xl font-bold mb-2">Minecraft国际版</h2>
+        <p class="text-gray-700 mb-4">密码每天0点后重置，请检查后兑换</p>
+        <div class="flex justify-between items-center mb-4">
+          <span id="currentPoints" class="text-xl font-bold">当前积分：0</span>
+        </div>
+        <button id="redeemBtn" class="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded text-lg font-semibold">
+          兑换（消耗 1000 积分）
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <nav class="fixed bottom-0 left-0 w-full">
+    <div class="bg-[#2980b9] text-white flex justify-around items-center p-3">
+      <button onclick="window.location.href='index.html'">首页</button>
+      <button onclick="window.location.href='cheakin.html'">课程</button>
+      <button onclick="window.location.href='my.html'">我的</button>
+    </div>
+  </nav>
+
+  <script>
+    let points = parseInt(localStorage.getItem('points')) || 0;
+    const currentPoints = document.getElementById('currentPoints');
+    function updatePointsDisplay() {
+      localStorage.setItem('points', points);
+      currentPoints.textContent = "当前积分：" + points;
+    }
+    updatePointsDisplay();
+
+    const redeemBtn = document.getElementById('redeemBtn');
+    redeemBtn.addEventListener('click', function() {
+      if (points >= 1000) {
+        if (confirm("确定兑换吗？将消耗 1000 积分进行兑换。")) {
+          points -= 1000;
+          updatePointsDisplay();
+          alert("付款成功！");
+          window.location.href = "mcsu.html"; // 修改为跳转到 mcsu.html
+        }
+      } else {
+        alert("积分不足，无法兑换。");
+      }
+    });
+  </script>
+</body>
+</html>

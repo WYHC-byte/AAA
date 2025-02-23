@@ -1,114 +1,324 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>骂人语录生成器</title>
-  <!-- 引入 Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- 引入 Font Awesome 图标库（6.4.0版本） -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-sVt+2pFwwHnKuz6w+KROFm5EfwjBs5K1+fBU4Djif0IxqzS2izBkXJr1xy4GryZk65+oUpR+jVJyTcS+8+Xqmw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- 自定义样式 -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>chakios</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <meta name="apple-mobile-web-app-capable" content="yes"> <!-- 启用全屏模式 -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- 设置状态栏透明 -->
+  <meta name="theme-color" content="#2980b9"> <!-- 设置浏览器顶部的主题颜色 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <style>
-    /* 为整个网站添加背景图 */
-    body {
-      background: url('1.jpg') no-repeat center center fixed;
-      background-size: cover;
+    .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .chat-window {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 999;
+        }
+        .chat-window.active {
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        .chat-input {
+            border-top: 1px solid #eee;
+            padding: 10px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+        .bot-message {
+            background: #f0f0f0;
+            margin-right: auto;
+        }
+        .user-message {
+            background: #1d4ed8;
+            color: white;
+            margin-left: auto;
+        }
+
+        /* 底部导航栏 */
+    nav {
+      background-color: #2980b9;
+      color: #fff;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0.75rem 0;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
     }
-    /* 新闻栏滚动动画 */
-    @keyframes scroll-left {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
+    nav button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
     }
-    .animate-scroll {
-      animation: scroll-left 15s linear infinite;
+    nav button svg {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 0.25rem;
     }
+    /* 动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
   </style>
 </head>
-<body class="flex flex-col min-h-screen">
-  <!-- 顶部新闻栏 -->
-  <header class="bg-blue-500 text-white p-2 overflow-hidden">
-    <div class="whitespace-nowrap inline-block animate-scroll">
-      <span class="mx-4">注：网站内容仅为模仿特定网络语言风格，请勿在现实生活中对他人进行人身攻击或恶意嘲讽，理性交流，互相尊重。</span>
-    </div>
-  </header>
+<body class="bg-gray-100">
 
-  <!-- Hero 区 -->
-  <section class="bg-cover bg-center h-64 flex items-center justify-center" style="background-image: url('1.jpg');">
-    <div class="bg-black bg-opacity-50 p-4 rounded">
-      <h1 class="text-white text-4xl font-bold">欢迎来到骂人语录生成器</h1>
-      <p class="text-white mt-2">有些人啊，活得像拼多多砍一刀的链接——又长又臭还TM没人想点！</p>
+  <!-- 顶部搜索框 -->
+  <div class="fixed top-0 left-0 right-0 bg-white shadow-md p-4 z-50">
+    <div class="container mx-auto flex items-center">
+      <input type="text" placeholder="搜索游戏..." class="w-full px-4 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button class="px-4 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 transition duration-300">
+        <i class="fas fa-search"></i>
+      </button>
     </div>
-  </section>
+  </div>
 
-  <!-- 主内容区：语录生成区 -->
-  <main class="flex-grow container mx-auto p-4 bg-white bg-opacity-80 rounded my-4">
-    <h2 class="text-2xl font-bold mb-4">生成你的语录</h2>
-    <!-- 生成语录的按钮 -->
-    <button id="generateQuote" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-      生成语录
+  <!-- 顶部新闻条 -->
+  <div class="bg-gray-900 text-white py-2 overflow-hidden">
+    <div class="inline-block whitespace-nowrap animate-marquee">
+      <span class="mx-4">网站新闻：请注意：由于假账户注册过多，于2025年2月9日起，没有获得官方许可账号的用户积分在退出网站后将无法保存，并于2025年2月10日后停止发放官方账号</span>
+    </div>
+  </div>
+
+  <!-- 主要内容 -->
+  <div class="container mx-auto mt-20 p-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- 示例卡片 -->
+<a href="mc.html" class="block">
+  <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300">
+    <img src="https://via.placeholder.com/300x200" alt="封面" class="w-full h-48 object-cover">
+    <div class="p-4">
+      <h2 class="text-xl font-bold mb-2">Minecraft</h2>
+      <p class="text-gray-700">账号和密码每24小时更换，兑换后请尽快操作</p>
+      <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
+        <i class="fas fa-download"></i> 获取
+      </button>
+    </div>
+  </div>
+</a>
+
+
+<a href="tlry.html" class="block">
+  <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300">
+    <img src="https://via.placeholder.com/300x200" alt="封面" class="w-full h-48 object-cover">
+    <div class="p-4">
+      <h2 class="text-xl font-bold mb-2">泰拉瑞亚国服</h2>
+      <p class="text-gray-700">账号和密码每24小时更换，兑换后请尽快操作</p>
+      <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
+        <i class="fas fa-download"></i> 获取
+      </button>
+    </div>
+  </div>
+</a>
+
+      <!-- 更多卡片 -->
+      <a href="yt.html" class="block">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300">
+          <img src="https://via.placeholder.com/300x200" alt="封面" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h2 class="text-xl font-bold mb-2">YouTube</h2>
+            <p class="text-gray-700">账号和密码每24小时更换，兑换后请尽快操作</p>
+            <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
+              <i class="fas fa-download"></i> 获取
+            </button>
+          </div>
+        </div>
+      </a>
+
+      <a href="x.html" class="block">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300">
+          <img src="https://via.placeholder.com/300x200" alt="封面" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h2 class="text-xl font-bold mb-2">X(原身推特)</h2>
+            <p class="text-gray-700">账号和密码每24小时更换，兑换后请尽快操作</p>
+            <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
+              <i class="fas fa-download"></i> 获取
+            </button>
+          </div>
+        </div>
+      </a>
+
+      <a href="poe.html" class="block">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300">
+          <img src="https://via.placeholder.com/300x200" alt="封面" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h2 class="text-xl font-bold mb-2">Poe（AI，含chatgpt，DeepSeek和Claude AI等）</h2>
+            <p class="text-gray-700">账号和密码每24小时更换，兑换后请尽快操作</p>
+            <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
+              <i class="fas fa-download"></i> 获取
+            </button>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://www.tenyun.ltd" class="block">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300">
+          <img src="https://via.placeholder.com/300x200" alt="封面" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h2 class="text-xl font-bold mb-2">建站？上腾云</h2>
+            <p class="text-gray-700">腾云建站，专业建站两年半</p>
+            <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
+              <i class="fas fa-download"></i> 去看看
+            </button>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 底部导航栏 -->
+  <nav>
+    <button onclick="window.location.href='index.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12l2-2 7-7 7 7 2 2v8a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3z"></path>
+      </svg>
+      <span>首页</span>
     </button>
-    <!-- 用于显示生成的语录 -->
-    <div id="quoteDisplay" class="mt-4 p-4 bg-white rounded shadow">
-      <!-- 生成的语录将显示在这里 -->
-    </div>
-  </main>
-
-  <nav class="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex justify-around py-3 z-50">
-    <!-- 主页 -->
-    <a href="index.html" class="flex flex-col items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2h-4a2 2 0 01-2-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 01-2 2H3a2 2 0 01-2-2V9z" />
+    <button onclick="window.location.href='cheakin.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <path d="M3 9h18"></path>
       </svg>
-      <span class="text-sm">主页</span>
-    </a>
-    <!-- 福利 -->
-    <a href="ai.html" class="flex flex-col items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A4 4 0 001 9.87v4.263a4 4 0 005.555 3.664l3.197-2.132a4 4 0 000-6.232z" />
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 9.87v4.263a4 4 0 01-5.555 3.664l-3.197-2.132a4 4 0 010-6.232l3.197-2.132A4 4 0 0123 9.87z" />
+      <span>签到</span>
+    </button>
+    <button onclick="window.location.href='my.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="7" r="4"></circle>
+        <path d="M5.5 21a8.38 8.38 0 0 1 13 0"></path>
       </svg>
-      <span class="text-sm">AI</span>
-    </a>
-    <!-- 我的 -->
-    <a href="my.html" class="flex flex-col items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.657 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-      <span class="text-sm">我的</span>
-    </a>
+      <span>我的</span>
+    </button>
   </nav>
 
+  <!-- 聊天机器人 -->
+  <div class="chat-widget">
+    <button id="chatButton" class="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-4 shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+    </button>
+</div>
 
-  <!-- JavaScript 逻辑：点击按钮随机生成语录 -->
+<div id="chatWindow" class="chat-window">
+    <div class="bg-blue-500 text-white p-3 rounded-t-lg">
+        <h3 class="font-bold">智能客服</h3>
+    </div>
+    <div id="chatMessages" class="chat-messages">
+        <div class="message bot-message">
+            您好！我是智能客服，您可以输入”日志“查看更新新日志
+        </div>
+    </div>
+    <div class="chat-input">
+        <div class="flex">
+            <input type="text" id="messageInput" class="flex-grow px-3 py-2 border rounded-l focus:outline-none" placeholder="请输入您的问题...">
+            <button id="sendMessage" class="bg-blue-500 text-white px-4 rounded-r hover:bg-blue-600">发送</button>
+        </div>
+    </div>
+</div>
   <script>
-    // 定义几条示例骂人语录
-    const quotes = [
-      "天天搁那指点江山，现实里点个外卖都选半小时优惠券，张嘴就是“格局小了”“你懂个屁”，结果自己兜比脸干净。咋的，您那键盘是盘古斧转世啊？敲两下能劈开天地混沌是不？",
-      "见人聊啥都要插一脚，从量子力学到母猪产后护理，没您不懂的。知道的以为您上知天文下知地理，不知道的还以为您家WiFi连的是百度百科呢！真当自己是人类进化漏网之鱼啊？",
-      "别人说“今天太阳挺大”，他非说“月亮表示不服”。您脖子上顶的是肿瘤啊？还是天生属ETC的——不自动抬杠浑身刺挠？建议直接应聘工地，您一人能扛十吨钢筋！",
-      "朋友圈天天晒方向盘，仔细一看是共享单车扫码界面；张口闭口“我朋友上市公司老总”，一问月薪3500。咋的，您的人生是PPT做的啊？全靠虚构动画撑排面？",
-      "哎呦，我草，这年头真是啥人都有啊！有些人就跟TM游戏里的NPC似的，走哪儿都自带一堆迷惑操作，还觉得自己贼牛逼。你说你菜就菜吧，非得出来秀智商，秀得跟个峡谷里的河道蟹一样，横着走还以为自己是大龙呢！",
-      "那种天天在网上指点江山的懂哥，键盘敲得比放鞭炮还响，结果一问现实啥也不是，活脱脱一个“网络战神，现实蹲神”。咋的，你家WIFI能给你加Buff是吧？真当自己是赛博坦来的钢铁侠啊？",
-      "最绝的是那些装逼犯，朋友圈P图P得妈都不认识，非得给自己加个“自律人设”——早上五点起床打卡，结果下午三点还在被窝里挺尸呢。咋的，你的一天是48小时啊？还是说你穿越到异世界练级去了？",
-      "有些人呐，活得像拼多多九块九包邮的劣质商品——价格低就算了，质量还烂得跟屎一样。天天在网上当“正义使者”，结果自己做人做事全是漏洞，跟漏勺成精似的，筛子都没你能漏！说你两句还急眼，咋的，你那玻璃心是义乌批发的啊？十块钱一斤包邮到家？",
-      "再说说某些“人间清醒”，张嘴闭嘴“看透社会黑暗”，实际兜里比脸干净，本事没有，酸劲儿冲天。你那不叫清醒，叫熬夜熬出幻觉了！真牛逼的人早闷声发财去了，就你搁这儿拿键盘当琵琶弹，真当自己是赛博白居易啊？",
-      "有些人，活得跟盗版 Windows 系统似的——天天弹窗提醒你“该充智商了”，自己却连个正版验证都过不去。一张嘴就是“我有个朋友如何如何”，结果你朋友知道你拿他当《故事会》素材吗？咋的，你是人形百度百科啊，还是专门给朋友圈生产二手牛逼的？",
-      "还有那些“丧文化”深度患者，整天“人间不值得”“活着没意思”，转头干饭干得比谁都快。咋的，你是玩川剧变脸的啊？emo 完记得把美团外卖好评给补上是吧？真要那么丧，建议去火葬场兼职，提前熟悉业务！",
-      "别跟老子扯什么“网络自由”，你自由得像菜市场里的苍蝇，嗡嗡乱飞还觉得自己是战斗机呢！真当互联网是法外之地啊？哪天网警顺着 ID 把你号封了，你哭得比孟姜女还惨信不信？"
-    ];
+    // 聊天机器人功能
+    const chatButton = document.getElementById('chatButton');
+    const chatWindow = document.getElementById('chatWindow');
+    const messageInput = document.getElementById('messageInput');
+    const sendMessage = document.getElementById('sendMessage');
+    const chatMessages = document.getElementById('chatMessages');
 
-    const generateBtn = document.getElementById('generateQuote');
-    const quoteDisplay = document.getElementById('quoteDisplay');
+    // 关键词回复配置
+    const responses = {
+        '人工': '您好，人工客服小策为您服务',
+        '联系': '您可以拨打我们的客服热线，或发送邮件至contact@rulemyst.us.kg。',
+        '干什么': '本网站主要提供Iphone & Ipad的热门海外游戏下载服务',
+        '下载码': '为了避免游戏过于多的流出，我们将会使用下载码进行约束各位的先下载次数',
+        '兑换': '各位可以在商城兑换邀请码，不同游戏邀请码价格不同',
+        '日志': '最新日志：版本号：0.1.1，加入了大转盘功能',
+        '商业': '您可以拨打我们的客服热线，或发送邮件至contact@rulemyst.us.kg。'
 
-    // 点击按钮时随机选取一句语录并显示
-    generateBtn.addEventListener('click', () => {
-      const randomIndex = Math.floor(Math.random() * quotes.length);
-      const randomQuote = quotes[randomIndex];
-      quoteDisplay.textContent = randomQuote;
+    };
+
+    // 切换聊天窗口显示/隐藏
+    chatButton.addEventListener('click', () => {
+        chatWindow.classList.toggle('active');
     });
-  </script>
+
+    // 发送消息
+    function sendMessageHandler() {
+        const message = messageInput.value.trim();
+        if (message) {
+            // 添加用户消息
+            appendMessage(message, 'user');
+            
+            // 处理回复
+            setTimeout(() => {
+                const reply = getResponse(message);
+                appendMessage(reply, 'bot');
+            }, 500);
+
+            messageInput.value = '';
+        }
+    }
+
+    // 发送按钮点击事件
+    sendMessage.addEventListener('click', sendMessageHandler);
+
+    // 输入框回车事件
+    messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessageHandler();
+        }
+    });
+
+    // 添加消息到聊天窗口
+    function appendMessage(message, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        messageDiv.classList.add(type === 'user' ? 'user-message' : 'bot-message');
+        messageDiv.textContent = message;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // 获取回复
+    function getResponse(message) {
+        // 检查消息中是否包含关键词
+        for (const [keyword, response] of Object.entries(responses)) {
+            if (message.includes(keyword)) {
+                return response;
+            }
+        }
+        return '对不起，我没有找到相关信息。请您换个方式提问，或直接联系我们的客服人员。';
+    }
+</script>
 </body>
 </html>

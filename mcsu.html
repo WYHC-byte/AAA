@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>兑换成功</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"><meta name="apple-mobile-web-app-capable" content="yes"> <!-- 启用全屏模式 -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- 设置状态栏透明 -->
+  <meta name="theme-color" content="#2980b9"> <!-- 设置浏览器顶部的主题颜色 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+</head>
+<body class="bg-gray-100">
+  <header class="fixed top-0 left-0 right-0 z-50">
+    <div class="container mx-auto flex items-center justify-between p-4">
+      <a href="index.html" class="text-blue-500 text-xl">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <h1 class="text-lg font-bold">兑换成功</h1>
+      <div class="w-6"></div>
+    </div>
+  </header>
+
+  <main class="container mx-auto mt-20 mb-16 p-4">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-2xl font-bold mb-4">恭喜你兑换成功！</h2>
+      <p class="text-gray-700 mb-4">以下是你兑换的账号信息：</p>
+
+      <!-- 显示账号和密码 -->
+      <div class="bg-gray-100 p-4 rounded-md shadow-sm mb-6">
+        <p class="text-lg font-bold mb-2">账号：<span id="account">*****</span></p>
+        <p class="text-lg font-bold">密码：<span id="password">*****</span></p>
+      </div>
+
+      <div class="text-center">
+        <button onclick="window.location.href='index.html'" class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
+          返回首页
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <nav class="fixed bottom-0 left-0 w-full">
+    <div class="bg-[#2980b9] text-white flex justify-around items-center p-3">
+      <button onclick="window.location.href='index.html'">首页</button>
+      <button onclick="window.location.href='cheakin.html'">课程</button>
+      <button onclick="window.location.href='my.html'">我的</button>
+    </div>
+  </nav>
+
+  <script>
+    // 假设我们已经从后端或其他来源获得了兑换后的账号和密码
+    const account = "chakios112233@outlook.com"; // 替换为实际账号
+    const password = "muqdu7-hyBkog-goxdyf"; // 替换为实际密码
+
+    // 显示账号和密码
+    document.getElementById("account").textContent = account;
+    document.getElementById("password").textContent = password;
+  </script>
+</body>
+</html>
