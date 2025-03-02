@@ -131,6 +131,57 @@
             50% { transform: translate(-50px, -50px); }
             75% { transform: translate(-100px, 100px); }
         }
+        /* 在原有样式基础上新增以下代码 */
+        .version-switch {
+            text-align: center;
+            margin-top: 25px;
+            position: relative;
+        }
+
+        .version-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9em;
+            padding: 8px 20px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+        }
+
+        .version-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .version-link:hover {
+            color: #00ffff;
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .version-link:hover::before {
+            left: 100%;
+        }
+
+        /* 修改原有.login-container的padding */
+        .login-container {
+            padding: 40px 40px 30px; /* 底部减少padding */
+        }
     </style>
 </head>
 <body>
@@ -148,6 +199,12 @@
             </div>
             <button type="submit" class="submit-btn">Sign In</button>
             <div class="error-message" id="errorMessage"></div>
+            <div class="version-switch">
+                <a href="shouji-login.html" class="version-link">
+                    <span>手机版？点这里</span>
+                    <span style="margin-left: 8px">→</span>
+                </a>
+            </div>
         </form>
     </div>
 
