@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[AI服务名称] 服务条款</title>
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --emphasis-red: #b91c1c;
+            --text-color: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+            max-width: 1100px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .clause-nav {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .toggle-section {
+            margin: 2rem 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .toggle-header {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .legal-warning {
+            background: #fef2f2;
+            border-left: 4px solid var(--emphasis-red);
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .prohibited-list {
+            columns: 2;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .clause-nav { display: none; }
+            .prohibited-list { columns: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>[AI服务名称] 服务条款</h1>
+    <div class="legal-warning">
+        <strong>重要提示：</strong>使用本服务即表示您同意受以下条款约束，请仔细阅读第4（内容规范）、7（责任限制）及9（争议解决）条款
+    </div>
+
+    <!-- 侧边导航 -->
+    <nav class="clause-nav">
+        <strong>快速导航</strong>
+        <ul>
+            <li><a href="#acceptance">1. 协议接受</a></li>
+            <li><a href="#account">3. 账户条款</a></li>
+            <li><a href="#content">4. 内容规范</a></li>
+            <li><a href="#payment">6. 付费服务</a></li>
+        </ul>
+    </nav>
+
+    <!-- 第2条款示例 -->
+    <section id="license">
+        <h2>2. 服务授权</h2>
+        <div class="toggle-section">
+            <div class="toggle-header" onclick="toggleSection('license-details')">
+                <span class="toggle-icon">▶</span>
+                <h3>2.1 许可范围</h3>
+            </div>
+            <div id="license-details" style="display:none">
+                <p>授予您非独占的、不可转让的访问许可：</p>
+                <ul>
+                    <li>商业用途：允许生成内容用于商业目的</li>
+                    <li>输出限制：每月不超过5000次API调用</li>
+                    <li>禁止逆向工程：包括模型反编译、权重提取等</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第4条款 -->
+    <section id="content">
+        <h2>4. 内容规范</h2>
+        <div class="prohibited-list">
+            <strong>禁止生成内容类型：</strong>
+            <ul>
+                <li>涉及真实人物的深度伪造（Deepfake）</li>
+                <li>伪造官方文件/证件</li>
+                <li>恶意代码生成</li>
+                <li>仇恨言论/歧视性内容</li>
+                <li>医疗诊断建议</li>
+                <li>自动生成评论/虚假评分</li>
+            </ul>
+        </div>
+        <p>违规处理：首次警告 → 暂停账户7天 → 永久封禁</p>
+    </section>
+
+    <!-- 第7条款 -->
+    <section id="disclaimer">
+        <h2>7. 免责声明</h2>
+        <p>我们不对以下情况负责：</p>
+        <ul>
+            <li>生成内容的准确性（包括但不限于法律/医疗/财务建议）</li>
+            <li>第三方通过API集成导致的损害</li>
+            <li>因政策变化导致的服务中断（提前30天公告）</li>
+        </ul>
+    </section>
+
+    <!-- 第9条款 -->
+    <section id="dispute">
+        <h2>9. 争议解决</h2>
+        <p>管辖法律：美国加利福尼亚州法律</p>
+        <p>争议解决流程：</p>
+        <ol>
+            <li>书面通知（30天协商期）</li>
+            <li>强制仲裁（根据AAA规则）</li>
+            <li>禁止集体诉讼</li>
+        </ol>
+    </section>
+
+    <script>
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+            const icon = document.querySelector(`#${id}`).previousElementSibling.querySelector('.toggle-icon');
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                icon.style.transform = 'rotate(90deg)';
+            } else {
+                section.style.display = 'none';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+</body>
+</html>

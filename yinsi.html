@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[AI服务名称] 隐私政策</title>
+    <style>
+        :root {
+            --primary-color: #1d4ed8;
+            --legal-red: #dc2626;
+            --text-color: #334155;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+            max-width: 1100px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .toc {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 3px solid currentColor;
+            padding-bottom: 1rem;
+            font-size: 2.75rem;
+        }
+
+        h2 {
+            color: var(--legal-red);
+            margin: 3rem 0 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .legal-clause {
+            counter-increment: clause;
+            margin: 2rem 0;
+        }
+
+        .legal-clause::before {
+            content: counter(clause) ". ";
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .definition-list dt {
+            font-weight: 600;
+            margin-top: 1.2rem;
+        }
+
+        .definition-list dd {
+            margin-left: 2rem;
+            color: #64748b;
+        }
+
+        .highlight-box {
+            background: #fff1f2;
+            border-left: 4px solid var(--legal-red);
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        footer {
+            border-top: 1px solid #e2e8f0;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            color: #64748b;
+        }
+
+        @media print {
+            .toc { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <h1>[AI服务名称] 隐私政策</h1>
+    
+    <div class="toc">
+        <strong>目录导航：</strong>
+        <a href="#definitions">1. 术语定义</a> |
+        <a href="#data-collection">2. 数据收集</a> |
+        <a href="#processing-purpose">3. 处理目的</a> |
+        <a href="#legal-basis">4. 法律依据</a> |
+        <a href="#data-sharing">5. 数据共享</a> |
+        <a href="#security">6. 安全措施</a> |
+        <a href="#rights">7. 用户权利</a> |
+        <a href="#international">8. 跨境传输</a> |
+        <a href="#retention">9. 数据留存</a> |
+        <a href="#children">10. 未成年人</a> |
+        <a href="#changes">11. 政策变更</a>
+    </div>
+
+    <!-- 术语定义 -->
+    <div class="legal-clause" id="definitions">
+        <h2>1. 术语定义</h2>
+        <dl class="definition-list">
+            <dt>"服务数据"</dt>
+            <dd>指用户在使用AI模型交互过程中产生的输入内容、输出结果及相关元数据</dd>
+            
+            <dt>"生物特征数据"</dt>
+            <dd>根据GDPR第4条定义，包含声纹、面部特征等个人生理数据</dd>
+        </dl>
+    </div>
+
+    <!-- 数据收集 -->
+    <div class="legal-clause" id="data-collection">
+        <h2>2. 数据收集</h2>
+        <p>我们通过以下方式收集个人信息：</p>
+        
+        <h3>2.1 直接收集</h3>
+        <ul>
+            <li>账户注册信息：包括但不限于姓名、电子邮箱、社交账号联合登录令牌</li>
+            <li>支付验证数据：信用卡最后四位数字、PayPal交易ID</li>
+        </ul>
+
+        <h3>2.2 自动收集</h3>
+        <ul>
+            <li>设备指纹：屏幕分辨率、字体列表、GPU渲染器</li>
+            <li>行为分析：API调用频率、提示词重复率、结果修改次数</li>
+        </ul>
+
+        <div class="highlight-box">
+            <strong>特别说明：</strong>当用户触发内容审查机制时，系统将临时存储完整会话日志最长72小时
+        </div>
+    </div>
+
+    <!-- 处理目的 -->
+    <div class="legal-clause" id="processing-purpose">
+        <h2>3. 处理目的</h2>
+        <p>数据处理基于以下业务需求：</p>
+        
+        <table>
+            <tr>
+                <th>处理活动</th>
+                <th>法律依据</th>
+                <th>数据类别</th>
+            </tr>
+            <tr>
+                <td>模型训练优化</td>
+                <td>GDPR第6(1)(f)条（合法利益）</td>
+                <td>去标识化后的服务数据</td>
+            </tr>
+            <tr>
+                <td>反欺诈检测</td>
+                <td>GDPR第6(1)(c)条（法定义务）</td>
+                <td>设备指纹、IP地址</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 用户权利 -->
+    <div class="legal-clause" id="rights">
+        <h2>7. 用户权利</h2>
+        <p>根据CCPA和GDPR第三章，您享有以下权利：</p>
+        
+        <ul>
+            <li>访问权：获取正在处理的个人数据副本（每年免费提供2次）</li>
+            <li>删除权：要求删除非必要数据（需验证身份）</li>
+            <li>反对权：拒绝基于个人画像的自动化决策</li>
+        </ul>
+
+        <p>权利行使流程：</p>
+        <ol>
+            <li>通过DSAR表格提交请求</li>
+            <li>10个工作日内身份验证</li>
+            <li>30日内完成请求处理</li>
+        </ol>
+    </div>
+
+    <footer>
+        <p>版本记录：v2.1 (2023-09-01)</p>
+        <p>监管机构投诉渠道：[所在地数据保护机构名称及联系方式]</p>
+    </footer>
+</body>
+</html>

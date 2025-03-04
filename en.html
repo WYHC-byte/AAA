@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jork AI - The Future is Here</title>
+    <style>
+        /* Base reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Dynamic starry background */
+        body {
+            background: 
+                radial-gradient(ellipse at 20% 20%, #0f0f1a 25%, #1a0f1a 60%),
+                linear-gradient(45deg, #000 0%, #0a0a1a 100%);
+            color: #e0e0ff;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ... (keep all CSS styles unchanged except Chinese comments) ... */
+        
+        /* Cyber card styles */
+        .cyber-card {
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 1rem;
+            position: relative;
+            transition: 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        /* Developer section */
+        .creator-section::before {
+            content: 'WU YIHU';
+            position: absolute;
+            bottom: -2rem;
+            right: -2rem;
+            font-size: 8rem;
+            color: rgba(255, 255, 255, 0.03);
+            font-weight: bold;
+            transform: rotate(-15deg);
+        }
+
+        /* 动画定义 */
+        @keyframes borderFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        @keyframes hologramScan {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .cyber-header h1 {
+                font-size: 3rem;
+            }
+        }
+        /* 页脚基础样式 */
+        .modern-footer {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 4rem 0 2rem;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* 网格布局 */
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* 品牌区块 */
+        .brand-column .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #818cf8;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .brand-text {
+            color: #94a3b8;
+            line-height: 1.6;
+            margin: 1rem 0;
+        }
+
+        /* 链接区块 */
+        .link-group h4 {
+            color: #f8fafc;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            padding-left: 0.5rem;
+            position: relative;
+        }
+
+        .link-group h4::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -0.5rem;
+            width: 2rem;
+            height: 2px;
+            background: #818cf8;
+        }
+
+        .link-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .link-list a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .link-list a:hover {
+            background: rgba(129, 140, 248, 0.1);
+            color: #e2e8f0;
+            transform: translateX(5px);
+        }
+
+        /* 图标样式 */
+        .material-symbols-rounded {
+            font-family: 'Material Symbols Rounded';
+            font-weight: 400;
+            font-size: 1.2em;
+            vertical-align: bottom;
+        }
+
+        /* 底部栏 */
+        .footer-bottom {
+            margin-top: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #64748b;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: #94a3b8;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: rgba(129, 140, 248, 0.1);
+            color: #e2e8f0;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-container">
+        <header class="cyber-header">
+            <h1>JORK AI</h1>
+            <p class="subtitle">The Future is Here</p>
+            <div class="hero-cta">
+                <a href="login.html" class="quantum-btn">
+                    <span class="btn-glow"></span>
+                    Get Started
+                    <div class="particle-wave"></div>
+                </a>
+            </div>
+        </header>
+
+        <!-- Feature showcase -->
+        <section class="cyber-card card-type1">
+            <h2>Intelligent Dialogue System</h2>
+            <p>Transcends traditional chatbots with deep understanding and personalized responses.</p>
+        </section>
+
+        <section class="cyber-card card-type2">
+            <h2>Multimodal Understanding</h2>
+            <p>Integrated text, image, and voice processing for comprehensive interaction.</p>
+        </section>
+
+        <section class="cyber-card card-type3">
+            <h2>Knowledge Graph</h2>
+            <p>Cross-domain knowledge network delivering holistic solutions.</p>
+        </section>
+
+        <!-- Developer info -->
+        <div class="creator-section">
+            <h2>Chief Architect</h2>
+            <p>Wu Yihu</p>
+            <p>Specializing in AI Research & Development</p>
+        </div>
+    </div>
+
+    <!-- Modern footer -->
+    <footer class="modern-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="brand-column">
+                    <div class="logo">
+                        <span class="material-symbols-rounded">Tenyun Tech</span>
+                        Jork AI
+                    </div>
+                    <p class="brand-text">Next-generation AI platform leading intelligent cognitive evolution</p>
+                </div>
+
+                <!-- Products -->
+                <div class="link-group">
+                    <h4>Products</h4>
+                    <nav class="link-list">
+                        <a href="#">
+                            <span class="material-symbols-rounded">rocket_launch</span>
+                            Demo
+                        </a>
+                        <a href="#">
+                            <span class="material-symbols-rounded">diversity_3</span>
+                            Enterprise Solutions
+                        </a>
+                        <a href="api.html">
+                            <span class="material-symbols-rounded">api</span>
+                            API Documentation
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Resources -->
+                <div class="link-group">
+                    <h4>Resources</h4>
+                    <nav class="link-list">
+                        <a href="kaifa.html">
+                            <span class="material-symbols-rounded">menu_book</span>
+                            Documentation
+                        </a>
+                        <a href="baipishu.html">
+                            <span class="material-symbols-rounded">description</span>
+                            White Paper
+                        </a>
+                        <a href="#">
+                            <span class="material-symbols-rounded">cases</span>
+                            Case Studies
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Legal -->
+                <div class="link-group">
+                    <h4>Legal</h4>
+                    <nav class="link-list">
+                        <a href="yinsi.html">
+                            <span class="material-symbols-rounded">policy</span>
+                            Privacy Policy
+                        </a>
+                        <a href="fuwu.html">
+                            <span class="material-symbols-rounded">gavel</span>
+                            Terms of Service
+                        </a>
+                        <a href="#">
+                            <span class="material-symbols-rounded">verified</span>
+                            Compliance
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="copyright">
+                    © 2024 Jork AI. All rights reserved.
+                </div>
+                <div class="social-links">
+                    <a href="index.html">
+                        <span class="material-symbols-rounded">中文</span>
+                    </a>
+                    <a href="#">
+                        <span class="material-symbols-rounded">public</span>
+                    </a>
+                    <a href="fourm.html">
+                        <span class="material-symbols-rounded">forum</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

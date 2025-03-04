@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI技术论坛</title>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-gray-50" x-data="{ openEditor: false }">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="text-2xl font-bold text-blue-600">AI Forum</a>
+                    <div class="ml-10 space-x-8">
+                        <a href="#" class="text-gray-700 hover:text-blue-600">热门</a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600">分类</a>
+                        <a href="#" class="text-gray-700 hover:text-blue-600">问答</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <button @click="openEditor = true" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700">
+                        发新帖
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <!-- 分类导航 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <h3 class="text-lg font-semibold mb-2">🤖 模型开发</h3>
+                <p class="text-gray-600">讨论Transformer、RLHF等技术</p>
+            </div>
+            <!-- 其他分类... -->
+        </div>
+
+        <!-- 帖子列表 -->
+        <div class="bg-white rounded-xl shadow-sm">
+            <div class="divide-y divide-gray-200">
+                <!-- 帖子项 -->
+                <article class="p-6 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-start">
+                        <img src="avatar.png" class="w-12 h-12 rounded-full" alt="用户头像">
+                        <div class="ml-4 flex-1">
+                            <h2 class="text-xl font-semibold">
+                                <a href="#" class="hover:text-blue-600">如何优化大模型推理速度？</a>
+                            </h2>
+                            <div class="mt-2 text-gray-600 flex items-center space-x-4">
+                                <span>👤 张伟</span>
+                                <span>🕒 2小时前</span>
+                                <span>💬 15 评论</span>
+                                <span>🔥 42 赞</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                <!-- 更多帖子... -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 发帖编辑器 -->
+    <div x-show="openEditor" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-xl p-6" @click.outside="openEditor = false">
+            <h3 class="text-xl font-bold mb-6">发表新主题</h3>
+            <form>
+                <input type="text" placeholder="标题" class="w-full px-4 py-3 border rounded-lg mb-4">
+                <div class="border rounded-lg mb-4">
+                    <div class="border-b p-2 bg-gray-50">
+                        <button type="button" class="px-3 py-1 hover:bg-gray-200 rounded">B</button>
+                        <button type="button" class="px-3 py-1 hover:bg-gray-200 rounded">#</button>
+                    </div>
+                    <textarea class="w-full p-4 min-h-[300px]" placeholder="输入内容..."></textarea>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" @click="openEditor = false" 
+                            class="px-6 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+                        取消
+                    </button>
+                    <button type="submit" 
+                            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        发布
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

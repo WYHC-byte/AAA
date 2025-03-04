@@ -45,24 +45,26 @@
       margin: 1rem 0;
     }
 
-    .code-header {
-      background: #f3f4f6;
-      padding: 8px 16px;
-      border-radius: 4px 4px 0 0;
-      display: flex;
-      justify-content: space-between;
-    }
-    .code-filename {
-      font-family: 'Courier New';
-      color: #666;
-    }
-    .prose table {
-      border: 1px solid #ddd;
-      margin: 10px 0;
-    }
-    .prose th {
-      background: #f8f9fa;
-    }
+    /* 在原来.code-block样式下面加这些 */
+.code-header {
+  background: #f3f4f6;
+  padding: 8px 16px;
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  justify-content: space-between;
+}
+.code-filename {
+  font-family: 'Courier New';
+  color: #666;
+}
+/* 在原来的表格样式下加这个 */
+.prose table {
+  border: 1px solid #ddd;
+  margin: 10px 0;
+}
+.prose th {
+  background: #f8f9fa;
+}
     
     .copy-button {
       position: absolute;
@@ -112,26 +114,13 @@
     }
 
     .system-message {
-      animation: fadeIn 0.3s ease-in-out;
-    }
+  animation: fadeIn 0.3s ease-in-out;
+}
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    .attachment-preview {
-      background: #f8f9fa;
-      max-height: 120px;
-      overflow-y: auto;
-    }
-
-    .attachment {
-      transition: transform 0.2s;
-    }
-
-    .attachment:hover {
-      transform: translateY(-2px);
-    }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
@@ -200,23 +189,18 @@
               <button id="image-gen-button" class="p-2 text-gray-500 hover:text-blue-600 focus:outline-none" title="生成图片（测试中）">
                 <i class="fas fa-image"></i>
               </button>
-              <input type="file" id="file-input" class="hidden" multiple>
-              <button id="upload-button" class="p-2 text-gray-500 hover:text-blue-600 focus:outline-none" title="添加附件">
-                <i class="fas fa-paperclip"></i>
-              </button>
               <button id="send-button" class="bg-blue-600 text-white rounded-md px-4 py-1 hover:bg-blue-700 focus:outline-none">
                 发送
               </button>
             </div>
           </div>
-          <div id="attachment-preview-container"></div>
           <div class="flex justify-between items-center mt-2 text-xs text-gray-500">
             <div class="flex items-center space-x-4">
               <div class="flex items-center">
                 <span>模型:</span>
                 <select id="model-selector" class="ml-2 bg-transparent border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500">
                   <option value="deepseek-r1">DeepSeek R1</option>
-                  <option value="jork">Jork</option>
+                  <option value="deepseek-r1">Jork</option>
                 </select>
               </div>
               <div class="flex items-center">
@@ -252,9 +236,6 @@
     const newChatButton = document.getElementById('new-chat-button');
     const conversationHistoryEl = document.getElementById('conversation-history');
     const welcomeMessageEl = document.getElementById('welcome-message');
-    const fileInput = document.getElementById('file-input');
-    const uploadButton = document.getElementById('upload-button');
-    const attachmentPreviewContainer = document.getElementById('attachment-preview-container');
 
     // State
     let conversations = JSON.parse(localStorage.getItem(LS_CONVERSATIONS_KEY) || '{}');
@@ -263,15 +244,14 @@
     let isWebSearchEnabled = false; 
     let isSidebarVisible = true;
     let isTyping = false;
-    let attachments = [];
 
     // Initialize the app
     function init() {
       setWelcomeMessage();
       setupEventListeners();
       loadConversationHistory();
-      updatePointsDisplay();
-      setupPointsResetTimer();
+      updatePointsDisplay(); // 添加这行
+      setupPointsResetTimer(); // 添加这行
       
       if (currentConversationId && conversations[currentConversationId]) {
         loadConversation(currentConversationId);
@@ -303,18 +283,11 @@
       // Send message on button click
       sendButton.addEventListener('click', sendMessage);
 
-      // 文件上传处理
-      uploadButton.addEventListener('click', () => {
-        fileInput.click();
-      });
-
-      fileInput.addEventListener('change', handleFileUpload);
-
       const searchButton = document.getElementById('search-button');
-      searchButton.addEventListener('click', () => {
-        isWebSearchEnabled = !isWebSearchEnabled;
-        searchButton.classList.toggle('text-blue-600', isWebSearchEnabled);
-      });
+  searchButton.addEventListener('click', () => {
+    isWebSearchEnabled = !isWebSearchEnabled;
+    searchButton.classList.toggle('text-blue-600', isWebSearchEnabled);
+  });
       
       // Toggle thinking mode
       thinkingButton.addEventListener('click', () => {
@@ -335,105 +308,6 @@
       
       // Create new conversation
       newChatButton.addEventListener('click', createNewConversation);
-    }
-
-    // 文件上传处理函数
-    function handleFileUpload(event) {
-      const files = event.target.files;
-      if (!files || files.length === 0) return;
-      
-      // 创建预览容器（如果不存在）
-      if (!document.querySelector('.attachment-preview')) {
-        const previewDiv = document.createElement('div');
-        previewDiv.className = 'attachment-preview mt-2 p-2 border rounded';
-        attachmentPreviewContainer.appendChild(previewDiv);
-      }
-      
-      const previewContainer = document.querySelector('.attachment-preview');
-      
-      // 处理每个文件
-      Array.from(files).forEach(file => {
-        // 检查文件类型和大小限制
-        if (file.size > 5 * 1024 * 1024) { // 5MB限制
-          alert(`文件 ${file.name} 超过5MB限制`);
-          return;
-        }
-        
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-          // 保存文件信息到附件数组
-          attachments.push({
-            name: file.name,
-            type: file.type,
-            data: e.target.result,
-            size: file.size
-          });
-          
-          // 创建预览元素
-          const attachmentDiv = document.createElement('div');
-          attachmentDiv.className = 'attachment inline-block mr-2 mb-2 relative';
-          
-          // 根据文件类型创建不同的预览
-          if (file.type.startsWith('image/')) {
-            attachmentDiv.innerHTML = `
-              <div class="relative">
-                <img src="${e.target.result}" class="h-16 w-16 object-cover rounded cursor-zoom-in" 
-                     onclick="showFullImage('${e.target.result}')">
-                <button class="remove-attachment absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
-                  <i class="fas fa-times text-xs"></i>
-                </button>
-              </div>
-            `;
-          } else {
-            const iconClass = getFileIcon(file.type);
-            attachmentDiv.innerHTML = `
-              <div class="p-2 border rounded bg-white">
-                <div class="relative">
-                  <i class="fas ${iconClass} mr-1"></i>
-                  <span class="text-sm">${file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name}</span>
-                  <button class="remove-attachment absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
-                    <i class="fas fa-times text-xs"></i>
-                  </button>
-                </div>
-              </div>
-            `;
-          }
-          
-          previewContainer.appendChild(attachmentDiv);
-          
-          // 添加删除按钮事件处理
-          const index = attachments.length - 1;
-          attachmentDiv.querySelector('.remove-attachment').addEventListener('click', () => {
-            attachments.splice(index, 1);
-            attachmentDiv.remove();
-            if (attachments.length === 0) {
-              previewContainer.remove();
-            }
-          });
-        };
-        
-        if (file.type.startsWith('image/') || file.type === 'application/pdf') {
-          reader.readAsDataURL(file);
-        } else {
-          reader.readAsText(file);
-        }
-      });
-      
-      // 清空文件输入，允许再次选择相同文件
-      fileInput.value = '';
-    }
-
-    // 获取文件类型图标
-    function getFileIcon(mimeType) {
-      if (mimeType.startsWith('image/')) return 'fa-image';
-      if (mimeType === 'application/pdf') return 'fa-file-pdf';
-      if (mimeType.includes('word')) return 'fa-file-word';
-      if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return 'fa-file-excel';
-      if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return 'fa-file-powerpoint';
-      if (mimeType.includes('text/')) return 'fa-file-alt';
-      if (mimeType.includes('zip') || mimeType.includes('compressed')) return 'fa-file-archive';
-      return 'fa-file';
     }
 
     // Toggle sidebar visibility
@@ -505,31 +379,32 @@
       });
     }
 
-    function formatMessage(message) {
-      // 处理代码块
-      let formattedMessage = message.replace(/```(\w+)?\s*([\s\S]*?)```/g, (match, lang, code) => {
-        const filename = lang ? `文件.${lang}` : '代码文件';
-        return `<div class="code-block border rounded-md mb-4">
-          <div class="code-header bg-gray-100 px-4 py-2 flex justify-between">
-            <span class="code-filename">${filename}</span>
-            <button class="copy-button" onclick="copyCode(this)">复制</button>
-          </div>
-          <pre class="p-4 overflow-x-auto"><code>${escapeHTML(code)}</code></pre>
-        </div>`;
-      });
+    // 粘贴到发送消息的函数上面
+function formatMessage(message) {
+  // 处理代码块
+  let formattedMessage = message.replace(/```(\w+)?\s*([\s\S]*?)```/g, (match, lang, code) => {
+    const filename = lang ? `文件.${lang}` : '代码文件';
+    return `<div class="code-block border rounded-md mb-4">
+      <div class="code-header bg-gray-100 px-4 py-2 flex justify-between">
+        <span class="code-filename">${filename}</span>
+        <button class="copy-button" onclick="copyCode(this)">复制</button>
+      </div>
+      <pre class="p-4 overflow-x-auto"><code>${escapeHTML(code)}</code></pre>
+    </div>`;
+  });
 
-      // 处理表格
-      formattedMessage = formattedMessage.replace(/\|(.+?)\|/g, (match, row) => {
-        const cells = row.split('|').map(cell => `<td class="p-2 border">${cell.trim()}</td>`).join('');
-        return `<table class="table-auto border-collapse w-full mb-4"><tr>${cells}</tr></table>`;
-      });
+  // 处理表格
+  formattedMessage = formattedMessage.replace(/\|(.+?)\|/g, (match, row) => {
+    const cells = row.split('|').map(cell => `<td class="p-2 border">${cell.trim()}</td>`).join('');
+    return `<table class="table-auto border-collapse w-full mb-4"><tr>${cells}</tr></table>`;
+  });
 
-      // 处理图片
-      formattedMessage = formattedMessage.replace(/!$$(.*?)$$$(.*?)$/g, '<img src="$2" class="generated-image mx-auto" alt="$1">');
+  // 处理图片
+  formattedMessage = formattedMessage.replace(/!$$(.*?)$$$(.*?)$/g, '<img src="$2" class="generated-image mx-auto" alt="$1">');
 
-      // 处理换行
-      return formattedMessage.replace(/\n/g, '<br>');
-    }
+  // 处理换行
+  return formattedMessage.replace(/\n/g, '<br>');
+}
 
     // Load a conversation
     function loadConversation(id) {
@@ -583,105 +458,78 @@
     }
 
     // Send message to API
-    async function sendMessage() {
-      const message = messageInput.value.trim();
-      if (!message && attachments.length === 0) return;
+    // Send message to API
+async function sendMessage() {
+  const message = messageInput.value.trim();
+  if (!message || isTyping) return;
+  
+  // 检查积分是否足够
+  if (!hasEnoughPoints()) {
+    addErrorMessage('您的积分不足，每条消息需要300积分。积分将在每天0点重置。');
+    return;
+  }
+  
+  messageInput.value = '';
+  addUserMessage(message);
+  welcomeMessageEl.style.display = 'none';
+  
+  // 扣除积分
+  deductPoints(POINTS_PER_MESSAGE);
+  updatePointsDisplay();
+  
+  const model = modelSelector.value;
+  isWebSearchEnabled = document.getElementById('search-button').classList.contains('text-blue-600');
+  
+  try {
+    // 添加消息到对话历史
+    if (conversations[currentConversationId].messages.length === 0) {
+      conversations[currentConversationId].title = message.length > 20 ? message.substring(0, 20) + '...' : message;
+    }
+    
+    conversations[currentConversationId].model = model;
+    conversations[currentConversationId].messages.push({
+      role: 'user',
+      content: message
+    });
+    
+    saveConversations();
+    updateConversationHistory();
+    
+    let finalMessage = message;
+    let searchResultsContent = null;
+    
+    // 如果启用了网络搜索，进行搜索
+    if (isWebSearchEnabled) {
+      const enhancedMessage = await enhanceMessageWithSearch(message);
+      finalMessage = enhancedMessage.enhancedPrompt;
+      searchResultsContent = enhancedMessage.searchResults;
       
-      // 添加附件处理
-      const attachmentHTML = attachments.length > 0 ? 
-        `<div class="attachments mt-2">
-          ${attachments.map(file => `
-            <div class="attachment inline-block mr-2">
-              ${file.type.startsWith('image') ? 
-                `<img src="${file.data}" class="h-16 w-16 object-cover rounded cursor-zoom-in" 
-                     onclick="showFullImage('${file.data}')">` : 
-                `<div class="p-2 border rounded">
-                  <i class="fas ${getFileIcon(file.type)} mr-1"></i>
-                  <span class="text-sm">${file.name}</span>
-                </div>`
-              }
-            </div>
-          `).join('')}
-        </div>` : '';
-      
-      // 保存附件到消息记录
-      const messageWithAttachments = {
-        text: message,
-        attachments: [...attachments]
-      };
-
-      // 清空附件
-      attachments = [];
-      document.querySelector('.attachment-preview')?.remove();
-      
-      // 检查积分是否足够
-      if (!hasEnoughPoints()) {
-        addErrorMessage('您的积分不足，每条消息需要300积分。积分将在每天0点重置。');
-        return;
-      }
-      
-      messageInput.value = '';
-      addUserMessage(message, attachmentHTML);
-      welcomeMessageEl.style.display = 'none';
-      
-      // 扣除积分
-      deductPoints(POINTS_PER_MESSAGE);
-      updatePointsDisplay();
-      
-      const model = modelSelector.value;
-      isWebSearchEnabled = document.getElementById('search-button').classList.contains('text-blue-600');
-      
-      try {
-        // 添加消息到对话历史
-        if (conversations[currentConversationId].messages.length === 0) {
-          conversations[currentConversationId].title = message.length > 20 ? message.substring(0, 20) + '...' : message;
-        }
-        
-        conversations[currentConversationId].model = model;
-        conversations[currentConversationId].messages.push({
-          role: 'user',
-          content: message,
-          attachments: messageWithAttachments.attachments
-        });
-        
-        saveConversations();
-        updateConversationHistory();
-        
-        let finalMessage = message;
-        let searchResultsContent = null;
-        
-        // 如果启用了网络搜索，进行搜索
-        if (isWebSearchEnabled) {
-          const enhancedMessage = await enhanceMessageWithSearch(message);
-          finalMessage = enhancedMessage.enhancedPrompt;
-          searchResultsContent = enhancedMessage.searchResults;
-          
-          // 可选：显示搜索结果给用户
-          if (searchResultsContent) {
-            addSystemMessage(`搜索完成，已找到相关信息`);
-          }
-        }
-        
-        const response = await sendToDeepSeekAPI(finalMessage, model, isThinkingModeEnabled);
-        addAIMessage(response.answer, response.thinking, true);
-        
-        // 添加AI回复到对话历史
-        conversations[currentConversationId].messages.push({
-          role: 'assistant',
-          content: response.answer,
-          thinking: response.thinking
-        });
-        
-        if (searchResultsContent) {
-          // 将搜索内容也记录到对话历史中
-          conversations[currentConversationId].searchResults = searchResultsContent;
-        }
-        
-        saveConversations();
-      } catch (error) {
-        addErrorMessage('请求失败: ' + error.message);
+      // 可选：显示搜索结果给用户
+      if (searchResultsContent) {
+        addSystemMessage(`搜索完成，已找到相关信息`);
       }
     }
+    
+    const response = await sendToDeepSeekAPI(finalMessage, model, isThinkingModeEnabled);
+    addAIMessage(response.answer, response.thinking, true);
+    
+    // 添加AI回复到对话历史
+    conversations[currentConversationId].messages.push({
+      role: 'assistant',
+      content: response.answer,
+      thinking: response.thinking
+    });
+    
+    if (searchResultsContent) {
+      // 将搜索内容也记录到对话历史中
+      conversations[currentConversationId].searchResults = searchResultsContent;
+    }
+    
+    saveConversations();
+  } catch (error) {
+    addErrorMessage('请求失败: ' + error.message);
+  }
+}
 
     // Send message to DeepSeek API
     async function sendToDeepSeekAPI(message, model, includeThinking) {
@@ -711,11 +559,11 @@
       }
       
       if (includeThinking) {
-        conversationHistory.unshift({
-          role: "system",
-          content: `你需要展示你的思考过程，首先，你需要肯定用户以表明你接下了这个任务，你可以在开始运用"好的"，"嗯"，然后，你可以运用首先，让后等词语来展示你的思考顺序，记住，你要分段，例如：首先一段，然后：然后一段，等，你可以在过程中穿插一些句子，例如：等一等，用户好像...，你在过程中要运用一些网络热梗，最后，总结一下答案。思考过程请标注为"思考过程"，最终答案请标注为"最终答案"`
-        });
-      }
+  conversationHistory.unshift({
+    role: "system",
+    content: `你需要展示你的思考过程，首先，你需要肯定用户以表明你接下了这个任务，你可以在开始运用“好的”，“嗯”，然后，你可以运用首先，让后等词语来展示你的思考顺序，记住，你要分段，例如：首先一段，然后：然后一段，等，你可以在过程中穿插一些句子，例如：等一等，用户好像...，你在过程中要运用一些网络热梗，最后，总结一下答案。思考过程请标注为“思考过程”，最终答案请标注为“最终答案”`
+  });
+}
       
       try {
         const response = await fetch(apiUrl, {
@@ -797,7 +645,7 @@
     }
 
     // Add user message to the UI
-    function addUserMessage(message, attachmentHTML = '') {
+    function addUserMessage(message) {
       const messageHTML = `
         <div class="flex items-start p-4 max-w-3xl mx-auto">
           <div class="flex-shrink-0 mr-4">
@@ -809,7 +657,6 @@
             <div class="font-medium text-gray-900">You</div>
             <div class="message-content prose prose-slate max-w-none">
               ${formatMessage(message)}
-              ${attachmentHTML || ''}
             </div>
           </div>
         </div>
@@ -940,6 +787,37 @@
       }
     }
 
+    // Format message with code highlighting
+    function formatMessage(message) {
+      // Replace code blocks
+      let formattedMessage = message.replace(/```([\s\S]*?)```/g, (match, code) => {
+        // Try to extract language if specified
+        const langMatch = code.match(/^([a-zA-Z0-9_+-]+)\n/);
+        let language = '';
+        
+        if (langMatch) {
+          language = langMatch[1];
+          code = code.substring(langMatch[0].length);
+        }
+        
+        return `<div class="code-block">
+          <div class="bg-gray-100 px-4 py-2 text-xs flex justify-between items-center rounded-t-md">
+            <span>${language || 'code'}</span>
+            <button class="copy-button" onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`')}\`)">复制</button>
+          </div>
+          <pre><code>${escapeHTML(code)}</code></pre>
+        </div>`;
+      });
+      
+      // Replace inline code
+      formattedMessage = formattedMessage.replace(/`([^`]+)`/g, '<code>$1</code>');
+      
+      // Convert line breaks to <br>
+      formattedMessage = formattedMessage.replace(/\n/g, '<br>');
+      
+      return formattedMessage;
+    }
+
     // Escape HTML
     function escapeHTML(text) {
       return text
@@ -956,276 +834,331 @@
     }
 
     // 积分系统常量
-    const POINTS_INITIAL = 3000;       // 初始积分
-    const POINTS_PER_MESSAGE = 300;    // 每条消息消耗的积分
-    const LS_USER_POINTS_KEY = 'deepseekUserPoint';  // 本地存储积分的键名
+const POINTS_INITIAL = 3000000000000;       // 初始积分
+const POINTS_PER_MESSAGE = 10;    // 每条消息消耗的积分
+const LS_USER_POINTS_KEY = 'deepseekUserPoints';  // 本地存储积分的键名
 
-    // 获取用户当前积分
-    function getUserPoints() {
-      const pointsData = JSON.parse(localStorage.getItem(LS_USER_POINTS_KEY) || '{}');
-      const today = new Date().toLocaleDateString('zh-CN');
-      
-      // 检查是否需要重置（新的一天或首次使用）
-      if (!pointsData.date || pointsData.date !== today) {
-        // 重置积分
-        const newPointsData = {
-          date: today,
-          points: POINTS_INITIAL
-        };
-        localStorage.setItem(LS_USER_POINTS_KEY, JSON.stringify(newPointsData));
-        return newPointsData.points;
+// 获取用户当前积分
+function getUserPoints() {
+  const pointsData = JSON.parse(localStorage.getItem(LS_USER_POINTS_KEY) || '{}');
+  const today = new Date().toLocaleDateString('zh-CN');
+  
+  // 检查是否需要重置（新的一天或首次使用）
+  if (!pointsData.date || pointsData.date !== today) {
+    // 重置积分
+    const newPointsData = {
+      date: today,
+      points: POINTS_INITIAL
+    };
+    localStorage.setItem(LS_USER_POINTS_KEY, JSON.stringify(newPointsData));
+    return newPointsData.points;
+  }
+  
+  return pointsData.points;
+}
+
+// 扣除积分
+function deductPoints(amount) {
+  const pointsData = JSON.parse(localStorage.getItem(LS_USER_POINTS_KEY) || '{}');
+  const today = new Date().toLocaleDateString('zh-CN');
+  
+  // 如果是新的一天，先重置积分
+  if (!pointsData.date || pointsData.date !== today) {
+    pointsData.date = today;
+    pointsData.points = POINTS_INITIAL;
+  }
+  
+  // 扣除积分
+  pointsData.points -= amount;
+  localStorage.setItem(LS_USER_POINTS_KEY, JSON.stringify(pointsData));
+  
+  return pointsData.points;
+}
+
+// 检查是否有足够积分
+function hasEnoughPoints() {
+  return getUserPoints() >= POINTS_PER_MESSAGE;
+}
+
+// 更新积分显示
+function updatePointsDisplay() {
+  const pointsDisplay = document.getElementById('points-display');
+  if (pointsDisplay) {
+    pointsDisplay.textContent = `积分: ${getUserPoints()}`;
+  }
+}
+
+// 添加积分重置定时器（每天0点重置）
+function setupPointsResetTimer() {
+  const now = new Date();
+  // 计算到今天结束还有多少毫秒
+  const tomorrow = new Date(now);
+  tomorrow.setDate(now.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  
+  const timeToReset = tomorrow - now;
+  
+  // 设置定时器
+  setTimeout(() => {
+    // 重置积分
+    const today = new Date().toLocaleDateString('zh-CN');
+    const newPointsData = {
+      date: today,
+      points: POINTS_INITIAL
+    };
+    localStorage.setItem(LS_USER_POINTS_KEY, JSON.stringify(newPointsData));
+    updatePointsDisplay();
+    
+    // 重新设置定时器，每24小时重置一次
+    setupPointsResetTimer();
+  }, timeToReset);
+}
+
+
+
+async function performWebSearch(query) {
+  try {
+    // 使用更可靠的CORS代理
+    const proxyUrl = 'https://api.allorigins.win/raw?url=';
+    const searchUrl = `${proxyUrl}${encodeURIComponent(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&t=JorkAI`)}`;
+    
+    const response = await fetch(searchUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
       }
-      
-      return pointsData.points;
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-
-    // 扣除积分
-    function deductPoints(amount) {
-      const pointsData = JSON.parse(localStorage.getItem(LS_USER_POINTS_KEY) || '{}');
-      const today = new Date().toLocaleDateString('zh-CN');
-      
-      // 如果是新的一天，先重置积分
-      if (!pointsData.date || pointsData.date !== today) {
-        pointsData.date = today;
-        pointsData.points = POINTS_INITIAL;
-      }
-      
-      // 扣除积分
-      pointsData.points -= amount;
-      localStorage.setItem(LS_USER_POINTS_KEY, JSON.stringify(pointsData));
-      
-      return pointsData.points;
-    }
-
-    // 检查是否有足够积分
-    function hasEnoughPoints() {
-      return getUserPoints() >= POINTS_PER_MESSAGE;
-    }
-
-    // 更新积分显示
-    function updatePointsDisplay() {
-      const pointsDisplay = document.getElementById('points-display');
-      if (pointsDisplay) {
-        pointsDisplay.textContent = `积分: ${getUserPoints()}`;
-      }
-    }
-
-    // 添加积分重置定时器（每天0点重置）
-    function setupPointsResetTimer() {
-      const now = new Date();
-      // 计算到今天结束还有多少毫秒
-      const tomorrow = new Date(now);
-      tomorrow.setDate(now.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-      
-      const timeToReset = tomorrow - now;
-      
-      // 设置定时器
-      setTimeout(() => {
-        // 重置积分
-        const today = new Date().toLocaleDateString('zh-CN');
-        const newPointsData = {
-          date: today,
-          points: POINTS_INITIAL
-        };
-        localStorage.setItem(LS_USER_POINTS_KEY, JSON.stringify(newPointsData));
-        updatePointsDisplay();
-        
-        // 重新设置定时器，每24小时重置一次
-        setupPointsResetTimer();
-      }, timeToReset);
-    }
-
-    async function performWebSearch(query) {
-      try {
-        // 使用更可靠的CORS代理
-        const proxyUrl = 'https://api.allorigins.win/raw?url=';
-        const searchUrl = `${proxyUrl}${encodeURIComponent(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&t=JorkAI`)}`;
-        
-        const response = await fetch(searchUrl, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        const results = [];
-        
-        // 处理Abstract结果
-        if (data.Abstract) {
-          results.push({
-            title: data.AbstractSource || '摘要',
-            link: data.AbstractURL || '#',
-            snippet: data.Abstract
-          });
-        }
-        
-        // 处理RelatedTopics结果
-        if (data.RelatedTopics && data.RelatedTopics.length > 0) {
-          data.RelatedTopics.slice(0, 5).forEach(topic => {
-            if (topic.Text && !topic.Name) {
-              results.push({
-                title: topic.Text.split(' - ')[0] || topic.Text,
-                link: topic.FirstURL || '#',
-                snippet: topic.Text
-              });
-            }
-          });
-        }
-        
-        // 如果没有找到结果，添加备用搜索方案
-        if (results.length === 0) {
-          try {
-            // 备用搜索API
-            const backupUrl = `https://ddg-api.herokuapp.com/search?q=${encodeURIComponent(query)}`;
-            const backupResponse = await fetch(backupUrl);
-            const backupData = await backupResponse.json();
-            
-            backupData.slice(0, 3).forEach(result => {
-              results.push({
-                title: result.title,
-                link: result.link,
-                snippet: result.snippet
-              });
-            });
-          } catch (backupError) {
-            console.log('备用搜索失败:', backupError);
-          }
-        }
-        
-        return results.length > 0 ? results : [{
-          title: '搜索提示',
-          link: '#',
-          snippet: '暂时无法获取搜索结果，但我会基于已有知识尽力回答您的问题。'
-        }];
-        
-      } catch (error) {
-        console.error('搜索错误:', error);
-        // 返回错误提示
-        return [{
-          title: '搜索服务暂时不可用',
-          link: '#',
-          snippet: '搜索服务暂时不可用，但我会基于已有知识回答您的问题。'
-        }];
-      }
-    }
-
-    function formatSearchResults(results) {
-      if (!results || results.length === 0) {
-        return "未找到相关搜索结果。";
-      }
-      
-      let formattedResults = "### 网络搜索结果\n\n";
-      
-      results.forEach((result, index) => {
-        formattedResults += `**${index + 1}. ${result.title}**\n`;
-        formattedResults += `${result.snippet}\n`;
-        formattedResults += `来源: ${result.link}\n\n`;
+    
+    const data = await response.json();
+    const results = [];
+    
+    // 处理Abstract结果
+    if (data.Abstract) {
+      results.push({
+        title: data.AbstractSource || '摘要',
+        link: data.AbstractURL || '#',
+        snippet: data.Abstract
       });
-      
-      return formattedResults;
     }
-
-    async function enhanceMessageWithSearch(message) {
+    
+    // 处理RelatedTopics结果
+    if (data.RelatedTopics && data.RelatedTopics.length > 0) {
+      data.RelatedTopics.slice(0, 5).forEach(topic => {
+        if (topic.Text && !topic.Name) {
+          results.push({
+            title: topic.Text.split(' - ')[0] || topic.Text,
+            link: topic.FirstURL || '#',
+            snippet: topic.Text
+          });
+        }
+      });
+    }
+    
+    // 如果没有找到结果，添加备用搜索方案
+    if (results.length === 0) {
       try {
-        // 显示搜索中消息
-        addSystemMessage("正在进行网络搜索...");
+        // 备用搜索API
+        const backupUrl = `https://ddg-api.herokuapp.com/search?q=${encodeURIComponent(query)}`;
+        const backupResponse = await fetch(backupUrl);
+        const backupData = await backupResponse.json();
         
-        // 执行搜索
-        const searchResults = await performWebSearch(message);
-        
-        // 移除搜索中消息
-        removeLastMessage();
-        
-        // 格式化搜索结果
-        const formattedResults = formatSearchResults(searchResults);
-        
-        // 修改用户消息，增加搜索结果指示
-        return {
-          originalMessage: message,
-          searchResults: formattedResults,
-          enhancedPrompt: `以下是用户的问题和相关的网络搜索结果，请基于这些信息回答问题。\n\n用户问题: ${message}\n\n${formattedResults}\n\n请基于以上搜索结果回答用户问题，并在必要时引用来源。如果搜索结果对回答问题没有帮助，请说明并尽力给出最佳回答。`
-        };
-      } catch (error) {
-        console.error("搜索错误:", error);
-        removeLastMessage();
-        addSystemMessage("搜索功能暂时不可用，将直接回答您的问题。");
-        
-        // 出错时返回原始消息
-        return { 
-          originalMessage: message, 
-          enhancedPrompt: message,
-          searchResults: null
-        };
+        backupData.slice(0, 3).forEach(result => {
+          results.push({
+            title: result.title,
+            link: result.link,
+            snippet: result.snippet
+          });
+        });
+      } catch (backupError) {
+        console.log('备用搜索失败:', backupError);
       }
     }
+    
+    return results.length > 0 ? results : [{
+      title: '搜索提示',
+      link: '#',
+      snippet: '暂时无法获取搜索结果，但我会基于已有知识尽力回答您的问题。'
+    }];
+    
+  } catch (error) {
+    console.error('搜索错误:', error);
+    // 返回错误提示
+    return [{
+      title: '搜索服务暂时不可用',
+      link: '#',
+      snippet: '搜索服务暂时不可用，但我会基于已有知识回答您的问题。'
+    }];
+  }
+}
 
-    // 添加系统消息
-    function addSystemMessage(message) {
-      const messageHTML = `
-        <div class="flex items-start p-4 max-w-3xl mx-auto system-message">
-          <div class="flex-shrink-0 mr-4">
-            <div class="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-white">
-              <i class="fas fa-cog"></i>
-            </div>
-          </div>
-          <div class="flex-1">
-            <div class="font-medium text-gray-900">系统</div>
-            <div class="message-content prose prose-slate max-w-none">
-              ${escapeHTML(message)}
-            </div>
-          </div>
+function formatSearchResults(results) {
+  if (!results || results.length === 0) {
+    return "未找到相关搜索结果。";
+  }
+  
+  let formattedResults = "### 网络搜索结果\n\n";
+  
+  results.forEach((result, index) => {
+    formattedResults += `**${index + 1}. ${result.title}**\n`;
+    formattedResults += `${result.snippet}\n`;
+    formattedResults += `来源: ${result.link}\n\n`;
+  });
+  
+  return formattedResults;
+}
+
+async function enhanceMessageWithSearch(message) {
+  try {
+    // 显示搜索中消息
+    addSystemMessage("正在进行网络搜索...");
+    
+    // 执行搜索
+    const searchResults = await performWebSearch(message);
+    
+    // 移除搜索中消息
+    removeLastMessage();
+    
+    // 格式化搜索结果
+    const formattedResults = formatSearchResults(searchResults);
+    
+    // 修改用户消息，增加搜索结果指示
+    return {
+      originalMessage: message,
+      searchResults: formattedResults,
+      enhancedPrompt: `以下是用户的问题和相关的网络搜索结果，请基于这些信息回答问题。\n\n用户问题: ${message}\n\n${formattedResults}\n\n请基于以上搜索结果回答用户问题，并在必要时引用来源。如果搜索结果对回答问题没有帮助，请说明并尽力给出最佳回答。`
+    };
+  } catch (error) {
+    console.error("搜索错误:", error);
+    removeLastMessage();
+    addSystemMessage("搜索功能暂时不可用，将直接回答您的问题。");
+    
+    // 出错时返回原始消息
+    return { 
+      originalMessage: message, 
+      enhancedPrompt: message,
+      searchResults: null
+    };
+  }
+}
+
+// 添加系统消息
+function addSystemMessage(message) {
+  const messageHTML = `
+    <div class="flex items-start p-4 max-w-3xl mx-auto system-message">
+      <div class="flex-shrink-0 mr-4">
+        <div class="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-white">
+          <i class="fas fa-cog"></i>
         </div>
-      `;
+      </div>
+      <div class="flex-1">
+        <div class="font-medium text-gray-900">系统</div>
+        <div class="message-content prose prose-slate max-w-none">
+          ${escapeHTML(message)}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  messagesEl.insertAdjacentHTML('beforeend', messageHTML);
+  scrollToBottom();
+}
+
+// 移除最后一条消息
+function removeLastMessage() {
+  // 查找所有系统消息
+  const systemMessages = document.querySelectorAll('.system-message');
+  if (systemMessages.length > 0) {
+    // 移除最后一条系统消息
+    systemMessages[systemMessages.length - 1].remove();
+  }
+}
+
+// 将网络搜索功能与消息发送集成
+async function sendMessageWithSearch() {
+  const message = messageInput.value.trim();
+  if (!message || isTyping) return;
+  
+  // 检查积分是否足够
+  if (!hasEnoughPoints()) {
+    addErrorMessage('您的积分不足，每条消息需要300积分。积分将在每天0点重置。');
+    return;
+  }
+  
+  messageInput.value = '';
+  addUserMessage(message);
+  welcomeMessageEl.style.display = 'none';
+  
+  // 扣除积分
+  deductPoints(POINTS_PER_MESSAGE);
+  updatePointsDisplay();
+  
+  const model = modelSelector.value;
+  isWebSearchEnabled = document.getElementById('search-button').classList.contains('text-blue-600');
+  
+  try {
+    // 添加消息到对话历史
+    if (conversations[currentConversationId].messages.length === 0) {
+      conversations[currentConversationId].title = message.length > 20 ? message.substring(0, 20) + '...' : message;
+    }
+    
+    conversations[currentConversationId].model = model;
+    conversations[currentConversationId].messages.push({
+      role: 'user',
+      content: message
+    });
+    
+    saveConversations();
+    updateConversationHistory();
+    
+    let finalMessage = message;
+    let searchResultsContent = null;
+    
+    // 如果启用了网络搜索，进行搜索
+    if (isWebSearchEnabled) {
+      const enhancedMessage = await enhanceMessageWithSearch(message);
+      finalMessage = enhancedMessage.enhancedPrompt;
+      searchResultsContent = enhancedMessage.searchResults;
       
-      messagesEl.insertAdjacentHTML('beforeend', messageHTML);
-      scrollToBottom();
-    }
-
-    // 移除最后一条消息
-    function removeLastMessage() {
-      // 查找所有系统消息
-      const systemMessages = document.querySelectorAll('.system-message');
-      if (systemMessages.length > 0) {
-        // 移除最后一条系统消息
-        systemMessages[systemMessages.length - 1].remove();
+      // 可选：显示搜索结果给用户
+      if (searchResultsContent) {
+        addSystemMessage(`搜索完成，已找到相关信息`);
       }
     }
-
-    // 复制代码函数
-    function copyCode(button) {
-      const code = button.parentElement.nextElementSibling.innerText;
-      navigator.clipboard.writeText(code);
-      button.textContent = "已复制!";
-      setTimeout(() => button.textContent = "复制", 2000);
+    
+    const response = await sendToDeepSeekAPI(finalMessage, model, isThinkingModeEnabled);
+    addAIMessage(response.answer, response.thinking, true);
+    
+    // 添加AI回复到对话历史
+    conversations[currentConversationId].messages.push({
+      role: 'assistant',
+      content: response.answer,
+      thinking: response.thinking
+    });
+    
+    if (searchResultsContent) {
+      // 将搜索内容也记录到对话历史中
+      conversations[currentConversationId].searchResults = searchResultsContent;
     }
+    
+    saveConversations();
+  } catch (error) {
+    addErrorMessage('请求失败: ' + error.message);
+  }
+}
 
-    // 显示全屏图片
-    function showFullImage(src) {
-      const overlay = document.createElement('div');
-      overlay.className = 'fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center';
-      overlay.innerHTML = `
-        <div class="max-w-4xl max-h-full">
-          <img src="${src}" class="max-w-full max-h-screen">
-          <button class="absolute top-4 right-4 text-white text-2xl">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      `;
-      overlay.querySelector('button').addEventListener('click', () => overlay.remove());
-      document.body.appendChild(overlay);
-    }
+// 粘贴到最下面
+function copyCode(button) {
+  const code = button.parentElement.nextElementSibling.innerText;
+  navigator.clipboard.writeText(code);
+  button.textContent = "已复制!";
+  setTimeout(() => button.textContent = "复制", 2000);
+}
 
-    // 全局函数，供HTML使用
-    window.copyCode = copyCode;
-    window.showFullImage = showFullImage;
-
-    // 初始化应用
+    // Initialize the app
     init();
   </script>
 </body>

@@ -415,6 +415,125 @@
                 text-align: center;
             }
         }
+
+        /* 新增CSS样式 */
+    /* 架构图样式 */
+    .card-type4 {
+        background: rgba(15,15,30,0.9);
+        border: 1px solid rgba(0,243,255,0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .arch-diagram {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+        padding: 2rem;
+    }
+
+    .layer {
+        position: relative;
+        padding: 2rem;
+        border-radius: 1rem;
+        background: rgba(25,25,50,0.6);
+    }
+
+    .nodes {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .node {
+        padding: 1rem 2rem;
+        background: linear-gradient(45deg, #1a0f1a, #0f0f2a);
+        border: 1px solid #bc13fe;
+        border-radius: 0.5rem;
+        position: relative;
+    }
+
+    .pulse::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 0.5rem;
+        animation: nodePulse 2s infinite;
+    }
+
+    /* 动态数据样式 */
+    .card-type5 {
+        background: linear-gradient(135deg, 
+            rgba(15,15,40,0.9) 0%, 
+            rgba(40,15,40,0.9) 100%);
+        border: 2px solid #bc13fe;
+    }
+
+    .live-data-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+
+    .data-card {
+        text-align: center;
+        padding: 2rem;
+        border-radius: 1rem;
+        background: rgba(255,255,255,0.05);
+    }
+
+    .data-value {
+        font-size: 3.5rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #00f3ff, #bc13fe);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 1rem 0;
+    }
+
+    /* 时间线样式 */
+    .timeline {
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .milestone {
+        padding: 2rem;
+        position: relative;
+        width: 50%;
+    }
+
+    .milestone.left {
+        left: 0;
+        border-right: 2px solid #00f3ff;
+    }
+
+    .milestone.right {
+        left: 50%;
+        border-left: 2px solid #bc13fe;
+    }
+
+    .dot {
+        width: 20px;
+        height: 20px;
+        background: #00f3ff;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* 新增动画 */
+    @keyframes nodePulse {
+        0% { box-shadow: 0 0 0 0 rgba(188,19,254,0.3); }
+        100% { box-shadow: 0 0 0 15px rgba(188,19,254,0); }
+    }
     </style>
 </head>
 <body>
@@ -455,6 +574,78 @@
             <p>专业于AI领域的研究</p>
         </div>
     </div>
+    <section class="cyber-card card-type4">
+        <div class="arch-diagram">
+            <div class="layer ai-core">
+                <h3>AI核心层</h3>
+                <div class="nodes">
+                    <div class="node pulse">自然语言处理</div>
+                    <div class="node pulse">深度学习引擎</div>
+                    <div class="node pulse">知识图谱</div>
+                </div>
+            </div>
+            <div class="layer middleware">
+                <div class="connector"></div>
+                <h3>智能中间件</h3>
+                <div class="nodes">
+                    <div class="node pulse">API网关</div>
+                    <div class="node pulse">任务调度</div>
+                    <div class="node pulse">数据总线</div>
+                </div>
+            </div>
+            <div class="layer application">
+                <div class="connector"></div>
+                <h3>应用层</h3>
+                <div class="nodes">
+                    <div class="node pulse">智能客服</div>
+                    <div class="node pulse">数据分析</div>
+                    <div class="node pulse">预测引擎</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 动态数据展示 -->
+    <section class="cyber-card card-type5">
+        <div class="live-data-grid">
+            <div class="data-card">
+                <div class="data-header">
+                    <span class="material-symbols-rounded">database</span>
+                    <h4>实时处理</h4>
+                </div>
+                <div class="data-value" data-target="35678">138</div>
+                <div class="data-label">请求/分钟</div>
+            </div>
+            <div class="data-card">
+                <div class="data-header">
+                    <span class="material-symbols-rounded">bolt</span>
+                    <h4>响应时间</h4>
+                </div>
+                <div class="data-value" data-target="98.7">38</div>
+                <div class="data-label">毫秒平均</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 时间线发展 -->
+    <section class="cyber-card card-type6">
+        <div class="timeline">
+            <div class="milestone left">
+                <div class="dot"></div>
+                <div class="content">
+                    <h4>2024-12-13</h4>
+                    <p>Jork h3模型强势发布</p>
+                </div>
+            </div>
+            <div class="milestone right">
+                <div class="dot"></div>
+                <div class="content">
+                    <h4>2025-3-3</h4>
+                    <p>Jork v1推理大模型上线</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
 <!-- 现代化页脚 -->
 <footer class="modern-footer">
@@ -481,7 +672,7 @@
                         <span class="material-symbols-rounded">diversity_3</span>
                         企业方案
                     </a>
-                    <a href="#">
+                    <a href="api.html">
                         <span class="material-symbols-rounded">api</span>
                         API 文档
                     </a>
@@ -492,11 +683,11 @@
             <div class="link-group">
                 <h4>资源</h4>
                 <nav class="link-list">
-                    <a href="#">
+                    <a href="kaifa.html">
                         <span class="material-symbols-rounded">menu_book</span>
                         开发文档
                     </a>
-                    <a href="#">
+                    <a href="baipishu.html">
                         <span class="material-symbols-rounded">description</span>
                         白皮书
                     </a>
@@ -511,11 +702,11 @@
             <div class="link-group">
                 <h4>法律</h4>
                 <nav class="link-list">
-                    <a href="#">
+                    <a href="yinsi.html">
                         <span class="material-symbols-rounded">policy</span>
                         隐私政策
                     </a>
-                    <a href="#">
+                    <a href="fuwu.html">
                         <span class="material-symbols-rounded">gavel</span>
                         服务条款
                     </a>
@@ -533,13 +724,13 @@
                 © 2024 Jork AI. All rights reserved.
             </div>
             <div class="social-links">
-                <a href="#">
-                    <span class="material-symbols-rounded">code</span>
+                <a href="en.html">
+                    <span class="material-symbols-rounded">En</span>
                 </a>
                 <a href="#">
                     <span class="material-symbols-rounded">public</span>
                 </a>
-                <a href="#">
+                <a href="fourm.html">
                     <span class="material-symbols-rounded">forum</span>
                 </a>
             </div>
