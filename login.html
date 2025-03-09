@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Modern Login</title>
+    <title>登入</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
     <style>
@@ -24,7 +24,24 @@
             overflow: hidden;
         }
 
-        /* 添加动态背景效果 */
+        /* JorkAI Logo */
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .logo span {
+            color: #ff6b6b;
+        }
+
+        /* 动态背景效果 */
         .background-animation {
             position: absolute;
             width: 100%;
@@ -288,15 +305,6 @@
             z-index: -1;
             animation: borderGlow 3s linear infinite;
         }
-        /* 更新Google按钮的悬停效果 */
-.social-icons .google {
-    background: #db4437;
-    transition: transform 0.3s, background 0.3s;
-}
-
-.social-icons .google:hover {
-    background: #c33d32;
-}
 
         @keyframes borderGlow {
             0% { filter: blur(5px); }
@@ -306,6 +314,11 @@
     </style>
 </head>
 <body>
+    <!-- JorkAI Logo -->
+    <div class="logo">
+        <span>Jork</span>AI
+    </div>
+
     <!-- 动态背景 -->
     <div class="background-animation">
         <div class="circle"></div>
@@ -318,19 +331,19 @@
         <form id="loginForm">
             <div class="input-group">
                 <input type="text" id="username" placeholder=" " required>
-                <label for="username">Username</label>
+                <label for="username">昵称</label>
             </div>
             <div class="input-group">
                 <input type="password" id="password" placeholder=" " required>
-                <label for="password">Password</label>
+                <label for="password">密码</label>
             </div>
             <div class="remember-me">
                 <input type="checkbox" id="remember" name="remember">
-                <label for="remember">Remember me</label>
+                <label for="remember">记住我</label>
             </div>
-            <button type="submit">Sign In</button>
+            <button type="submit">登入</button>
         </form>
-        <div id="errorMessage" class="error-message">Invalid username or password</div>
+        <div id="errorMessage" class="error-message">用户名或密码错误</div>
 
         <div class="social-login">
             <p>Or continue with</p>
@@ -373,7 +386,7 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            const validUsernames = ['Evan', 'Kerin', 'Alan'];
+            const validUsernames = ['Evan', 'Kerin', 'Aonly', '丝竹', 'TenyunAI-JorkAI内部专员测试', 'Alan'];
             
             if(validUsernames.includes(username) && password === '110131') {
                 // 如果选中"记住我"，保存登录信息
@@ -420,33 +433,33 @@
         });
 
         // 初始化Google登录
-    function handleCredentialResponse(response) {
-        // 这里可以验证ID令牌或发送到你的服务器
-        console.log("ID Token: " + response.credential);
-        
-        // 示例：直接跳转到成功页面
-        window.location.href = 'ai.html';
-    }
+        function handleCredentialResponse(response) {
+            // 这里可以验证ID令牌或发送到你的服务器
+            console.log("ID Token: " + response.credential);
+            
+            // 示例：直接跳转到成功页面
+            window.location.href = 'v3.html';
+        }
 
-    // 初始化Google登录按钮
-    window.onload = function () {
-        google.accounts.id.initialize({
-            client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-            callback: handleCredentialResponse,
-            context: "signin"
-        });
-
-        // 绑定到现有按钮
-        document.getElementById('googleSignIn').addEventListener('click', (e) => {
-            e.preventDefault();
-            google.accounts.id.prompt((notification) => {
-                if (notification.isNotDisplayed() || notification.isSkipped()) {
-                    // 处理弹出窗口被阻止的情况
-                    alert('请允许弹出窗口以继续使用Google登录');
-                }
+        // 初始化Google登录按钮
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+                callback: handleCredentialResponse,
+                context: "signin"
             });
-        });
-    }
+
+            // 绑定到现有按钮
+            document.getElementById('googleSignIn').addEventListener('click', (e) => {
+                e.preventDefault();
+                google.accounts.id.prompt((notification) => {
+                    if (notification.isNotDisplayed() || notification.isSkipped()) {
+                        // 处理弹出窗口被阻止的情况
+                        alert('请允许弹出窗口以继续使用Google登录');
+                    }
+                });
+            });
+        }
 
         // 社交媒体按钮点击效果
         document.querySelectorAll('.social-icons a:not(#googleSignIn)').forEach(icon => {
