@@ -6,6 +6,129 @@
     <title>Jork-v3 AI助手</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* 链接容器样式 */
+.footer-links-container {
+    padding: 15px 0;
+    border-top: 1px solid var(--light-border);
+    margin-top: 15px;
+}
+
+/* 通用链接样式 */
+.footer-links-container a {
+    color: var(--light-text);
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+}
+
+.footer-links-container a:hover {
+    color: var(--primary-color);
+}
+
+/* 标题样式 */
+.footer-links-container h4 {
+    color: var(--primary-color);
+    font-size: 0.95em;
+    margin: 15px 0 10px;
+    font-weight: 600;
+}
+
+/* 分隔线样式 */
+.dot-divider {
+    color: var(--light-border);
+    padding: 0 5px;
+    font-weight: bold;
+}
+
+/* 信息链接行样式 */
+.info-links {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+}
+
+/* 微信公众号悬浮提示 */
+.wechat-link {
+    position: relative;
+}
+
+.wechat-link:hover::after {
+    content: "扫码关注";
+    position: absolute;
+    left: 0;
+    bottom: 100%;
+    background: var(--light-card);
+    padding: 6px 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-size: 0.8em;
+    white-space: nowrap;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .footer-links-container {
+        padding: 10px;
+    }
+    
+    .info-links {
+        justify-content: center;
+    }
+}
+        .message-content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.6;
+}
+
+.message-content p {
+    margin: 8px 0;
+}
+    .message-heading {
+        font-size: 1.4rem;
+        margin: 15px 0 10px;
+        color: var(--primary-color);
+        border-bottom: 2px solid rgba(123, 104, 238, 0.2);
+        padding-bottom: 5px;
+    }
+
+    .message-subheading {
+        font-size: 1.2rem;
+        margin: 12px 0 8px;
+        color: var(--secondary-color);
+    }
+        .thinking-process {
+    background-color: var(--light-card);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    border-left: 4px solid var(--primary-color);
+    font-style: italic;
+    color: #666;
+    line-height: 1.6;
+}
+
+.thinking-process strong {
+    display: block;
+    margin-bottom: 10px;
+    font-style: normal;
+    color: var(--primary-color);
+}
+
+.thinking-process ol {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.thinking-process li {
+    margin-bottom: 8px;
+}
         :root {
             --primary-color: #7b68ee;
             --secondary-color: #5d4aee;
@@ -307,11 +430,7 @@
             align-self: flex-start;
         }
 
-        .message-content {
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
+        
 
         .user-message .message-content {
             background-color: var(--primary-color);
@@ -345,35 +464,34 @@
 
         /* 代码块样式 */
         .code-block {
-            margin: 10px 0;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-            overflow: hidden;
-        }
+    background: var(--dark-bg);
+    border-radius: 8px;
+    margin: 15px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.code-header {
+    background: rgba(255,255,255,0.1);
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.code-content {
+    padding: 12px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+    tab-size: 4;
+}
 
         body.dark-mode .code-block {
             background-color: #2d2d3a;
         }
 
-        .code-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 15px;
-            background-color: #e0e0e0;
-            font-size: 0.9rem;
-        }
-
         body.dark-mode .code-header {
             background-color: #35354a;
-        }
-
-        .code-content {
-            padding: 15px;
-            overflow-x: auto;
-            font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 0.9rem;
-            line-height: 1.5;
         }
 
         /* 表格样式 */
@@ -857,6 +975,43 @@
             <div class="sidebar-footer">
                 <button class="settings-btn"><i class="fas fa-cog"></i> 设置</button>
             </div>
+            <div class="sidebar-header">
+                <button class="toggle-sidebar-btn"><i class="fas fa-chevron-left"></i></button>
+            </div>
+            
+            <style>
+                .sidebar-header {
+                    padding: 10px;
+                    border-bottom: 1px solid var(--light-border);
+                    display: flex;
+                    justify-content: flex-end;
+                }
+            
+                .toggle-sidebar-btn {
+                    background: none;
+                    border: none;
+                    color: var(--primary-color);
+                    cursor: pointer;
+                    padding: 5px;
+                }
+            
+                @media (min-width: 769px) {
+                    .sidebar.collapsed {
+                        width: 50px !important;
+                        overflow: hidden;
+                    }
+            
+                    .sidebar.collapsed .toggle-sidebar-btn i {
+                        transform: rotate(180deg);
+                    }
+            
+                    .sidebar.collapsed .new-chat-btn,
+                    .sidebar.collapsed .chat-history,
+                    .sidebar.collapsed .settings-btn span {
+                        display: none;
+                    }
+                }
+            </style>
         </div>
 
         <!-- 主内容区域 -->
@@ -927,6 +1082,38 @@
                 <h3 class="modal-title">设置</h3>
                 <button class="close-modal">&times;</button>
             </div>
+            <!-- 新增链接区块 -->
+        <div class="footer-links-container">
+            <div class="connect-section">
+                <h4>关注我们</h4>
+                <a href="https://twitter.com" target="_blank">
+                    <i class="fab fa-twitter"></i> Twitter
+                </a>
+                <a href="#wechat" class="wechat-link">
+                    <i class="fab fa-weixin"></i> 微信公众号
+                </a>
+            </div>
+            
+            <div class="join-section">
+                <h4>加入我们</h4>
+                <a href="/careers">
+                    <i class="fas fa-users"></i> 招聘信息
+                </a>
+                <a href="/intern">
+                    <i class="fas fa-graduation-cap"></i> 实习生计划
+                </a>
+            </div>
+            
+            <div class="info-links">
+                <a href="/about">关于</a>
+                <span class="dot-divider">·</span>
+                <a href="/blog">博客</a>
+                <span class="dot-divider">·</span>
+                <a href="/careers">职业</a>
+                <span class="dot-divider">·</span>
+                <a href="/help">帮助中心</a>
+            </div>
+        </div>
             <div class="modal-body">
                 <div class="settings-section">
                     <h4 class="settings-title">账户信息</h4>
@@ -1015,53 +1202,69 @@
         // 状态变量
         let isThinking = false;
         let isSearching = false;
-        let currentCredits = 3000;
+        let currentCredits = localStorage.getItem('jorkCredits') 
+                     ? parseInt(localStorage.getItem('jorkCredits')) 
+                     : 3000; // 默认积分
         let chatHistory = [];
         let currentChatId = null;
         let isTyping = false;
         let hasRedeemedCode = localStorage.getItem('hasRedeemedCode') === 'true';
 
-        // 初始化函数
-        function init() {
-    // 检查本地存储中的深色模式设置
-    if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark-mode');
-        darkModeToggle.checked = true;
-    }
-    
-    // 从本地存储中加载积分
-    const savedCredits = localStorage.getItem('jorkCredits');
-    currentCredits = savedCredits ? parseInt(savedCredits, 10) : 3000;
-    updateCreditsDisplay();
-    
-    // 加载聊天历史
-    loadChatHistory();
-    
-    // 初始化当前聊天
-    currentChatId = 'chat_' + Date.now();
-    chatHistory.push({
-        id: currentChatId,
-        title: '新的聊天',
-        messages: []
-    });
-    saveChatHistory();
-    updateChatHistoryUI();
-    
-    // 根据时间调整问候语
-    updateGreeting();
-    
-    // 自动调整输入框高度
-    chatInput.addEventListener('input', autoResizeTextarea);
-    
-    // 检查是否已经兑换过积分码
-    if (hasRedeemedCode) {
-        redeemButton.disabled = true;
-        redeemCode.disabled = true;
-        redeemMessage.textContent = "您已经兑换过积分";
-        redeemMessage.style.color = "#888";
-        redeemMessage.style.display = "block";
+
+            // 在JavaScript部分添加
+            const toggleSidebarBtn = document.querySelector('.toggle-sidebar-btn');
+            toggleSidebarBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+            });
+        
+
+            function saveCreditsToStorage() {
+    try {
+        localStorage.setItem('jorkCredits', currentCredits.toString());
+    } catch (e) {
+        console.error('积分存储失败:', e);
+        // 处理存储空间不足的情况
+        if (e.name === 'QuotaExceededError') {
+            alert('本地存储空间不足，积分将暂时保存在内存中');
+        }
     }
 }
+            // 初始化函数
+        function init() {
+            // 检查本地存储中的深色模式设置
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.checked = true;
+            }
+            
+            // 加载聊天历史
+            loadChatHistory();
+            
+            // 初始化当前聊天
+            currentChatId = 'chat_' + Date.now();
+            chatHistory.push({
+                id: currentChatId,
+                title: '新的聊天',
+                messages: []
+            });
+            saveChatHistory();
+            updateChatHistoryUI();
+            
+            // 根据时间调整问候语
+            updateGreeting();
+            
+            // 自动调整输入框高度
+            chatInput.addEventListener('input', autoResizeTextarea);
+            
+            // 检查是否已经兑换过积分码
+            if (hasRedeemedCode) {
+                redeemButton.disabled = true;
+                redeemCode.disabled = true;
+                redeemMessage.textContent = "您已经兑换过积分";
+                redeemMessage.style.color = "#888";
+                redeemMessage.style.display = "block";
+            }
+        }
 
         // 更新问候语
         function updateGreeting() {
@@ -1141,6 +1344,7 @@
             
             // 扣除积分
             currentCredits -= 100;
+            saveCreditsToStorage(); 
             updateCreditsDisplay();
             
             // 清空输入框并重置高度
@@ -1155,21 +1359,6 @@
             
             // 添加用户消息
             addMessage(message, 'user');
-            
-            // 添加AI正在输入的提示
-            const typingElement = document.createElement('div');
-            typingElement.className = 'message ai-message typing-indicator';
-            typingElement.innerHTML = `
-                <div class="message-content">
-                    <div class="loading-dots">
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                    </div>
-                </div>
-            `;
-            chatArea.appendChild(typingElement);
-            chatArea.scrollTop = chatArea.scrollHeight;
             
             // 保存到聊天历史
             const currentChat = chatHistory.find(chat => chat.id === currentChatId);
@@ -1189,111 +1378,137 @@
                 saveChatHistory();
             }
             
+            // 创建AI消息框
+            const aiMessageElement = document.createElement('div');
+            aiMessageElement.className = 'message ai-message';
+            
+            const timeString = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute:'2-digit'});
+            
+            aiMessageElement.innerHTML = `
+                <div class="message-content"></div>
+                <div class="message-time">${timeString}</div>
+            `;
+            chatArea.appendChild(aiMessageElement);
+            
+            const messageContentElement = aiMessageElement.querySelector('.message-content');
+            let aiResponseText = '';
+            
             try {
                 // 如果开启了思考模式，先显示思考过程
                 if (isThinking) {
-                    // 准备思考请求
-                    const thinkingPrompt = "我将回答这个问题，但首先让我思考一下。\n\n问题：" + message + "\n\n在回答之前，我想清晰地思考这个问题的各个方面。我的思考过程如下：";
+                    // 以思考模式调用AI
+                    const thinkingPrompt = `
+作为Jork-v3，我将以Claude的语气，严谨的学术态度分析这个问题。以下是系统化的思考路径：
+
+**问题分析阶段**
+1. 问题归类：确定问题的核心类别（技术、学术、生活等）
+2. 需求识别：明确用户的核心需求和潜在目标
+3. 背景调研：检索相关知识库和最新研究成果
+
+**逻辑推理阶段**
+4. 关键要素提取：识别问题中的核心变量和影响因素
+5. 关系建模：建立各要素之间的逻辑关系
+6. 假设验证：评估可能的解决方案和潜在风险
+
+**解决方案构建**
+7. 方案设计：基于分析结果提出初步解决方案
+8. 可行性评估：从技术、资源和时间成本角度评估方案
+9. 优化建议：提出改进方向和注意事项
+
+**最终输出**
+10. 结构化表达：将分析结果以清晰、易懂的方式呈现
+11. 后续建议：提供进一步探索的方向和资源
+
+以下是针对当前问题的具体思考过程：
+`;
                     
-                    // 调用AI获取思考过程
-                    const thinkingResult = await callAI(thinkingPrompt);
-                    
-                    // 提取出思考部分和回答部分
-                    let thinking = '';
-                    let aiResponse = '';
-                    
-                    if (typeof thinkingResult === 'object' && thinkingResult.thinking) {
-                        thinking = thinkingResult.thinking;
-                        aiResponse = thinkingResult.response;
-                    } else {
-                        // 从返回的文本中尝试分离思考过程和最终回答
-                        const parts = thinkingResult.split("\n\n");
-                        if (parts.length > 1) {
-                            // 假设前面部分是思考过程，后面部分是回答
-                            const middleIndex = Math.floor(parts.length / 2);
-                            thinking = parts.slice(0, middleIndex).join("\n\n");
-                            aiResponse = parts.slice(middleIndex).join("\n\n");
-                        } else {
-                            thinking = "我正在分析这个问题的多个维度...";
-                            aiResponse = thinkingResult;
-                        }
-                    }
-                    
-                    // 移除正在输入的提示
-                    chatArea.removeChild(typingElement);
-                    
-                    // 添加思考过程
+                    // 显示思考区域
                     const thinkingElement = document.createElement('div');
                     thinkingElement.className = 'message ai-message';
                     thinkingElement.innerHTML = `
                         <div class="message-content">
                             <div class="thinking-process">
                                 <strong>思考过程：</strong><br>
-                                ${thinking}
+                                <span id="thinking-text"></span>
                             </div>
                         </div>
-                        <div class="message-time">${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute:'2-digit'})}</div>
+                        <div class="message-time">${timeString}</div>
                     `;
                     chatArea.appendChild(thinkingElement);
-                    chatArea.scrollTop = chatArea.scrollHeight;
+                    const thinkingTextElement = thinkingElement.querySelector('#thinking-text');
                     
-                    // 短暂延迟后显示最终回答
+                    // 调用API获取思考过程，分段显示
+                    let thinkingText = '';
+                    await callAI(thinkingPrompt, (chunk, isDone) => {
+                        thinkingText += chunk;
+                        thinkingTextElement.textContent = thinkingText;
+                        chatArea.scrollTop = chatArea.scrollHeight;
+                    });
+                    
+                    // 思考完成后，等待一小段时间再显示答案
                     setTimeout(() => {
-                        addMessage(aiResponse, 'ai');
+                        // 调用API获取最终回答，流式显示
+                        callAI(message, (chunk, isDone) => {
+                            // 累积响应文本
+                            aiResponseText += chunk;
+                            
+                            // 实时更新UI
+                            const currentHTML = messageContentElement.innerHTML;
+                            messageContentElement.innerHTML = formatPartialMessageContent(aiResponseText);
+                            chatArea.scrollTop = chatArea.scrollHeight;
+                            
+                            // 如果是完整响应，保存到聊天历史
+                            if (isDone && currentChat) {
+                                currentChat.messages.push({
+                                    role: 'assistant',
+                                    content: aiResponseText,
+                                    timestamp: new Date().toISOString(),
+                                    thinking: thinkingText
+                                });
+                                saveChatHistory();
+                                // 完成后进行完整格式化
+                                finalizeMessageContent(messageContentElement, aiResponseText);
+                            }
+                        });
+                    }, 1000);
+                    
+                } else {
+                    // 直接调用AI获取回复，流式显示
+                    callAI(message, (chunk, isDone) => {
+                        // 累积响应文本
+                        aiResponseText += chunk;
                         
-                        // 保存到聊天历史
-                        if (currentChat) {
+                        // 实时更新UI
+                        messageContentElement.innerHTML = formatPartialMessageContent(aiResponseText);
+                        chatArea.scrollTop = chatArea.scrollHeight;
+                        
+                        // 如果是完整响应，保存到聊天历史
+                        if (isDone && currentChat) {
                             currentChat.messages.push({
                                 role: 'assistant',
-                                content: aiResponse,
-                                timestamp: new Date().toISOString(),
-                                thinking: thinking
+                                content: aiResponseText,
+                                timestamp: new Date().toISOString()
                             });
                             saveChatHistory();
+                            // 完成后进行完整格式化
+                            finalizeMessageContent(messageContentElement, aiResponseText);
                         }
-                    }, 1000);
-                } else {
-                    // 直接调用AI获取回复
-                    const aiResponse = await callAI(message);
-                    
-                    // 移除正在输入的提示
-                    chatArea.removeChild(typingElement);
-                    
-                    // 添加AI回复
-                    let responseText = aiResponse;
-                    if (typeof aiResponse === 'object') {
-                        responseText = aiResponse.response || "抱歉，我无法处理您的请求。";
-                    }
-                    
-                    addMessage(responseText, 'ai');
-                    
-                    // 保存到聊天历史
-                    if (currentChat) {
-                        currentChat.messages.push({
-                            role: 'assistant',
-                            content: responseText,
-                            timestamp: new Date().toISOString()
-                        });
-                        saveChatHistory();
-                    }
+                    });
                 }
             } catch (error) {
                 console.error('AI API调用失败:', error);
-                // 移除正在输入的提示
-                chatArea.removeChild(typingElement);
-                // 添加错误消息
-                addMessage('抱歉，我遇到了问题，无法回应你的请求。请稍后再试。', 'ai');
+                messageContentElement.innerHTML = '抱歉，我遇到了问题，无法回应你的请求。请稍后再试。';
             }
         }
 
-        // 调用AI API
-        async function callAI(message) {
+        // 调用AI API，支持流式输出
+        async function callAI(message, onChunk) {
             try {
                 // 实际调用DeepSeek API
                 const apiUrl = "https://api.deepseek.com/v1/chat/completions";
                 const apiKey = "sk-e1ed90c2effc4415beeee85845f66d05"; // 使用提供的API密钥
                 
-                // 构建请求参数
+                // 构建请求参数，添加 stream: true
                 const requestOptions = {
                     method: 'POST',
                     headers: {
@@ -1309,11 +1524,11 @@
                             }
                         ],
                         temperature: 0.7,
-                        max_tokens: 800
+                        max_tokens: 800,
+                        stream: true // 启用流式输出
                     })
                 };
                 
-                // 尝试发送实际API请求
                 try {
                     const response = await fetch(apiUrl, requestOptions);
                     
@@ -1323,15 +1538,52 @@
                         console.error('错误详情:', errorData);
                         
                         // 如果API请求失败，使用后备响应
-                        return generateFallbackResponse(message, isThinking);
+                        const fallback = generateFallbackResponse(message, isThinking);
+                        onChunk(fallback.response, true); // 一次性发送全部后备响应
+                        return;
                     }
                     
-                    const data = await response.json();
-                    return data.choices[0].message.content;
+                    // 获取返回的数据流
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let fullText = '';
+                    
+                    // 读取数据流
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        
+                        // 解码当前数据块
+                        const chunk = decoder.decode(value, { stream: true });
+                        
+                        // 解析SSE响应的数据块
+                        const lines = chunk.split('\n');
+                        for (const line of lines) {
+                            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                                try {
+                                    const data = JSON.parse(line.substring(6));
+                                    if (data.choices && data.choices[0].delta && data.choices[0].delta.content) {
+                                        const contentChunk = data.choices[0].delta.content;
+                                        fullText += contentChunk;
+                                        onChunk(contentChunk, false); // 发送部分响应
+                                    }
+                                } catch (e) {
+                                    console.error('解析SSE数据出错:', e);
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 通知流式传输完成
+                    onChunk('', true);
+                    // 返回完整文本，以便保存到历史记录
+                    return fullText;
                 } catch (apiError) {
                     console.error('API调用异常:', apiError);
                     // 如果API请求出错，使用后备响应
-                    return generateFallbackResponse(message, isThinking);
+                    const fallback = generateFallbackResponse(message, isThinking);
+                    onChunk(fallback.response, true); // 一次性发送全部后备响应
+                    return fallback.response;
                 }
             } catch (error) {
                 console.error('调用失败:', error);
@@ -1489,8 +1741,45 @@
             });
         }
 
+        // 格式化部分消息内容（用于流式输出）
+        function formatPartialMessageContent(text) {
+            // 简单格式化，对流式输出的部分文本进行基本处理
+            let formatted = text;
+            
+            // 处理换行
+            formatted = formatted.replace(/\n/g, '<br>');
+            
+            // 简单处理粗体
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            return formatted;
+        }
+
+        // 完成消息内容的最终格式化（用于流式输出完成后）
+        function finalizeMessageContent(element, text) {
+            element.innerHTML = formatMessageContent(text);
+            
+            // 添加代码复制功能
+            const copyButtons = element.querySelectorAll('.copy-code-btn');
+            copyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const codeBlock = button.closest('.code-block').querySelector('.code-content');
+                    navigator.clipboard.writeText(codeBlock.textContent)
+                        .then(() => {
+                            button.innerHTML = '<i class="fas fa-check"></i>';
+                            setTimeout(() => {
+                                button.innerHTML = '<i class="far fa-copy"></i>';
+                            }, 2000);
+                        });
+                });
+            });
+        }
+
         // 格式化消息内容（识别代码块和表格）
         function formatMessageContent(content) {
+            // 处理标题
+    content = content.replace(/^##\s+(.+)$/gm, '<h2 class="message-heading">$1</h2>');
+    content = content.replace(/^###\s+(.+)$/gm, '<h3 class="message-subheading">$1</h3>');
             // 处理代码块
             content = content.replace(/```([a-z]*)\n([\s\S]*?)```/g, (match, language, code) => {
                 return `
@@ -1588,10 +1877,16 @@
         });
 
         // 更新积分显示
-function updateCreditsDisplay() {
+        function updateCreditsDisplay() {
     creditDisplay.textContent = `积分：${currentCredits}`;
-    // 将当前积分保存到本地存储
-    localStorage.setItem('jorkCredits', currentCredits.toString());
+    // 添加积分颜色变化提示
+    const diff = currentCredits - localStorage.getItem('jorkCredits');
+    if (diff !== 0) {
+        creditDisplay.style.color = diff > 0 ? '#4CAF50' : '#FF5722';
+        setTimeout(() => {
+            creditDisplay.style.color = '';
+        }, 1000);
+    }
 }
 
         // 新建聊天
@@ -1746,6 +2041,31 @@ function updateCreditsDisplay() {
             // 加载聊天消息
             chat.messages.forEach(msg => {
                 addMessage(msg.content, msg.role === 'user' ? 'user' : 'ai');
+                
+                // 如果有思考过程，也添加显示
+                if (msg.thinking && msg.role === 'assistant') {
+                    // 在用户消息和AI回复之间插入思考过程
+                    const messageElements = document.querySelectorAll('.message');
+                    const aiMessageElement = messageElements[messageElements.length - 1];
+                    
+                    const thinkingElement = document.createElement('div');
+                    thinkingElement.className = 'message ai-message';
+                    
+                    const timeString = new Date(msg.timestamp).toLocaleTimeString('zh-CN', {hour: '2-digit', minute:'2-digit'});
+                    
+                    thinkingElement.innerHTML = `
+                        <div class="message-content">
+                            <div class="thinking-process">
+                                <strong>思考过程：</strong><br>
+                                ${msg.thinking}
+                            </div>
+                        </div>
+                        <div class="message-time">${timeString}</div>
+                    `;
+                    
+                    // 插入到AI回复前面
+                    chatArea.insertBefore(thinkingElement, aiMessageElement);
+                }
             });
         }
 
@@ -1795,55 +2115,42 @@ function updateCreditsDisplay() {
         });
 
         redeemButton.addEventListener('click', () => {
-    const code = redeemCode.value.trim();
-
-    // 定义兑换码及其对应的积分
-    const redeemCodes = {
-        'tenyun888': 1000, // 默认兑换码
-        'jorkai888': 1000, // 新兑换码
-        'sy888': 1000, // 新兑换码
-        'WYHC-jorkai-开发者模式-110131': 10000000 // 特殊兑换码
-    };
-
-    // 检查兑换码是否有效
-    if (redeemCodes.hasOwnProperty(code)) {
-        if (hasRedeemedCode && code !== 'WYHC-jorkai-开发者模式-110131') {
-            redeemMessage.textContent = "您已经兑换过积分，每台设备仅能兑换一次";
-            redeemMessage.style.color = "#ff3333";
-            redeemMessage.style.display = "block";
-        } else {
-            // 增加积分
-            currentCredits += redeemCodes[code];
-            updateCreditsDisplay();
-            
-            // 显示成功信息
-            redeemMessage.textContent = `兑换成功！已添加${redeemCodes[code]}积分`;
-            redeemMessage.style.color = "green";
-            redeemMessage.style.display = "block";
-            
-            // 标记为已兑换（仅对普通兑换码生效）
-            if (code !== 'WYHC-jorkai-开发者模式-110131') {
-                hasRedeemedCode = true;
-                localStorage.setItem('hasRedeemedCode', 'true');
+            const code = redeemCode.value.trim();
+            if (code === '1234567890qwertyuiiop') {
+                if (hasRedeemedCode) {
+                    redeemMessage.textContent = "您已经兑换过积分，每台设备仅能兑换一次";
+                    redeemMessage.style.color = "#ff3333";
+                    redeemMessage.style.display = "block";
+                } else {
+                    // 增加积分
+                    currentCredits += 1000;
+                    saveCreditsToStorage(); // 新增
+                    updateCreditsDisplay();
+                    
+                    // 显示成功信息
+                    redeemMessage.textContent = "兑换成功！已添加1000积分";
+                    redeemMessage.style.color = "green";
+                    redeemMessage.style.display = "block";
+                    
+                    // 标记为已兑换
+                    hasRedeemedCode = true;
+                    localStorage.setItem('hasRedeemedCode', 'true');
+                    
+                    // 禁用兑换按钮和输入框
+                    redeemButton.disabled = true;
+                    redeemCode.disabled = true;
+                    
+                    // 3秒后关闭弹窗
+                    setTimeout(() => {
+                        creditsModalOverlay.classList.remove('show');
+                    }, 3000);
+                }
+            } else {
+                redeemMessage.textContent = "兑换码无效，请重新输入";
+                redeemMessage.style.color = "#ff3333";
+                redeemMessage.style.display = "block";
             }
-            
-            // 禁用兑换按钮和输入框（仅对普通兑换码生效）
-            if (code !== 'WYHC-jorkai-开发者模式-110131') {
-                redeemButton.disabled = true;
-                redeemCode.disabled = true;
-            }
-            
-            // 3秒后关闭弹窗
-            setTimeout(() => {
-                creditsModalOverlay.classList.remove('show');
-            }, 3000);
-        }
-    } else {
-        redeemMessage.textContent = "兑换码无效，请重新输入";
-        redeemMessage.style.color = "#ff3333";
-        redeemMessage.style.display = "block";
-    }
-});
+        });
 
         // 初始化应用
         init();
