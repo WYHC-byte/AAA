@@ -103,31 +103,82 @@
         margin: 12px 0 8px;
         color: var(--secondary-color);
     }
-        .thinking-process {
-    background-color: var(--light-card);
-    border-radius: 10px;
-    padding: 15px;
-    margin: 10px 0;
-    border-left: 4px solid var(--primary-color);
-    font-style: italic;
-    color: #666;
-    line-height: 1.6;
+
+.thinking-process {
+    background: linear-gradient(145deg, rgba(123,104,238,0.08) 0%, rgba(123,104,238,0.03) 100%);
+    border: 1px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 18px 24px;
+    margin: 16px 0;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    counter-reset: thinking-step;
+    line-height: 1.7;
+}
+
+.thinking-process::before {
+    content: "💡";
+    position: absolute;
+    top: -18px;
+    left: 20px;
+    background: var(--light-card);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 1.2em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .thinking-process strong {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-style: normal;
     color: var(--primary-color);
+    font-size: 1.1em;
+    padding-bottom: 8px;
+    border-bottom: 2px dashed rgba(123,104,238,0.3);
 }
 
 .thinking-process ol {
-    padding-left: 20px;
-    margin: 10px 0;
+    padding-left: 32px;
+    margin: 12px 0;
 }
 
 .thinking-process li {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    position: relative;
+    padding-left: 28px;
+    transition: all 0.3s ease;
+}
+
+.thinking-process li::before {
+    content: counter(thinking-step);
+    counter-increment: thinking-step;
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 20px;
+    height: 20px;
+    background: rgba(123,104,238,0.1);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    font-size: 0.9em;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.thinking-process li:hover {
+    transform: translateX(8px);
+}
+
+body.dark-mode .thinking-process {
+    background: linear-gradient(145deg, rgba(123,104,238,0.15) 0%, rgba(123,104,238,0.05) 100%);
+    border-color: rgba(123,104,238,0.5);
+}
+
+body.dark-mode .thinking-process::before {
+    background: var(--dark-card);
+    color: #7b68ee;
 }
         :root {
             --primary-color: #7b68ee;
@@ -961,6 +1012,36 @@
                 grid-template-columns: 1fr;
             }
         }
+        .model-selection-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.model-option {
+  cursor: pointer;
+  padding: 8px 16px;
+  border: 2px solid var(--light-border);
+  border-radius: 8px;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.model-option:hover {
+  border-color: var(--primary-color);
+}
+
+.model-option.active {
+  background-color: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+}
+.chat-input-tips {
+  font-size: 0.8rem;
+  color: #888;
+  text-align: center;
+  margin-top: 5px;
+}
+
     </style>
 </head>
 <body>
@@ -1027,7 +1108,7 @@
             <!-- 聊天区域 -->
             <div class="chat-area">
                 <div class="chat-intro">
-                    <h1>下午好，我是 Jork-v3</h1>
+                    <h1>下午好，我是 JorkAI</h1>
                     <p>有什么可以帮助你的吗？</p>
                     <div class="example-questions">
                         <div class="example-item">
@@ -1039,7 +1120,7 @@
                             <p>我可以解释复杂的科学概念</p>
                         </div>
                         <div class="example-item">
-                            <strong>帮我分析这段Python代码的问题</strong>
+                            <strong>帮我生成一段Python代码</strong>
                             <p>我可以帮你调试和优化代码</p>
                         </div>
                         <div class="example-item">
@@ -1051,27 +1132,42 @@
 
                 <!-- 聊天消息将在这里动态加载 -->
             </div>
+              
 
             <!-- 聊天输入区域 -->
             <div class="chat-input-container">
-                <div class="chat-input-wrapper">
-                    <textarea class="chat-input" placeholder="输入消息..." rows="1"></textarea>
-                    <div class="input-buttons">
-                        <button class="input-button thinking-button" title="深度思考">
-                            <i class="fas fa-brain"></i>
-                        </button>
-                        <button class="input-button search-button" title="联网搜索">
-                            <i class="fas fa-search"></i>
-                        </button>
-                        <button class="input-button upload-button" title="上传附件">
-                            <i class="fas fa-paperclip"></i>
-                        </button>
-                        <button class="input-button send-button" title="发送">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
+                <!-- 新增模型选择 -->
+                <div class="model-selection" style="margin-bottom: 8px;">
+                  <label for="modelSelect">选择模型: </label>
+                  <div class="model-selection-container">
+                    <div class="model-option" data-model="Tanka" data-cost="30">Tanka (30积分)</div>
+                    <div class="model-option active" data-model="Canto" data-cost="100">Canto (100积分)</div>
+                    <div class="model-option" data-model="Epic" data-cost="200">Epic (200积分)</div>
+                  </div>
                 </div>
-            </div>
+              
+                <div class="chat-input-wrapper">
+                  <textarea class="chat-input" placeholder="输入消息..." rows="1"></textarea>
+                  <div class="input-buttons">
+                    <button class="input-button thinking-button" title="深度思考">
+                      <i class="fas fa-lightbulb"></i>
+                    </button>
+                    <button class="input-button search-button" title="联网搜索">
+                      <i class="fas fa-search"></i>
+                    </button>
+                    <button class="input-button upload-button" title="上传附件">
+                      <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button class="input-button send-button" title="发送">
+                      <i class="fas fa-paper-plane"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="chat-input-tips">
+                    (Shift + Enter 换行, Enter 发送) 积分: 3000 | 当前使用人数较多，回复可能延迟 | 所有内容均由AI生成，仅供参考
+                  </div>
+              </div>
+              
         </div>
     </div>
 
@@ -1083,37 +1179,7 @@
                 <button class="close-modal">&times;</button>
             </div>
             <!-- 新增链接区块 -->
-        <div class="footer-links-container">
-            <div class="connect-section">
-                <h4>关注我们</h4>
-                <a href="https://twitter.com" target="_blank">
-                    <i class="fab fa-twitter"></i> Twitter
-                </a>
-                <a href="#wechat" class="wechat-link">
-                    <i class="fab fa-weixin"></i> 微信公众号
-                </a>
-            </div>
-            
-            <div class="join-section">
-                <h4>加入我们</h4>
-                <a href="/careers">
-                    <i class="fas fa-users"></i> 招聘信息
-                </a>
-                <a href="/intern">
-                    <i class="fas fa-graduation-cap"></i> 实习生计划
-                </a>
-            </div>
-            
-            <div class="info-links">
-                <a href="/about">关于</a>
-                <span class="dot-divider">·</span>
-                <a href="/blog">博客</a>
-                <span class="dot-divider">·</span>
-                <a href="/careers">职业</a>
-                <span class="dot-divider">·</span>
-                <a href="/help">帮助中心</a>
-            </div>
-        </div>
+        
             <div class="modal-body">
                 <div class="settings-section">
                     <h4 class="settings-title">账户信息</h4>
@@ -1332,51 +1398,58 @@
             }
         });
 
-        async function sendMessage() {
-            const message = chatInput.value.trim();
-            if (!message) return;
-            
-            // 检查积分是否足够
-            if (currentCredits < 100) {
-                alert('积分不足，请充值后继续使用。');
-                return;
-            }
-            
-            // 扣除积分
-            currentCredits -= 100;
-            saveCreditsToStorage(); 
-            updateCreditsDisplay();
-            
-            // 清空输入框并重置高度
-            chatInput.value = '';
-            chatInput.style.height = 'auto';
-            
-            // 隐藏介绍页面
-            const chatIntro = document.querySelector('.chat-intro');
-            if (chatIntro) {
-                chatIntro.style.display = 'none';
-            }
-            
-            // 添加用户消息
-            addMessage(message, 'user');
-            
-            // 保存到聊天历史
-            const currentChat = chatHistory.find(chat => chat.id === currentChatId);
-            if (currentChat) {
-                currentChat.messages.push({
-                    role: 'user',
-                    content: message,
-                    timestamp: new Date().toISOString()
-                });
-                
-                // 如果这是第一条消息，更新聊天标题
-                if (currentChat.messages.length === 1) {
-                    currentChat.title = message.length > 20 ? message.substring(0, 20) + '...' : message;
-                    updateChatHistoryUI();
-                }
-                
-                saveChatHistory();
-            }
+        // 绑定自定义选择框的点击事件
+document.querySelectorAll('.model-option').forEach(item => {
+  item.addEventListener('click', () => {
+    // 移除所有选项的激活状态
+    document.querySelectorAll('.model-option').forEach(opt => opt.classList.remove('active'));
+    // 将当前点击项设为激活状态
+    item.classList.add('active');
+  });
+});
+
+    // 修改发送消息时积分扣除逻辑（示例中的 sendMessage 函数中使用）
+  async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+    
+    const selectedOption = document.querySelector('.model-option.active');
+    const cost = parseInt(selectedOption.getAttribute('data-cost'));
+    
+    if (currentCredits < cost) {
+      alert('积分不足，请充值后继续使用。');
+      return;
+    }
+    
+    currentCredits -= cost;
+    saveCreditsToStorage();
+    updateCreditsDisplay();
+    
+    chatInput.value = '';
+    chatInput.style.height = 'auto';
+    
+    const chatIntro = document.querySelector('.chat-intro');
+    if (chatIntro) {
+      chatIntro.style.display = 'none';
+    }
+    
+    addMessage(message, 'user');
+    
+    const currentChat = chatHistory.find(chat => chat.id === currentChatId);
+    if (currentChat) {
+      currentChat.messages.push({
+        role: 'user',
+        content: message,
+        timestamp: new Date().toISOString()
+      });
+      
+      if (currentChat.messages.length === 1) {
+        currentChat.title = message.length > 20 ? message.substring(0, 20) + '...' : message;
+        updateChatHistoryUI();
+      }
+      
+      saveChatHistory();
+    }
             
             // 创建AI消息框
             const aiMessageElement = document.createElement('div');
@@ -1399,27 +1472,7 @@
                     // 以思考模式调用AI
                     const thinkingPrompt = `
 作为Jork-v3，我将以Claude的语气，严谨的学术态度分析这个问题。以下是系统化的思考路径：
-
-**问题分析阶段**
-1. 问题归类：确定问题的核心类别（技术、学术、生活等）
-2. 需求识别：明确用户的核心需求和潜在目标
-3. 背景调研：检索相关知识库和最新研究成果
-
-**逻辑推理阶段**
-4. 关键要素提取：识别问题中的核心变量和影响因素
-5. 关系建模：建立各要素之间的逻辑关系
-6. 假设验证：评估可能的解决方案和潜在风险
-
-**解决方案构建**
-7. 方案设计：基于分析结果提出初步解决方案
-8. 可行性评估：从技术、资源和时间成本角度评估方案
-9. 优化建议：提出改进方向和注意事项
-
-**最终输出**
-10. 结构化表达：将分析结果以清晰、易懂的方式呈现
-11. 后续建议：提供进一步探索的方向和资源
-
-以下是针对当前问题的具体思考过程：
+首先，总概括：你需要以文章的形式思考，你可以运用”首先“，”其次“，”然后“，”最后“等词语，分步骤思考：先理解问题本质，再构建解决框架，主动澄清模糊需求（当信息不足时）提供可验证的数据源或方法论，对不确定的领域明确说明，保持专业且友好的语气。以下是针对当前问题的具体思考过程：
 `;
                     
                     // 显示思考区域
