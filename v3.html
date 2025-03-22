@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <title>Jork-v3 AI助手</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -195,7 +196,7 @@ body.dark-mode .thinking-process::before {
             --dark-border: #3f3f5a;
         }
 
-        * {
+        ▪ {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -1041,6 +1042,162 @@ body.dark-mode .thinking-process::before {
   text-align: center;
   margin-top: 5px;
 }
+.featured-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.section-container {
+    background-color: var(--light-card);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+body.dark-mode .section-container {
+    background-color: var(--dark-card);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.section-header {
+    padding: 15px 20px;
+    background: linear-gradient(135deg, rgba(123,104,238,0.1) 0%, rgba(123,104,238,0.05) 100%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-header i {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+.section-header h2 {
+    font-size: 1.2rem;
+    margin: 0;
+    color: var(--light-text);
+    font-weight: 600;
+}
+
+body.dark-mode .section-header h2 {
+    color: var(--dark-text);
+}
+
+/* Hot searches styling */
+.search-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 15px;
+}
+
+.search-item {
+    background-color: rgba(123,104,238,0.05);
+    border: 1px solid rgba(123,104,238,0.1);
+    border-radius: 8px;
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.search-item:hover {
+    background-color: rgba(123,104,238,0.1);
+    transform: translateY(-2px);
+}
+
+.search-item span {
+    font-size: 0.9rem;
+    color: var(--light-text);
+    font-weight: 500;
+}
+
+body.dark-mode .search-item span {
+    color: var(--dark-text);
+}
+
+/* Try asking me styling */
+.ask-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 15px;
+}
+
+.ask-item {
+    display: flex;
+    align-items: center;
+    background-color: rgba(123,104,238,0.05);
+    border: 1px solid rgba(123,104,238,0.1);
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ask-item:hover {
+    background-color: rgba(123,104,238,0.1);
+    transform: translateY(-2px);
+}
+
+.ask-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.ask-icon i {
+    color: white;
+    font-size: 1rem;
+}
+
+.ask-content {
+    flex: 1;
+}
+
+.ask-content h3 {
+    font-size: 0.95rem;
+    margin: 0 0 5px 0;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.ask-content p {
+    font-size: 0.85rem;
+    margin: 0;
+    color: var(--light-text);
+}
+
+body.dark-mode .ask-content p {
+    color: var(--dark-text);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .search-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .ask-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-grid {
+        grid-template-columns: 1fr;
+    }
+}
 
     </style>
 </head>
@@ -1107,69 +1264,175 @@ body.dark-mode .thinking-process::before {
 
             <!-- 聊天区域 -->
             <div class="chat-area">
-                <div class="chat-intro">
-                    <h1>下午好，我是 JorkAI</h1>
-                    <p>有什么可以帮助你的吗？</p>
-                    <div class="example-questions">
-                        <div class="example-item">
-                            <strong>帮我写一篇关于人工智能的文章</strong>
-                            <p>我可以帮你创作高质量的内容</p>
-                        </div>
-                        <div class="example-item">
-                            <strong>解释一下量子计算的基本原理</strong>
-                            <p>我可以解释复杂的科学概念</p>
-                        </div>
-                        <div class="example-item">
-                            <strong>帮我生成一段Python代码</strong>
-                            <p>我可以帮你调试和优化代码</p>
-                        </div>
-                        <div class="example-item">
-                            <strong>创建一个健康饮食的周计划</strong>
-                            <p>我可以帮你规划生活和工作</p>
-                        </div>
+                <!-- Replace the existing chat-intro div with this new structure -->
+<div class="chat-intro">
+    <h1>下午好，我是 JorkAI</h1>
+    <p>有什么可以帮助你的吗？</p>
+    
+    <div class="featured-sections">
+        <!-- Hot searches section -->
+        <div class="section-container">
+            <div class="section-header">
+                <i class="fas fa-fire"></i>
+                <h2>热搜</h2>
+            </div>
+            <div class="search-grid">
+                <div class="search-item" data-query="ChatGPT和Claude有什么区别？">
+                    <span>ChatGPT和Claude有什么区别？</span>
+                </div>
+                <div class="search-item" data-query="如何提高英语口语水平？">
+                    <span>如何提高英语口语水平？</span>
+                </div>
+                <div class="search-item" data-query="Python和JavaScript哪个更适合初学者？">
+                    <span>Python和JavaScript哪个更适合初学者？</span>
+                </div>
+                <div class="search-item" data-query="人工智能会取代哪些工作？">
+                    <span>人工智能会取代哪些工作？</span>
+                </div>
+                <div class="search-item" data-query="如何有效管理时间？">
+                    <span>如何有效管理时间？</span>
+                </div>
+                <div class="search-item" data-query="李嘉诚卖掉43个港口对中国的影响">
+                    <span>李嘉诚卖掉43个港口</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Try asking me section -->
+        <div class="section-container">
+            <div class="section-header">
+                <i class="fas fa-question-circle"></i>
+                <h2>试着问我</h2>
+            </div>
+            <div class="ask-grid">
+                <div class="ask-item" data-query="帮我写一篇关于环保的演讲稿">
+                    <div class="ask-icon"><i class="fas fa-pencil-alt"></i></div>
+                    <div class="ask-content">
+                        <h3>写作助手</h3>
+                        <p>帮我写一篇关于环保的演讲稿</p>
                     </div>
                 </div>
+                <div class="ask-item" data-query="解释一下区块链技术的工作原理">
+                    <div class="ask-icon"><i class="fas fa-lightbulb"></i></div>
+                    <div class="ask-content">
+                        <h3>知识解答</h3>
+                        <p>解释一下区块链技术的工作原理</p>
+                    </div>
+                </div>
+                <div class="ask-item" data-query="设计一个Python爬虫获取新闻标题">
+                    <div class="ask-icon"><i class="fas fa-code"></i></div>
+                    <div class="ask-content">
+                        <h3>编程帮助</h3>
+                        <p>设计一个Python爬虫获取新闻标题</p>
+                    </div>
+                </div>
+                <div class="ask-item" data-query="如何在一周内学会基础瑜伽动作？">
+                    <div class="ask-icon"><i class="fas fa-dumbbell"></i></div>
+                    <div class="ask-content">
+                        <h3>健康生活</h3>
+                        <p>如何在一周内学会基础瑜伽动作？</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Add these styles to your existing CSS -->
                 <!-- 聊天消息将在这里动态加载 -->
             </div>
               
 
-            <!-- 聊天输入区域 -->
-            <div class="chat-input-container">
-                <!-- 新增模型选择 -->
-                <div class="model-selection" style="margin-bottom: 8px;">
-                  <label for="modelSelect">选择模型: </label>
-                  <div class="model-selection-container">
-                    <div class="model-option" data-model="Tanka" data-cost="30">Tanka (30积分)</div>
-                    <div class="model-option active" data-model="Canto" data-cost="100">Canto (100积分)</div>
-                    <div class="model-option" data-model="Epic" data-cost="200">Epic (200积分)</div>
-                  </div>
-                </div>
-              
-                <div class="chat-input-wrapper">
-                  <textarea class="chat-input" placeholder="输入消息..." rows="1"></textarea>
-                  <div class="input-buttons">
-                    <button class="input-button thinking-button" title="深度思考">
-                      <i class="fas fa-lightbulb"></i>
-                    </button>
-                    <button class="input-button search-button" title="联网搜索">
-                      <i class="fas fa-search"></i>
-                    </button>
-                    <button class="input-button upload-button" title="上传附件">
-                      <i class="fas fa-paperclip"></i>
-                    </button>
-                    <button class="input-button send-button" title="发送">
-                      <i class="fas fa-paper-plane"></i>
-                    </button>
-                  </div>
-                </div>
-                <div class="chat-input-tips">
-                    (Shift + Enter 换行, Enter 发送) 积分: 3000 | 当前使用人数较多，回复可能延迟 | 所有内容均由AI生成，仅供参考
-                  </div>
-              </div>
-              
-        </div>
+<!-- 修改后的聊天输入区域 -->
+<div class="chat-input-container">
+    <!-- 将模型选择框移到左边 -->
+    <div class="model-selection" style="margin-right: 10px;">
+      <select class="model-select" id="modelSelect" style="width: 150px; padding: 6px 10px; font-size: 0.85em;">
+        <option value="Tanka" data-model="Tanka" data-cost="30">Jork 2.5 Tanka (30积分)</option>
+        <option value="Canto" data-model="Canto" data-cost="100" selected>Jork 2.5 Canto (100积分)</option>
+        <option value="Epic" data-model="Epic" data-cost="200">Jork 2.5 Epic (200积分)</option>
+        <option value="Tanka3" data-model="Tanka" data-cost="60">Jork 3 mini (60积分)</option>
+        <option value="Sonnet" data-model="Canto" data-cost="100">Jork 3 Sonnet (100积分)</option>
+      </select>
     </div>
+  
+    <!-- 输入框和按钮部分保持不变 -->
+    <div class="chat-input-wrapper">
+      <textarea class="chat-input" placeholder="输入消息..." rows="1"></textarea>
+      <div class="input-buttons">
+        <button class="input-button thinking-button" title="深度思考">
+          <i class="fas fa-lightbulb"></i>
+        </button>
+        <button class="input-button search-button" title="联网搜索">
+          <i class="fas fa-search"></i>
+        </button>
+        <button class="input-button upload-button" title="上传附件">
+          <i class="fas fa-paperclip"></i>
+        </button>
+        <button class="input-button send-button" title="发送">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+  /* 新增样式 */
+  .chat-input-container {
+    display: flex;
+    align-items: center; /* 垂直居中 */
+    gap: 10px; /* 元素之间的间距 */
+  }
+  
+  .model-selection {
+    flex-shrink: 0; /* 防止选择框被压缩 */
+  }
+  
+  .chat-input-wrapper {
+    flex: 1; /* 输入框占据剩余空间 */
+  }
+  
+  /* 调整选择框样式 */
+  .model-select {
+    width: 150px; /* 调整宽度 */
+    padding: 6px 10px; /* 调整内边距 */
+    border: 2px solid var(--light-border);
+    border-radius: 8px;
+    background-color: var(--light-bg);
+    color: var(--light-text);
+    font-size: 0.85em; /* 调整字体大小 */
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b68ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center; /* 调整箭头位置 */
+    background-size: 14px; /* 调整箭头大小 */
+    transition: border-color 0.3s;
+  }
+  
+  body.dark-mode .model-select {
+    background-color: var(--dark-bg);
+    border-color: var(--dark-border);
+    color: var(--dark-text);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  }
+  
+  .model-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(123, 104, 238, 0.2);
+  }
+  
+  /* 调整提示信息样式 */
+  .chat-input-tips {
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+    font-size: 0.8rem;
+    color: #888;
+  }
+  </style>
 
     <!-- 设置弹窗 -->
     <div class="modal-overlay">
@@ -1209,11 +1472,197 @@ body.dark-mode .thinking-process::before {
                     </div>
                 </div>
 
+                <!-- Add this new section to the modal-body in your settings modal -->
+<div class="settings-section">
+    <h4 class="settings-title">API 接入设置</h4>
+    <div class="settings-content">
+        <div class="api-input-container">
+            <label for="apiKeyInput">API Key</label>
+            <div class="api-input-wrapper">
+                <input type="password" id="apiKeyInput" class="api-input" placeholder="请输入您的API密钥">
+                <button id="toggleApiKey" class="toggle-api-key">
+                    <i class="far fa-eye"></i>
+                </button>
+            </div>
+        </div>
+        <div class="api-input-container">
+            <label for="apiEndpointInput">API 端点</label>
+            <input type="text" id="apiEndpointInput" class="api-input" placeholder="https://api.example.com/v1/chat/completions">
+        </div>
+        <div class="api-provider-dropdown">
+            <label for="apiProviderSelect">API 提供商</label>
+            <select id="apiProviderSelect" class="api-select">
+                <option value="custom">自定义</option>
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic</option>
+                <option value="deepseek">DeepSeek</option>
+                <option value="qianfan">百度千帆</option>
+                <option value="xinghuo">星火认知</option>
+            </select>
+        </div>
+        <div class="api-actions">
+            <button id="saveApiSettings" class="api-save-btn">保存设置</button>
+            <button id="testApiConnection" class="api-test-btn">测试连接</button>
+        </div>
+        <div id="apiStatus" class="api-status"></div>
+    </div>
+</div>
+
+<!-- Add these styles to your existing CSS -->
+<style>
+.api-input-container {
+    margin-bottom: 15px;
+}
+
+.api-input-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: var(--light-text);
+}
+
+body.dark-mode .api-input-container label {
+    color: var(--dark-text);
+}
+
+.api-input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--light-border);
+    background-color: var(--light-bg);
+    font-size: 0.9rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+body.dark-mode .api-input {
+    background-color: var(--dark-bg);
+    border-color: var(--dark-border);
+    color: var(--dark-text);
+}
+
+.api-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(123, 104, 238, 0.2);
+}
+
+.api-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-api-key {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 1rem;
+    transition: color 0.2s;
+}
+
+.toggle-api-key:hover {
+    color: var(--primary-color);
+}
+
+.api-provider-dropdown {
+    margin-bottom: 15px;
+}
+
+.api-select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--light-border);
+    background-color: var(--light-bg);
+    font-size: 0.9rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b68ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+}
+
+body.dark-mode .api-select {
+    background-color: var(--dark-bg);
+    border-color: var(--dark-border);
+    color: var(--dark-text);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+.api-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(123, 104, 238, 0.2);
+}
+
+.api-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.api-save-btn, .api-test-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.api-save-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    flex: 1;
+}
+
+.api-save-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+.api-test-btn {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+body.dark-mode .api-test-btn {
+    color: var(--primary-color);
+}
+
+.api-test-btn:hover {
+    background-color: rgba(123, 104, 238, 0.1);
+}
+
+.api-status {
+    font-size: 0.9rem;
+    padding: 8px 0;
+    text-align: center;
+    display: none;
+}
+
+.api-status.success {
+    color: #4CAF50;
+    display: block;
+}
+
+.api-status.error {
+    color: #F44336;
+    display: block;
+}
+</style>
+
                 <div class="settings-section">
                     <h4 class="settings-title">隐私与协议</h4>
                     <div class="settings-content">
-                        <a href="#" class="privacy-link">隐私协议</a>
-                        <a href="#" class="privacy-link">使用条款</a>
+                        <a href="yinsi.html" class="privacy-link">隐私协议</a>
+                        <a href="juanqian.html" class="privacy-link">支持我们</a>
+                        <a href="shuomingshu.html" class="privacy-link">如何使用</a>
                     </div>
                 </div>
             </div>
@@ -1242,6 +1691,7 @@ body.dark-mode .thinking-process::before {
 
     <script>
         // 获取DOM元素
+        const modelSelect = document.getElementById('modelSelect'); // 获取下拉菜单
         const sidebar = document.querySelector('.sidebar');
         const sidebarResizer = document.querySelector('.sidebar-resizer');
         const newChatBtn = document.querySelector('.new-chat-btn');
@@ -1282,6 +1732,7 @@ body.dark-mode .thinking-process::before {
             toggleSidebarBtn.addEventListener('click', () => {
                 sidebar.classList.toggle('collapsed');
             });
+
         
 
             function saveCreditsToStorage() {
@@ -1294,6 +1745,50 @@ body.dark-mode .thinking-process::before {
             alert('本地存储空间不足，积分将暂时保存在内存中');
         }
     }
+}
+
+function initClickableItems() {
+    // Set up click handlers for hot searches
+    document.querySelectorAll('.search-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const query = item.dataset.query;
+            chatInput.value = query;
+            sendMessage();
+        });
+    });
+    
+    // Set up click handlers for "try asking me" items
+    document.querySelectorAll('.ask-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const query = item.dataset.query;
+            chatInput.value = query;
+            sendMessage();
+        });
+    });
+}
+
+// 热搜点击事件
+document.querySelectorAll('.search-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const query = item.dataset.query;
+        chatInput.value = query;
+        sendMessage();
+    });
+});
+
+// 图片生成点击事件
+document.querySelectorAll('.image-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const prompt = item.dataset.prompt;
+        chatInput.value = `/generate ${prompt}`;
+        sendMessage();
+    });
+});
+
+// 添加这个函数 ↓↓↓
+function getSelectedModelCost() {
+  const selectedOption = modelSelect.options[modelSelect.selectedIndex];
+  return parseInt(selectedOption.dataset.cost);
 }
             // 初始化函数
         function init() {
@@ -1358,6 +1853,8 @@ body.dark-mode .thinking-process::before {
             }
         }
 
+        modelSelect.value = 'Canto'; 
+
         // 处理侧边栏调整大小
         let isResizing = false;
         let initialX = 0;
@@ -1413,8 +1910,8 @@ document.querySelectorAll('.model-option').forEach(item => {
     const message = chatInput.value.trim();
     if (!message) return;
     
-    const selectedOption = document.querySelector('.model-option.active');
-    const cost = parseInt(selectedOption.getAttribute('data-cost'));
+    
+    const cost = getSelectedModelCost();
     
     if (currentCredits < cost) {
       alert('积分不足，请充值后继续使用。');
@@ -1471,8 +1968,7 @@ document.querySelectorAll('.model-option').forEach(item => {
                 if (isThinking) {
                     // 以思考模式调用AI
                     const thinkingPrompt = `
-作为Jork-v3，我将以Claude的语气，严谨的学术态度分析这个问题。以下是系统化的思考路径：
-首先，总概括：你需要以文章的形式思考，你可以运用”首先“，”其次“，”然后“，”最后“等词语，分步骤思考：先理解问题本质，再构建解决框架，主动澄清模糊需求（当信息不足时）提供可验证的数据源或方法论，对不确定的领域明确说明，保持专业且友好的语气。以下是针对当前问题的具体思考过程：
+你需要展示你的思考过程，首先，你需要肯定用户以表明你接下了这个任务，你可以在开始运用"好的"，"嗯"，然后，你可以运用首先，让后等词语来展示你的思考顺序，记住，你要分段，例如：首先一段，然后：然后一段，等，你可以在过程中穿插一些句子，例如：等一等，用户好像...，你在过程中要运用一些网络热梗，最后，总结一下答案。思考过程请标注为"思考过程"，最终答案请标注为"最终答案"
 `;
                     
                     // 显示思考区域
@@ -1959,26 +2455,74 @@ document.querySelectorAll('.model-option').forEach(item => {
             // 重新显示介绍区域
             const chatIntroHTML = `
                 <div class="chat-intro">
-                    <h1>${getGreeting()}，我是 Jork-v3</h1>
+                    <h1>${getGreeting()}，我是 JorkAI</h1>
                     <p>有什么可以帮助你的吗？</p>
-                    <div class="example-questions">
-                        <div class="example-item">
-                            <strong>帮我写一篇关于人工智能的文章</strong>
-                            <p>我可以帮你创作高质量的内容</p>
-                        </div>
-                        <div class="example-item">
-                            <strong>解释一下量子计算的基本原理</strong>
-                            <p>我可以解释复杂的科学概念</p>
-                        </div>
-                        <div class="example-item">
-                            <strong>帮我分析这段Python代码的问题</strong>
-                            <p>我可以帮你调试和优化代码</p>
-                        </div>
-                        <div class="example-item">
-                            <strong>创建一个健康饮食的周计划</strong>
-                            <p>我可以帮你规划生活和工作</p>
-                        </div>
+                    <div class="featured-sections">
+        <div class="section-container">
+            <div class="section-header">
+                <i class="fas fa-fire"></i>
+                <h2>热门搜索</h2>
+            </div>
+            <div class="search-grid">
+                <div class="search-item" data-query="ChatGPT和Claude有什么区别？">
+                    <span>ChatGPT和Claude有什么区别？</span>
+                </div>
+                <div class="search-item" data-query="如何提高英语口语水平？">
+                    <span>如何提高英语口语水平？</span>
+                </div>
+                <div class="search-item" data-query="Python和JavaScript哪个更适合初学者？">
+                    <span>Python和JavaScript哪个更适合初学者？</span>
+                </div>
+                <div class="search-item" data-query="人工智能会取代哪些工作？">
+                    <span>人工智能会取代哪些工作？</span>
+                </div>
+                <div class="search-item" data-query="如何有效管理时间？">
+                    <span>如何有效管理时间？</span>
+                </div>
+                <div class="search-item" data-query="2025年值得关注的科技趋势">
+                    <span>2025年值得关注的科技趋势</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Try asking me section -->
+        <div class="section-container">
+            <div class="section-header">
+                <i class="fas fa-question-circle"></i>
+                <h2>试着问我</h2>
+            </div>
+            <div class="ask-grid">
+                <div class="ask-item" data-query="帮我写一篇关于环保的演讲稿">
+                    <div class="ask-icon"><i class="fas fa-pencil-alt"></i></div>
+                    <div class="ask-content">
+                        <h3>写作助手</h3>
+                        <p>帮我写一篇关于环保的演讲稿</p>
                     </div>
+                </div>
+                <div class="ask-item" data-query="解释一下区块链技术的工作原理">
+                    <div class="ask-icon"><i class="fas fa-lightbulb"></i></div>
+                    <div class="ask-content">
+                        <h3>知识解答</h3>
+                        <p>解释一下区块链技术的工作原理</p>
+                    </div>
+                </div>
+                <div class="ask-item" data-query="设计一个Python爬虫获取新闻标题">
+                    <div class="ask-icon"><i class="fas fa-code"></i></div>
+                    <div class="ask-content">
+                        <h3>编程帮助</h3>
+                        <p>设计一个Python爬虫获取新闻标题</p>
+                    </div>
+                </div>
+                <div class="ask-item" data-query="如何在一周内学会基础瑜伽动作？">
+                    <div class="ask-icon"><i class="fas fa-dumbbell"></i></div>
+                    <div class="ask-content">
+                        <h3>健康生活</h3>
+                        <p>如何在一周内学会基础瑜伽动作？</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
                 </div>
             `;
             chatArea.innerHTML = chatIntroHTML;
@@ -2058,24 +2602,71 @@ document.querySelectorAll('.model-option').forEach(item => {
                     <div class="chat-intro">
                         <h1>${getGreeting()}，我是 Jork-v3</h1>
                         <p>有什么可以帮助你的吗？</p>
-                        <div class="example-questions">
-                            <div class="example-item">
-                                <strong>帮我写一篇关于人工智能的文章</strong>
-                                <p>我可以帮你创作高质量的内容</p>
-                            </div>
-                            <div class="example-item">
-                                <strong>解释一下量子计算的基本原理</strong>
-                                <p>我可以解释复杂的科学概念</p>
-                            </div>
-                            <div class="example-item">
-                                <strong>帮我分析这段Python代码的问题</strong>
-                                <p>我可以帮你调试和优化代码</p>
-                            </div>
-                            <div class="example-item">
-                                <strong>创建一个健康饮食的周计划</strong>
-                                <p>我可以帮你规划生活和工作</p>
-                            </div>
-                        </div>
+                        <div class="section-container">
+            <div class="section-header">
+                <i class="fas fa-fire"></i>
+                <h2>热门搜索</h2>
+            </div>
+            <div class="search-grid">
+                <div class="search-item" data-query="ChatGPT和Claude有什么区别？">
+                    <span>ChatGPT和Claude有什么区别？</span>
+                </div>
+                <div class="search-item" data-query="如何提高英语口语水平？">
+                    <span>如何提高英语口语水平？</span>
+                </div>
+                <div class="search-item" data-query="Python和JavaScript哪个更适合初学者？">
+                    <span>Python和JavaScript哪个更适合初学者？</span>
+                </div>
+                <div class="search-item" data-query="人工智能会取代哪些工作？">
+                    <span>人工智能会取代哪些工作？</span>
+                </div>
+                <div class="search-item" data-query="如何有效管理时间？">
+                    <span>如何有效管理时间？</span>
+                </div>
+                <div class="search-item" data-query="2025年值得关注的科技趋势">
+                    <span>2025年值得关注的科技趋势</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Try asking me section -->
+        <div class="section-container">
+            <div class="section-header">
+                <i class="fas fa-question-circle"></i>
+                <h2>试着问我</h2>
+            </div>
+            <div class="ask-grid">
+                <div class="ask-item" data-query="帮我写一篇关于环保的演讲稿">
+                    <div class="ask-icon"><i class="fas fa-pencil-alt"></i></div>
+                    <div class="ask-content">
+                        <h3>写作助手</h3>
+                        <p>帮我写一篇关于环保的演讲稿</p>
+                    </div>
+                </div>
+                <div class="ask-item" data-query="解释一下区块链技术的工作原理">
+                    <div class="ask-icon"><i class="fas fa-lightbulb"></i></div>
+                    <div class="ask-content">
+                        <h3>知识解答</h3>
+                        <p>解释一下区块链技术的工作原理</p>
+                    </div>
+                </div>
+                <div class="ask-item" data-query="设计一个Python爬虫获取新闻标题">
+                    <div class="ask-icon"><i class="fas fa-code"></i></div>
+                    <div class="ask-content">
+                        <h3>编程帮助</h3>
+                        <p>设计一个Python爬虫获取新闻标题</p>
+                    </div>
+                </div>
+                <div class="ask-item" data-query="如何在一周内学会基础瑜伽动作？">
+                    <div class="ask-icon"><i class="fas fa-dumbbell"></i></div>
+                    <div class="ask-content">
+                        <h3>健康生活</h3>
+                        <p>如何在一周内学会基础瑜伽动作？</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
                     </div>
                 `;
                 chatArea.innerHTML = chatIntroHTML;
@@ -2169,19 +2760,19 @@ document.querySelectorAll('.model-option').forEach(item => {
 
         redeemButton.addEventListener('click', () => {
             const code = redeemCode.value.trim();
-            if (code === '1234567890qwertyuiiop') {
+            if (code === '110131HK') {
                 if (hasRedeemedCode) {
                     redeemMessage.textContent = "您已经兑换过积分，每台设备仅能兑换一次";
                     redeemMessage.style.color = "#ff3333";
                     redeemMessage.style.display = "block";
                 } else {
                     // 增加积分
-                    currentCredits += 1000;
+                    currentCredits += 100000;
                     saveCreditsToStorage(); // 新增
                     updateCreditsDisplay();
                     
                     // 显示成功信息
-                    redeemMessage.textContent = "兑换成功！已添加1000积分";
+                    redeemMessage.textContent = "兑换成功！已添加100000积分";
                     redeemMessage.style.color = "green";
                     redeemMessage.style.display = "block";
                     

@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <title>Jork-2.5o Chat</title>
+    <style>
+        /* 移动端优化 */
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 260px;
+            clip-path: none;
+        }
+        
+        .toggle-sidebar {
+            right: -40px;
+        }
+        
+        .new-chat {
+            margin: 10px;
+            padding: 12px;
+        }
+    }
+    /* 新增布局样式 */
+    .chat-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .input-container {
+        padding: 20px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border-top: var(--cyber-border);
+    }
+
+    /* 修复模型选择器样式 */
+    .model-selector {
+        margin: 20px;
+        position: relative;
+    }
+
+    #model {
+        width: 100%;
+        background: rgba(138, 43, 226, 0.1);
+        border: var(--cyber-border);
+        color: white;
+        padding: 12px;
+        border-radius: 8px;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    /* 新增文件上传样式 */
+    .file-upload {
+        position: relative;
+        margin-bottom: 10px;
+    }
+
+    #file-input {
+        opacity: 0;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+    }
+
+    .file-upload label {
+        display: inline-block;
+        padding: 8px 16px;
+        background: rgba(138, 43, 226, 0.2);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    /* 历史记录样式补全 */
+    .history-item {
+        padding: 12px 20px;
+        margin: 8px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* 粒子层级修复 */
+    #particles-js {
+        z-index: 0 !important;
+    }
+
+    
+
+        @supports not (backdrop-filter: blur(20px)) {
+    body {
+        background: rgba(40, 40, 40, 0.95) !important;
+    }
+    .sidebar {
+        background: rgba(30, 30, 30, 0.9) !important;
+    }
+}
+        body {
+        background: var(--glass-bg) !important;
+        -webkit-backdrop-filter: blur(20px); /* 添加Webkit前缀 */
+        backdrop-filter: blur(20px);
+    }
+
+    /* 调整容器层级 */
+    .container {
+        position: relative;
+        z-index: 1; /* 确保内容在粒子层之上 */
+    }
+
+    /* 修复侧边栏显示问题 */
+    .sidebar {
+        -webkit-clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
+        clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
+        z-index: 2;
+    }
+
+    /* 添加浏览器前缀保证渐变显示 */
+    .new-chat {
+        background: -webkit-linear-gradient(135deg, #8A2BE2 0%, #4B0082 100%);
+        background: linear-gradient(135deg, #8A2BE2 0%, #4B0082 100%);
+    }
+    :root {
+        --gradient-primary: linear-gradient(135deg, #8A2BE2 0%, #4B0082 100%);
+        --neon-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --cyber-border: 1px solid rgba(138, 43, 226, 0.3);
+        --cyber-accent: #FF00FF;
+    }
+
+    .dark-mode {
+        --gradient-primary: linear-gradient(135deg, #00FFFF 0%, #8A2BE2 100%);
+        --neon-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+        --glass-bg: rgba(0, 0, 0, 0.2);
+        --cyber-accent: #00FF00;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        color: white;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    .container {
+        display: flex;
+        height: 100vh;
+        background: radial-gradient(circle at 50% 0%, rgba(138, 43, 226, 0.1) 0%, transparent 60%);
+    }
+
+    /* 赛博朋克风格侧边栏 */
+    .sidebar {
+        width: 300px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        border-right: var(--cyber-border);
+        box-shadow: var(--neon-shadow);
+        position: relative;
+        clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
+        transition: 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+
+    .sidebar.hidden {
+        transform: translateX(-110%);
+    }
+
+    .toggle-sidebar {
+        position: absolute;
+        right: -50px;
+        top: 30px;
+        background: var(--gradient-primary);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        box-shadow: var(--neon-shadow);
+        transition: 0.3s;
+    }
+
+    .toggle-sidebar:hover {
+        transform: rotate(180deg) scale(1.2);
+    }
+
+    /* 未来主义按钮 */
+    .new-chat {
+        background: var(--gradient-primary);
+        border: none;
+        padding: 16px;
+        margin: 20px;
+        color: white;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-radius: 12px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: 0.3s;
+    }
+
+    .new-chat::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+        transform: rotate(45deg);
+        animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+        0% { transform: translateX(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) rotate(45deg); }
+    }
+
+    /* 全息聊天消息 */
+    .message {
+        margin: 20px;
+        position: relative;
+        animation: messageAppear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes messageAppear {
+        0% { transform: translateY(20px) scale(0.9); opacity: 0; }
+        100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .message-content {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 20px;
+        border: var(--cyber-border);
+        box-shadow: var(--neon-shadow);
+        max-width: 80%;
+        position: relative;
+        transition: 0.3s;
+    }
+
+    .user-message .message-content {
+        background: rgba(138, 43, 226, 0.15);
+        margin-left: auto;
+    }
+
+    /* 科幻输入框 */
+    .input-box {
+        border: 2px solid;
+        border-image: var(--gradient-primary) 1;
+        border-radius: 15px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+
+    textarea {
+        background: transparent !important;
+        border: none !important;
+        color: white !important;
+        padding: 18px !important;
+        font-size: 16px;
+    }
+
+    textarea:focus {
+        outline: none;
+        box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+    }
+
+    .send-button {
+        background: var(--gradient-primary) !important;
+        margin: 8px !important;
+        padding: 14px 28px !important;
+        border-radius: 12px !important;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: 0.3s !important;
+    }
+
+    .send-button:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--neon-shadow);
+    }
+
+    /* 霓虹代码块 */
+    pre {
+        background: rgba(0,0,0,0.4) !important;
+        border: 1px solid var(--cyber-accent) !important;
+        box-shadow: 0 0 15px rgba(0,255,255,0.2);
+        border-radius: 12px !important;
+        margin: 20px 0 !important;
+        position: relative;
+    }
+
+    pre::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gradient-primary);
+    }
+
+    code {
+        font-family: 'Fira Code', monospace !important;
+        text-shadow: 0 0 5px rgba(255,255,255,0.1);
+    }
+
+    /* 全息加载动画 */
+    .loading-dots span {
+        background: var(--gradient-primary);
+        width: 12px;
+        height: 12px;
+        box-shadow: var(--neon-shadow);
+    }
+
+    /* 悬浮特效 */
+    .history-item:hover {
+        transform: translateX(10px);
+        background: rgba(138, 43, 226, 0.1) !important;
+    }
+
+    /* 动态背景粒子 */
+    #particles-js {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+    /* 新增样式 */
+    .settings-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        background: var(--gradient-primary);
+        border: none;
+        padding: 12px 24px;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: var(--neon-shadow);
+    }
+
+    .settings-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        position: relative;
+        background: var(--glass-bg);
+        margin: 15% auto;
+        padding: 30px;
+        width: 300px;
+        border-radius: 15px;
+        border: var(--cyber-border);
+        box-shadow: var(--neon-shadow);
+        animation: modalSlide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .cyber-input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        color: var(--cyber-accent);
+        padding: 12px 0;
+        margin: 10px 0;
+        border-bottom: 2px solid var(--cyber-accent);
+    }
+
+    .hologram-line {
+        height: 2px;
+        background: var(--gradient-primary);
+        width: 0;
+        transition: 0.3s;
+    }
+
+    .cyber-input:focus + .hologram-line {
+        width: 100%;
+    }
+
+    #user-status {
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .neon-text {
+        text-shadow: 0 0 10px var(--cyber-accent);
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    @keyframes modalSlide {
+        from {transform: translateY(-100px) scale(0.9); opacity: 0;}
+        to {transform: translateY(0) scale(1); opacity: 1;}
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <button class="toggle-sidebar">☰</button>
+            <button class="new-chat">新对话</button>
+            <div class="model-selector">
+                <select id="model">
+                    <option value="deepseek-chat">DeepSeek Chat</option>
+                    <option value="deepseek-coder">DeepSeek Coder</option>
+                    <option value="deepseek-chat-instruct">DeepSeek Chat Instruct</option>
+                </select>
+            </div>
+            <div class="history"></div>
+            <button class="theme-toggle">切换主题</button>
+            <button class="settings-btn">⚙️ 系统设置</button>
+        </div>
+        <div class="chat-container">
+            <div class="chat-messages"></div>
+            <div class="input-container">
+                <div class="file-upload">
+                    <input type="file" id="file-input" multiple>
+                </div>
+                <div class="input-box">
+                    <textarea placeholder="输入消息..." rows="1"></textarea>
+                    <button class="send-button">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 在body末尾添加设置弹窗 -->
+<div class="settings-modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 class="neon-text">用户系统</h2>
+        <div id="user-status">
+            <p>当前用户: <span id="username-display">未登录</span></p>
+            <button id="login-toggle" class="cyber-button">点击登录</button>
+        </div>
+        
+        <!-- 登录表单 -->
+        <div id="login-form" style="display:none;">
+            <div class="input-group">
+                <input type="text" id="username" placeholder="用户名" class="cyber-input">
+                <div class="hologram-line"></div>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="密码" class="cyber-input">
+                <div class="hologram-line"></div>
+            </div>
+            <button id="submit-login" class="cyber-button">验证身份</button>
+        </div>
+    </div>
+</div>
+</body>
+
+        <script>
+    const API_KEY = 'sk-e1ed90c2effc4415beeee85845f66d05';
+    const API_URL = 'https://api.deepseek.com/v1/chat/completions';
+
+    let conversationHistory = [];
+    let currentConversationId = Date.now().toString();
+    let isProcessing = false;
+
+    // 初始化本地存储
+    const savedHistory = localStorage.getItem('chatHistory');
+    if (savedHistory) {
+        conversationHistory = JSON.parse(savedHistory);
+        updateHistoryUI();
+    }
+
+    // DOM 元素
+    const sidebar = document.querySelector('.sidebar');
+    const toggleButton = document.querySelector('.toggle-sidebar');
+    const themeToggle = document.querySelector('.theme-toggle');
+    const newChatButton = document.querySelector('.new-chat');
+    const textarea = document.querySelector('textarea');
+    const sendButton = document.querySelector('.send-button');
+    const chatMessages = document.querySelector('.chat-messages');
+    const modelSelector = document.querySelector('#model');
+    const fileInput = document.querySelector('#file-input');
+
+    // 事件监听器（保持不变）
+    toggleButton.addEventListener('click', () => {
+        sidebar.classList.toggle('hidden');
+    });
+
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    });
+
+    newChatButton.addEventListener('click', () => {
+        currentConversationId = Date.now().toString();
+        chatMessages.innerHTML = '';
+        saveConversation();
+    });
+
+    textarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey && !isProcessing) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    sendButton.addEventListener('click', () => {
+        if (!isProcessing) {
+            sendMessage();
+        }
+    });
+
+    textarea.addEventListener('input', () => {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    });
+
+    fileInput.addEventListener('change', handleFiles);
+
+    async function handleFiles(e) {
+        const files = e.target.files;
+        for (let file of files) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const content = e.target.result;
+                appendMessage('user', `已上传文件: ${file.name}\n${content.substring(0, 100)}...`);
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    async function sendMessage() {
+        const message = textarea.value.trim();
+        if (!message || isProcessing) return;
+
+        isProcessing = true;
+        sendButton.disabled = true;
+        textarea.value = '';
+        textarea.style.height = 'auto';
+
+        appendMessage('user', message);
+
+        // 创建加载动画
+        const loadingMessage = createLoadingMessage();
+        chatMessages.appendChild(loadingMessage);
+
+        try {
+            const requestBody = {
+                model: modelSelector.value,
+                messages: [{ role: 'user', content: message }],
+                stream: true, // 启用流式传输
+                max_tokens: 2000,
+                temperature: 0.7,
+                top_p: 0.95,
+                presence_penalty: 0,
+                frequency_penalty: 0
+            };
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_KEY}`
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`API错误: ${errorData.error?.message || response.statusText}`);
+            }
+
+            // 移除加载动画并创建流式消息容器
+            chatMessages.removeChild(loadingMessage);
+            const { streamMessageDiv, contentDiv } = createStreamMessageContainer();
+            
+            // 处理流式数据
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullResponse = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n').filter(line => line.trim());
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(line.slice(6));
+                            const delta = data.choices[0].delta.content || '';
+                            fullResponse += delta;
+                            
+                            // 动态更新内容并保持格式
+                            contentDiv.innerHTML = formatMessage(fullResponse);
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        } catch (e) {
+                            console.error('解析流数据失败:', e);
+                        }
+                    }
+                }
+            }
+
+            // 最终保存对话
+            saveConversation();
+
+        } catch (error) {
+            console.error('Error:', error);
+            chatMessages.removeChild(loadingMessage);
+            appendMessage('assistant', `错误: ${error.message}`);
+        } finally {
+            isProcessing = false;
+            sendButton.disabled = false;
+        }
+    }
+
+    // 辅助函数
+    function createLoadingMessage() {
+        const div = document.createElement('div');
+        div.className = 'message assistant-message';
+        div.innerHTML = `
+            <div class="message-content loading-message">
+                思考中
+                <div class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        `;
+        return div;
+    }
+
+    function createStreamMessageContainer() {
+        const streamMessageDiv = document.createElement('div');
+        streamMessageDiv.className = 'message assistant-message';
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        streamMessageDiv.appendChild(contentDiv);
+        chatMessages.appendChild(streamMessageDiv);
+        return { streamMessageDiv, contentDiv };
+    }
+
+    function appendMessage(role, content) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${role}-message`;
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                ${formatMessage(content)}
+            </div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function formatMessage(content) {
+        // 处理代码块（支持动态更新）
+        let formatted = content;
+        
+        // 完整代码块处理
+        formatted = formatted.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+            return `<pre><button class="copy-button" onclick="copyCode(this)">复制</button>
+                    <code${lang ? ` class="language-${lang}"` : ''}>${code}</code></pre>`;
+        });
+        
+        // 处理未闭合的临时代码块（流式输出期间）
+        formatted = formatted.replace(/```(\w+)?\n([\s\S]*?)(?=\n```|$)/g, (match, lang, code) => {
+            return `<pre class="temp-code"><code${lang ? ` class="language-${lang}"` : ''}>${code}</code></pre>`;
+        });
+        
+        // 行内代码
+        formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
+        
+        // 换行处理
+        return formatted.replace(/\n/g, '<br>');
+    }
+
+    // 以下函数保持不变
+    function copyCode(button) {
+        const code = button.nextElementSibling.textContent;
+        navigator.clipboard.writeText(code).then(() => {
+            const originalText = button.textContent;
+            button.textContent = '已复制！';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
+        });
+    }
+
+    function saveConversation() {
+        const messages = Array.from(chatMessages.children).map(msg => ({
+            role: msg.classList.contains('user-message') ? 'user' : 'assistant',
+            content: msg.querySelector('.message-content').innerHTML
+        }));
+
+        const conversation = {
+            id: currentConversationId,
+            messages,
+            timestamp: Date.now()
+        };
+
+        const existingIndex = conversationHistory.findIndex(c => c.id === currentConversationId);
+        if (existingIndex !== -1) {
+            conversationHistory[existingIndex] = conversation;
+        } else {
+            conversationHistory.unshift(conversation);
+        }
+
+        localStorage.setItem('chatHistory', JSON.stringify(conversationHistory));
+        updateHistoryUI();
+    }
+
+    function updateHistoryUI() {
+        const historyContainer = document.querySelector('.history');
+        historyContainer.innerHTML = conversationHistory.map(conv => `
+            <div class="history-item" data-id="${conv.id}">
+                ${conv.messages[0]?.content.replace(/<[^>]*>/g, '').substring(0, 30) || '新对话'}...
+            </div>
+        `).join('');
+
+        document.querySelectorAll('.history-item').forEach(item => {
+            item.addEventListener('click', () => loadConversation(item.dataset.id));
+        });
+    }
+
+    function loadConversation(id) {
+        const conversation = conversationHistory.find(c => c.id === id);
+        if (!conversation) return;
+
+        currentConversationId = id;
+        chatMessages.innerHTML = '';
+        conversation.messages.forEach(msg => {
+            appendMessage(msg.role, msg.content);
+        });
+    }
+
+    // 初始化主题
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+    }
+    // 初始化粒子背景
+particlesJS('particles-js', {
+    particles: {
+        number: { value: 80 },
+        color: { value: '#8A2BE2' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5 },
+        size: { value: 3 },
+        move: {
+            enable: true,
+            speed: 2,
+            direction: 'none',
+            random: false,
+            straight: false,
+            out_mode: 'out',
+            bounce: false,
+        }
+    },
+    interactivity: {
+        detect_on: 'canvas',
+        events: {
+            onhover: { enable: true, mode: 'repulse' },
+            onclick: { enable: true, mode: 'push' },
+            resize: true
+        }
+    }
+});
+// 登录系统逻辑
+const validUsers = {
+        'Evan': '110131',
+        '丝竹': 'qnlwgwnlwbpp'
+    };
+
+    // DOM元素
+    const settingsBtn = document.querySelector('.settings-btn');
+    const modal = document.querySelector('.settings-modal');
+    const closeBtn = document.querySelector('.close');
+    const loginToggle = document.querySelector('#login-toggle');
+    const loginForm = document.querySelector('#login-form');
+    const usernameInput = document.querySelector('#username');
+    const passwordInput = document.querySelector('#password');
+    const submitBtn = document.querySelector('#submit-login');
+    const usernameDisplay = document.querySelector('#username-display');
+
+    // 打开设置弹窗
+    settingsBtn.addEventListener('click', () => {
+        modal.style.display = 'block';
+    });
+
+    // 关闭弹窗
+    closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    // 点击外部关闭
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // 切换登录表单
+    loginToggle.addEventListener('click', () => {
+        loginForm.style.display = 'block';
+        loginToggle.style.display = 'none';
+    });
+
+    // 提交登录
+    submitBtn.addEventListener('click', () => {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!username || !password) {
+            alert('请输入用户名和密码！');
+            return;
+        }
+
+        if (validUsers[username] === password) {
+            usernameDisplay.textContent = username;
+            loginForm.style.display = 'none';
+            loginToggle.textContent = '注销';
+            loginToggle.onclick = logout;
+            localStorage.setItem('currentUser', username);
+        } else {
+            alert('身份验证失败！');
+            passwordInput.value = '';
+        }
+    });
+
+    // 注销功能
+    function logout() {
+        usernameDisplay.textContent = '未登录';
+        loginToggle.textContent = '点击登录';
+        loginToggle.onclick = () => loginForm.style.display = 'block';
+        localStorage.removeItem('currentUser');
+    }
+
+    // 初始化用户状态
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+        usernameDisplay.textContent = savedUser;
+        loginToggle.textContent = '注销';
+        loginToggle.onclick = logout;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jork AI使用说明</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #4f46e5;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .api-list, .feature-list {
+            list-style: none;
+        }
+
+        .api-list li, .feature-list li {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8fafc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .api-icon, .feature-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+            background: #e0e7ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 0;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AI助手使用说明</h1>
+        <p>智能对话，让交流更轻松</p>
+    </div>
+
+    <div class="section">
+        <h2>语言模型积分消耗表</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tanka</th>
+                    <th>每次对话消耗(积分)</th>
+                    <th>特点</th>
+                    <th>适用场景</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Canto</td>
+                    <td>30</td>
+                    <td>响应快速，成本较低</td>
+                    <td>日常对话，简单任务</td>
+                </tr>
+                <tr>
+                    <td>Epic</td>
+                    <td>100</td>
+                    <td>理解深入，逻辑性强</td>
+                    <td>复杂分析，专业领域</td>
+                </tr>
+                <tr>
+                    <td>Claude-2</td>
+                    <td>200</td>
+                    <td>长文本处理能力强</td>
+                    <td>文档分析，内容创作</td>
+                </tr>
+                <tr>
+                    <td>Jork 3 mini</td>
+                    <td>60</td>
+                    <td>多模态能力出色</td>
+                    <td>图像分析，跨模态任务</td>
+                </tr>
+                <tr>
+                    <td>Jork 3 Sonnet</td>
+                    <td>100</td>
+                    <td>综合能力均衡</td>
+                    <td>通用型任务</td>
+                </tr>
+                <tr>
+                    <td>Claude 3.7 Sonnet满血版</td>
+                    <td>800</td>
+                    <td>定制化程度高</td>
+                    <td>特定领域专业任务</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>支持的API接入</h2>
+        <ul class="api-list">
+            <li>
+                <div class="api-icon">🤖</div>
+                <div>
+                    <strong>OpenAI ChatGPT</strong>
+                    <p>支持API Key接入，可选3.5/4.0版本</p>
+                </div>
+            </li>
+            <li>
+                <div class="api-icon">🎯</div>
+                <div>
+                    <strong>Anthropic Claude</strong>
+                    <p>支持最新Claude-2/3模型，支持长文本处理</p>
+                </div>
+            </li>
+            <li>
+                <div class="api-icon">🌟</div>
+                <div>
+                    <strong>Google Gemini</strong>
+                    <p>支持Pro/Ultra版本，多模态处理能力强</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>更多功能</h2>
+        <ul class="feature-list">
+            <li>
+                <div class="feature-icon">📝</div>
+                <div>
+                    <strong>多轮对话记忆</strong>
+                    <p>支持上下文理解，对话更连贯自然</p>
+                </div>
+            </li>
+            <li>
+                <div class="feature-icon">🖼️</div>
+                <div>
+                    <strong>图像理解与生成</strong>
+                    <p>支持图片描述、分析和AI绘图</p>
+                </div>
+            </li>
+            <li>
+                <div class="feature-icon">📊</div>
+                <div>
+                    <strong>数据可视化</strong>
+                    <p>支持图表生成和数据分析</p>
+                </div>
+            </li>
+            <li>
+                <div class="feature-icon">🔄</div>
+                <div>
+                    <strong>实时翻译</strong>
+                    <p>支持多语言实时互译</p>
+                </div>
+            </li>
+            <li>
+                <div class="feature-icon">💾</div>
+                <div>
+                    <strong>对话导出</strong>
+                    <p>支持多种格式导出对话记录</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+</body>
+</html>
