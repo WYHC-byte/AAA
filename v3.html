@@ -7,6 +7,56 @@
     <title>Jork-v3 AI助手</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* 基本样式 */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+      background-color: #f5f7fb;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #fff;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .left-header {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .credits {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+    }
+    .credits i {
+      margin-right: 8px;
+      color: #ffc107;
+    }
+    .credits span {
+      margin-right: 10px;
+      font-weight: 600;
+    }
+    .model-select {
+      padding: 6px 10px;
+      font-size: 0.9em;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background-color: #f5f7fb;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b68ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 14px;
+    }
+    .model-select:focus {
+      outline: none;
+      border-color: #7b68ee;
+      box-shadow: 0 0 0 2px rgba(123,104,238,0.2);
+    }
         /* 链接容器样式 */
 .footer-links-container {
     padding: 15px 0;
@@ -1198,6 +1248,44 @@ body.dark-mode .ask-content p {
         grid-template-columns: 1fr;
     }
 }
+/* 在原有样式中添加 */
+.message-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.message:hover .message-actions {
+    opacity: 1;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--light-text);
+    padding: 4px;
+    font-size: 0.9em;
+    transition: color 0.2s;
+}
+
+.action-btn:hover {
+    color: var(--primary-color);
+}
+
+body.dark-mode .action-btn {
+    color: var(--dark-text);
+}
+
+.liked {
+    color: #4CAF50 !important;
+}
+
+.disliked {
+    color: #F44336 !important;
+}
 
     </style>
 </head>
@@ -1255,13 +1343,23 @@ body.dark-mode .ask-content p {
         <!-- 主内容区域 -->
         <div class="main-content">
             <div class="header">
+                <!-- 模型选择放置在最左边 -->
+                <div class="left-header">
+                  <select class="model-select" id="modelSelect">
+                    <option value="Jork-3-Epic" data-cost="100">Jork-3-Epic (100积分)</option>
+                    <option value="Jork-3-Canto" data-cost="60">Jork-3-Canto (60积分)</option>
+                    <option value="Jork-3-Tanka" data-cost="30">Jork-3-Tanka (30积分)</option>
+                    <option value="Claude-3.5-Sonnet" data-cost="300">Claude-3.5-Sonnet (300积分)</option>
+                    <option value="Claude-3.7-Sonnet" data-cost="800">Claude-3.7-Sonnet (800积分)</option>
+                  </select>
+                </div>
+                <!-- 积分显示放在右边 -->
                 <div class="credits">
-                    <i class="fas fa-coins"></i>
-                    <span>积分：3000</span>
-                    <button class="add-credits-btn" title="添加积分"><i class="fas fa-plus-circle"></i></button>
+                  <i class="fas fa-coins"></i>
+                  <span>积分：3000</span>
+                  <button class="add-credits-btn" title="添加积分"><i class="fas fa-plus-circle"></i></button>
                 </div>
             </div>
-
             <!-- 聊天区域 -->
             <div class="chat-area">
                 <!-- Replace the existing chat-intro div with this new structure -->
@@ -1345,16 +1443,6 @@ body.dark-mode .ask-content p {
 
 <!-- 修改后的聊天输入区域 -->
 <div class="chat-input-container">
-    <!-- 将模型选择框移到左边 -->
-    <div class="model-selection" style="margin-right: 10px;">
-      <select class="model-select" id="modelSelect" style="width: 150px; padding: 6px 10px; font-size: 0.85em;">
-        <option value="Tanka" data-model="Tanka" data-cost="30">Jork 2.5 Tanka (30积分)</option>
-        <option value="Canto" data-model="Canto" data-cost="100" selected>Jork 2.5 Canto (100积分)</option>
-        <option value="Epic" data-model="Epic" data-cost="200">Jork 2.5 Epic (200积分)</option>
-        <option value="Tanka3" data-model="Tanka" data-cost="60">Jork 3 mini (60积分)</option>
-        <option value="Sonnet" data-model="Canto" data-cost="100">Jork 3 Sonnet (100积分)</option>
-      </select>
-    </div>
   
     <!-- 输入框和按钮部分保持不变 -->
     <div class="chat-input-wrapper">
@@ -1954,11 +2042,24 @@ document.querySelectorAll('.model-option').forEach(item => {
             
             const timeString = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute:'2-digit'});
             
-            aiMessageElement.innerHTML = `
-                <div class="message-content"></div>
-                <div class="message-time">${timeString}</div>
-            `;
+            // 修改为 ↓↓↓
+aiMessageElement.innerHTML = `
+    <div class="message-content"></div>
+    <div class="message-time">${timeString}</div>
+    <div class="message-actions">
+        <button class="action-btn like-btn" title="点赞"><i class="far fa-thumbs-up"></i></button>
+        <button class="action-btn dislike-btn" title="不喜欢"><i class="far fa-thumbs-down"></i></button>
+        <button class="action-btn copy-btn" title="复制"><i class="far fa-copy"></i></button>
+    </div>
+`;
             chatArea.appendChild(aiMessageElement);
+
+            // 在 chatArea.appendChild(aiMessageElement); 之后添加 ↓↓↓
+setTimeout(() => {
+    const currentChat = chatHistory.find(chat => chat.id === currentChatId);
+    const latestMessage = currentChat.messages[currentChat.messages.length - 1];
+    bindMessageActions(aiMessageElement, latestMessage.id);
+}, 100);
             
             const messageContentElement = aiMessageElement.querySelector('.message-content');
             let aiResponseText = '';
@@ -2009,9 +2110,11 @@ document.querySelectorAll('.model-option').forEach(item => {
                             // 如果是完整响应，保存到聊天历史
                             if (isDone && currentChat) {
                                 currentChat.messages.push({
+                                    id: `msg_${Date.now()}`, // 添加唯一ID
                                     role: 'assistant',
                                     content: aiResponseText,
                                     timestamp: new Date().toISOString(),
+                                    feedback: null,// 新增反馈字段
                                     thinking: thinkingText
                                 });
                                 saveChatHistory();
@@ -2253,6 +2356,52 @@ document.querySelectorAll('.model-option').forEach(item => {
             
             return { response, thinking };
         }
+        // 在 generateFallbackResponse 函数之后添加 ↓↓↓
+function bindMessageActions(messageElement, messageId) {
+    const likeBtn = messageElement.querySelector('.like-btn');
+    const dislikeBtn = messageElement.querySelector('.dislike-btn');
+    const copyBtn = messageElement.querySelector('.copy-btn');
+    const messageContent = messageElement.querySelector('.message-content');
+
+    // 点赞功能
+    likeBtn.addEventListener('click', () => {
+        const currentChat = chatHistory.find(chat => chat.id === currentChatId);
+        const message = currentChat.messages.find(m => m.id === messageId);
+        message.feedback = message.feedback === 'like' ? null : 'like';
+        
+        likeBtn.innerHTML = message.feedback === 'like' 
+            ? '<i class="fas fa-thumbs-up"></i>' 
+            : '<i class="far fa-thumbs-up"></i>';
+        dislikeBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+        
+        saveChatHistory();
+    });
+
+    // 不喜欢功能
+    dislikeBtn.addEventListener('click', () => {
+        const currentChat = chatHistory.find(chat => chat.id === currentChatId);
+        const message = currentChat.messages.find(m => m.id === messageId);
+        message.feedback = message.feedback === 'dislike' ? null : 'dislike';
+        
+        dislikeBtn.innerHTML = message.feedback === 'dislike' 
+            ? '<i class="fas fa-thumbs-down"></i>' 
+            : '<i class="far fa-thumbs-down"></i>';
+        likeBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+        
+        saveChatHistory();
+    });
+
+    // 复制功能
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(messageContent.textContent).then(() => {
+            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+            }, 2000);
+        });
+    });
+}
+// ↑↑↑ 添加到此结束
 
         // 添加消息到聊天区域
         function addMessage(content, role) {
@@ -2710,6 +2859,19 @@ document.querySelectorAll('.model-option').forEach(item => {
                     // 插入到AI回复前面
                     chatArea.insertBefore(thinkingElement, aiMessageElement);
                 }
+                // 恢复反馈状态 (添加在循环内)
+    if (msg.role === 'assistant') {
+        const messageElements = document.querySelectorAll('.ai-message');
+        const lastMessage = messageElements[messageElements.length - 1];
+        const likeBtn = lastMessage.querySelector('.like-btn');
+        const dislikeBtn = lastMessage.querySelector('.dislike-btn');
+        
+        if (msg.feedback === 'like') {
+            likeBtn.innerHTML = '<i class="fas fa-thumbs-up"></i>';
+        } else if (msg.feedback === 'dislike') {
+            dislikeBtn.innerHTML = '<i class="fas fa-thumbs-down"></i>';
+        }
+    }
             });
         }
 
@@ -2760,19 +2922,19 @@ document.querySelectorAll('.model-option').forEach(item => {
 
         redeemButton.addEventListener('click', () => {
             const code = redeemCode.value.trim();
-            if (code === '110131HK') {
+            if (code === 'Aq7Rz9TwLk3JqXc5VbNm2OpQr1StUvWxYz8') {
                 if (hasRedeemedCode) {
                     redeemMessage.textContent = "您已经兑换过积分，每台设备仅能兑换一次";
                     redeemMessage.style.color = "#ff3333";
                     redeemMessage.style.display = "block";
                 } else {
                     // 增加积分
-                    currentCredits += 100000;
+                    currentCredits += 1000;
                     saveCreditsToStorage(); // 新增
                     updateCreditsDisplay();
                     
                     // 显示成功信息
-                    redeemMessage.textContent = "兑换成功！已添加100000积分";
+                    redeemMessage.textContent = "兑换成功！已添加1000积分";
                     redeemMessage.style.color = "green";
                     redeemMessage.style.display = "block";
                     
