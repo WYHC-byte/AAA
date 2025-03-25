@@ -7,6 +7,53 @@
     <title>Jork-v3 AI助手</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* 命令面板样式 */
+.command-palette {
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+    background: var(--light-card);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    width: 200px;
+    z-index: 1000;
+}
+
+.command-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.command-item:hover {
+    background: rgba(123,104,238,0.1);
+}
+        .search-results {
+    border-left: 3px solid #4CAF50;
+    padding: 15px;
+    margin: 10px 0;
+    background: rgba(76,175,80,0.05);
+    border-radius: 8px;
+}
+
+.search-abstract {
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.related-results ul {
+    padding-left: 20px;
+    margin-top: 8px;
+}
+
+.related-results li {
+    margin-bottom: 6px;
+    padding-left: 8px;
+}
         /* 基本样式 */
     body {
       margin: 0;
@@ -1286,7 +1333,21 @@ body.dark-mode .action-btn {
 .disliked {
     color: #F44336 !important;
 }
+.search-status {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    background: rgba(123,104,238,0.1);
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
 
+.search-status.active {
+    display: flex;
+}
     </style>
 </head>
 <body>
@@ -1443,6 +1504,10 @@ body.dark-mode .action-btn {
 
 <!-- 修改后的聊天输入区域 -->
 <div class="chat-input-container">
+    <div class="search-status">
+        <i class="fas fa-search"></i>
+        <span>联网搜索模式已激活</span>
+    </div>
   
     <!-- 输入框和按钮部分保持不变 -->
     <div class="chat-input-wrapper">
@@ -1457,10 +1522,19 @@ body.dark-mode .action-btn {
         <button class="input-button upload-button" title="上传附件">
           <i class="fas fa-paperclip"></i>
         </button>
+        <button class="input-button voice-button" title="语音输入">
+            <i class="fas fa-microphone"></i>
+        </button>
+
         <button class="input-button send-button" title="发送">
           <i class="fas fa-paper-plane"></i>
         </button>
       </div>
+      <!-- 添加语音状态提示 -->
+<div class="voice-status">
+    <i class="fas fa-microphone"></i>
+    <span>正在聆听...</span>
+</div>
     </div>
   </div>
   
@@ -1821,7 +1895,64 @@ body.dark-mode .api-test-btn {
                 sidebar.classList.toggle('collapsed');
             });
 
-        
+        // 语音识别逻辑
+let recognition;
+if ('webkitSpeechRecognition' in window) {
+    recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+
+    document.querySelector('.voice-button').addEventListener('click', () => {
+        recognition.start();
+        document.querySelector('.voice-status').style.display = 'flex';
+    });
+
+    recognition.onresult = (e) => {
+        const transcript = Array.from(e.results)
+            .map(result => result[0].transcript)
+            .join('');
+        chatInput.value = transcript;
+    };
+
+    recognition.onerror = () => {
+        document.querySelector('.voice-status').style.display = 'none';
+    };
+} else {
+    document.querySelector('.voice-button').style.display = 'none';
+}
+
+// 监听输入事件
+chatInput.addEventListener('keyup', (e) => {
+    if (e.key === '/') {
+        showCommandPalette();
+    }
+});
+
+// 命令面板
+function showCommandPalette() {
+    const commands = [
+        {icon: 'fa-language', name: '翻译', prompt: '将以下内容翻译成英文：'},
+        {icon: 'fa-code', name: '优化代码', prompt: '优化这段代码的可读性：'},
+        {icon: 'fa-file-alt', name: '总结', prompt: '用三点总结以下内容：'}
+    ];
+
+    const palette = `<div class="command-palette">
+        ${commands.map(cmd => `
+            <div class="command-item" data-prompt="${cmd.prompt}">
+                <i class="fas ${cmd.icon}"></i>${cmd.name}
+            </div>
+        `).join('')}
+    </div>`;
+
+    // 插入到输入框下方并处理点击
+    document.body.insertAdjacentHTML('beforeend', palette);
+    document.querySelectorAll('.command-item').forEach(item => {
+        item.addEventListener('click', () => {
+            chatInput.value = item.dataset.prompt;
+            document.querySelector('.command-palette').remove();
+        });
+    });
+}
 
             function saveCreditsToStorage() {
     try {
@@ -1993,6 +2124,30 @@ document.querySelectorAll('.model-option').forEach(item => {
   });
 });
 
+// 新增DuckDuckGo搜索函数
+async function searchWeb(query) {
+    try {
+        const response = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&no_redirect=1`);
+        const data = await response.json();
+        return {
+            abstract: data.AbstractText,
+            results: data.RelatedTopics?.slice(0, 3).map(t => t.Text).filter(Boolean) || []
+        };
+    } catch (error) {
+        console.error('搜索失败:', error);
+        return null;
+    }
+}
+
+// 修改搜索按钮点击处理
+searchButton.addEventListener('click', () => {
+    isSearching = !isSearching;
+    document.querySelector('.search-status').classList.toggle('active', isSearching);
+    searchButton.classList.toggle('active', isSearching);
+});
+
+
+
     // 修改发送消息时积分扣除逻辑（示例中的 sendMessage 函数中使用）
   async function sendMessage() {
     const message = chatInput.value.trim();
@@ -2017,6 +2172,24 @@ document.querySelectorAll('.model-option').forEach(item => {
     if (chatIntro) {
       chatIntro.style.display = 'none';
     }
+    let searchContent = '';
+    if (isSearching) {
+        addMessage("🔍 正在联网搜索最新信息...", 'system');
+        const searchResult = await searchWeb(message);
+        if (searchResult) {
+            searchContent = `网络搜索结果：
+${searchResult.abstract ? `摘要：${searchResult.abstract}\n` : ''}
+${searchResult.results.length > 0 ? `相关结果：\n${searchResult.results.map((r,i) => `${i+1}. ${r}`).join('\n')}` : ''}`;
+            
+            // 显示搜索过程
+            addMessage(`🌐 搜索完成，找到${searchResult.results.length}条相关信息`, 'system');
+        }
+    }
+
+    // 构建AI提示词
+    const aiPrompt = isSearching ? 
+        `${searchContent}\n\n基于以上实时信息回答：${message}` : 
+        message;
     
     addMessage(message, 'user');
     
@@ -2035,6 +2208,7 @@ document.querySelectorAll('.model-option').forEach(item => {
       
       saveChatHistory();
     }
+
             
             // 创建AI消息框
             const aiMessageElement = document.createElement('div');
@@ -2065,12 +2239,18 @@ setTimeout(() => {
             let aiResponseText = '';
             
             try {
-                // 如果开启了思考模式，先显示思考过程
-                if (isThinking) {
-                    // 以思考模式调用AI
-                    const thinkingPrompt = `
-你需要展示你的思考过程，首先，你需要肯定用户以表明你接下了这个任务，你可以在开始运用"好的"，"嗯"，然后，你可以运用首先，让后等词语来展示你的思考顺序，记住，你要分段，例如：首先一段，然后：然后一段，等，你可以在过程中穿插一些句子，例如：等一等，用户好像...，你在过程中要运用一些网络热梗，最后，总结一下答案。思考过程请标注为"思考过程"，最终答案请标注为"最终答案"
+  // 如果开启了思考模式，先显示思考过程
+  if (isThinking) {
+    // 以思考模式调用AI
+    const thinkingPrompt = `
+用户问你（${message}）这里是你的思考过程：
+1. 首先，你需要肯定用户以表明你接下了这个任务，可以运用"好的👌"，"嗯🤔"等网络热梗；
+2. 然后分段展示思考顺序：
+   - 首先分析用户的问题："${message}"，发现需要...
+   - 然后，
+3. 最后总结答案。
 `;
+            
                     
                     // 显示思考区域
                     const thinkingElement = document.createElement('div');
@@ -2195,41 +2375,34 @@ setTimeout(() => {
                         return;
                     }
                     
-                    // 获取返回的数据流
                     const reader = response.body.getReader();
-                    const decoder = new TextDecoder();
-                    let fullText = '';
-                    
-                    // 读取数据流
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
-                        
-                        // 解码当前数据块
-                        const chunk = decoder.decode(value, { stream: true });
-                        
-                        // 解析SSE响应的数据块
-                        const lines = chunk.split('\n');
-                        for (const line of lines) {
-                            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-                                try {
-                                    const data = JSON.parse(line.substring(6));
-                                    if (data.choices && data.choices[0].delta && data.choices[0].delta.content) {
-                                        const contentChunk = data.choices[0].delta.content;
-                                        fullText += contentChunk;
-                                        onChunk(contentChunk, false); // 发送部分响应
-                                    }
-                                } catch (e) {
-                                    console.error('解析SSE数据出错:', e);
-                                }
-                            }
+        const decoder = new TextDecoder();
+        let buffer = '';
+        
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            buffer += decoder.decode(value, { stream: true });
+            
+            // 处理可能存在的多行数据
+            const parts = buffer.split('\n');
+            buffer = parts.pop() || ''; // 保留未处理完的部分
+            
+            for (const line of parts) {
+                if (line.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(line.substring(6));
+                        if (data.choices?.[0]?.delta?.content) {
+                            onChunk(data.choices[0].delta.content, false);
                         }
+                    } catch (e) {
+                        console.error('解析SSE数据出错:', e);
                     }
-                    
-                    // 通知流式传输完成
-                    onChunk('', true);
-                    // 返回完整文本，以便保存到历史记录
-                    return fullText;
+                }
+            }
+        }
+        onChunk('', true);
                 } catch (apiError) {
                     console.error('API调用异常:', apiError);
                     // 如果API请求出错，使用后备响应
@@ -2478,6 +2651,12 @@ function bindMessageActions(messageElement, messageId) {
             // 处理标题
     content = content.replace(/^##\s+(.+)$/gm, '<h2 class="message-heading">$1</h2>');
     content = content.replace(/^###\s+(.+)$/gm, '<h3 class="message-subheading">$1</h3>');
+    content = content.replace(/网络搜索结果：/g, '<div class="search-results"><h4>网络搜索结果</h4>');
+    content = content.replace(/摘要：/g, '<div class="search-abstract"><strong>摘要：</strong>');
+    content = content.replace(/相关结果：/g, '</div><div class="related-results"><strong>相关结果：</strong><ul>');
+    content = content.replace(/\d+\. /g, '<li>');
+    content = content.replace(/(\n|$)/g, '</li>$1');
+    content = content.replace(/(<\/ul>)?<\/div>/g, '</ul></div></div>');
             // 处理代码块
             content = content.replace(/```([a-z]*)\n([\s\S]*?)```/g, (match, language, code) => {
                 return `
