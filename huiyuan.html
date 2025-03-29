@@ -1,172 +1,298 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JorkAI 尊享会员</title>
+    <title>JorkAI - 会员计划</title>
     <style>
+        :root {
+            --primary-color: #4a10c0;
+            --secondary-color: #6d3ae9;
+            --light-color: #f7f7f8;
+            --dark-color: #202123;
+            --border-radius: 12px;
+            --success-color: #34d399;
+            --warning-color: #fbbf24;
+            --error-color: #ef4444;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
         }
-
+        
         body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background: #000;
-            color: #fff;
+            background-color: #ffffff;
+            color: var(--dark-color);
             line-height: 1.6;
-            background-image: 
-                radial-gradient(circle at 20% 20%, rgba(255, 193, 7, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 193, 7, 0.15) 0%, transparent 50%);
         }
-
+        
+        header {
+            background-color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 0 20px;
         }
-
-        header {
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            background-color: var(--primary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .hero {
             text-align: center;
-            margin-bottom: 4rem;
-            padding-top: 2rem;
+            padding: 80px 20px;
+            background: linear-gradient(180deg, #f9f9fb 0%, #ffffff 100%);
             position: relative;
         }
-
-        .logo {
-            font-size: 4.5rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-            letter-spacing: 2px;
+            display: inline-block;
         }
-
-        .subtitle {
-            font-size: 1.8rem;
-            color: #FFC107;
-            font-weight: 300;
-            text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        
+        .hero p {
+            font-size: 20px;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 40px;
         }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .feature-card {
-            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            border: 1px solid rgba(255, 193, 7, 0.1);
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #FFD700, transparent);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.2);
-            border-color: rgba(255, 193, 7, 0.3);
-        }
-
-        .feature-card:hover::before {
-            opacity: 1;
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            color: #FFD700;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-        }
-
-        .feature-title {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: #FFC107;
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
             font-weight: 600;
-        }
-
-        .feature-description {
-            color: #B8B8B8;
-            font-size: 1.1rem;
-        }
-
-        .cta-section {
-            text-align: center;
-            margin-top: 4rem;
-            position: relative;
-        }
-
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
-            z-index: 0;
-        }
-
-        .cta-button {
-            background: linear-gradient(45deg, #FFD700, #FFA500);
-            color: #000;
-            padding: 1.2rem 3rem;
-            border-radius: 3rem;
-            font-size: 1.4rem;
+            font-size: 16px;
             border: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(74, 16, 192, 0.15);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid #eaeaea;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--light-color);
+            color: var(--primary-color);
+        }
+        
+        .pricing-section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+        
+        .section-title p {
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .pricing-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #eaeaea;
+            display: flex;
+            flex-direction: column;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 5px 20px rgba(255, 193, 7, 0.3);
         }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.4);
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
         }
-
-        .cta-button::after {
-            content: '';
+        
+        .popular-badge {
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            top: 12px;
+            right: -30px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 5px 30px;
             transform: rotate(45deg);
-            transition: 0.5s;
+            font-size: 14px;
+            font-weight: bold;
         }
-
-        .cta-button:hover::after {
-            left: 100%;
+        
+        .pricing-card h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
         }
-
+        
+        .price {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .price-period {
+            font-size: 16px;
+            font-weight: normal;
+            color: #666;
+        }
+        
+        .features {
+            margin: 20px 0;
+            flex-grow: 1;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            background-color: var(--light-color);
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+        
+        .feature-tooltip {
+            position: relative;
+            cursor: help;
+        }
+        
+        .feature-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--dark-color) transparent transparent transparent;
+        }
+        
         .modal {
             display: none;
             position: fixed;
@@ -174,227 +300,1316 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            justify-content: center;
-            align-items: center;
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
+            align-items: center;
+            justify-content: center;
         }
-
+        
         .modal-content {
-            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
-            padding: 3rem;
-            border-radius: 1.5rem;
-            max-width: 90%;
-            width: 600px;
+            background-color: white;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.1);
             position: relative;
-            border: 1px solid rgba(255, 193, 7, 0.2);
-            box-shadow: 0 20px 50px rgba(255, 193, 7, 0.2);
+            animation: modalFadeIn 0.4s ease;
         }
-
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         .close-modal {
             position: absolute;
-            right: 1.5rem;
-            top: 1.5rem;
-            font-size: 2rem;
-            color: #FFC107;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
             cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: var(--dark-color);
+        }
+        
+        .code-container {
+            margin: 30px 0;
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .code {
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 1px;
+            color: var(--primary-color);
+            word-break: break-all;
+            padding: 5px 40px 5px 5px;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            right: 20px;
             background: none;
             border: none;
-            transition: transform 0.3s ease;
-        }
-
-        .close-modal:hover {
-            transform: rotate(90deg);
-        }
-
-        .code-container {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 1.5rem;
-            border-radius: 1rem;
-            margin: 1.5rem 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255, 193, 7, 0.1);
-        }
-
-        .code {
-            font-family: 'Courier New', monospace;
-            color: #FFD700;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-        }
-
-        .copy-button {
-            background: #FFD700;
-            color: #000;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 2rem;
+            color: var(--primary-color);
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 18px;
+            transition: all 0.3s;
         }
-
-        .copy-button:hover {
-            background: #FFA500;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+        
+        .copy-btn:hover {
+            transform: scale(1.1);
         }
-
-        .modal-title {
-            font-size: 2rem;
-            color: #FFD700;
-            margin-bottom: 1rem;
-            text-align: center;
-            font-weight: 700;
-        }
-
-        .modal-subtitle {
-            color: #B8B8B8;
-            margin-bottom: 2rem;
-            text-align: center;
-            font-size: 1.1rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .logo {
-                font-size: 3rem;
-            }
-            
-            .subtitle {
-                font-size: 1.4rem;
-            }
-
-            .feature-card {
-                padding: 2rem;
-            }
-        }
-
-        /* 金属质感效果 */
-        .metallic-effect {
-            position: relative;
-        }
-
-        .metallic-effect::after {
-            content: '';
+        
+        .floating-elements {
             position: absolute;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .float-element {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: rgba(109, 58, 233, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(100px, 100px) rotate(90deg);
+            }
+            50% {
+                transform: translate(200px, 50px) rotate(180deg);
+            }
+            75% {
+                transform: translate(100px, -50px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+        
+        .success-message {
+            display: none;
+            color: var(--success-color);
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 60px;
+        }
+        
+        .countdown-value {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: var(--border-radius);
+            padding: 10px;
+            width: 60px;
+            text-align: center;
+        }
+        
+        .countdown-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .features-section {
+            padding: 80px 0;
+            background-color: var(--light-color);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--light-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+        
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+        
+        .feature-card p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .testimonials-section {
+            padding: 80px 0;
+        }
+        
+        .testimonials-container {
+            margin-top: 40px;
+            position: relative;
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin: 0 10px;
+            display: none;
+        }
+        
+        .testimonial-card.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .testimonial-quote {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #444;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .testimonial-info h4 {
+            margin: 0;
+            color: var(--dark-color);
+        }
+        
+        .testimonial-info p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .testimonial-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 15px;
+        }
+        
+        .testimonial-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .testimonial-dot.active {
+            background-color: var(--primary-color);
+            transform: scale(1.2);
+        }
+        
+        .faq-section {
+            padding: 80px 0;
+            background-color: var(--light-color);
+        }
+        
+        .faq-container {
+            max-width: 800px;
+            margin: 40px auto 0;
+        }
+        
+        .faq-item {
+            background-color: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--dark-color);
+            transition: all 0.3s;
+        }
+        
+        .faq-question:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .faq-answer.active {
+            padding: 0 20px 20px;
+            max-height: 300px;
+        }
+        
+        .faq-icon {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            transition: transform 0.3s;
+        }
+        
+        .faq-icon:before,
+        .faq-icon:after {
+            content: '';
+            position: absolute;
+            background-color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .faq-icon:before {
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            transform: translateY(-50%);
+        }
+        
+        .faq-icon:after {
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            transform: translateX(-50%);
+        }
+        
+        .faq-item.active .faq-icon:after {
+            transform: translateX(-50%) rotate(90deg);
+            opacity: 0;
+        }
+        
+        .comparison-section {
+            padding: 80px 0;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px 20px;
+            text-align: center;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .comparison-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: #f9f9fb;
+        }
+        
+        .comparison-table tr:hover {
+            background-color: #f0f0f5;
+        }
+        
+        .check-icon {
+            color: var(--success-color);
+            font-size: 20px;
+        }
+        
+        .x-icon {
+            color: var(--error-color);
+            font-size: 20px;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+        }
+        
+        .notification-text {
+            flex-grow: 1;
+        }
+        
+        .notification-close {
+            margin-left: 15px;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s;
+        }
+        
+        .notification-close:hover {
+            color: var(--dark-color);
+        }
+        
+        .theme-switch {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 60px;
+            height: 30px;
+            background-color: var(--dark-color);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+        .theme-switch-handle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            transition: transform 0.3s;
+        }
+        
+        .theme-switch.dark .theme-switch-handle {
+            transform: translateX(30px);
+        }
+        
+        body.dark-theme {
+            background-color: #121212;
+            color: white;
+        }
+        
+        body.dark-theme header {
+            background-color: #1e1e1e;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        body.dark-theme .hero {
+            background: linear-gradient(180deg, #1a1a1a 0%, #121212 100%);
+        }
+        
+        body.dark-theme .hero p {
+            color: #aaa;
+        }
+        
+        body.dark-theme .pricing-card,
+        body.dark-theme .feature-card,
+        body.dark-theme .testimonial-card,
+        body.dark-theme .faq-item,
+        body.dark-theme .modal-content {
+            background-color: #1e1e1e;
+            border-color: #333;
+        }
+        
+        body.dark-theme .pricing-card:hover,
+        body.dark-theme .feature-card:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        body.dark-theme .feature-icon,
+        body.dark-theme .feature-card-icon,
+        body.dark-theme .testimonial-avatar {
+            background-color: #333;
+        }
+        
+        body.dark-theme .nav-links a {
+            color: #ddd;
+        }
+        
+        body.dark-theme .nav-links a:hover {
+            color: var(--secondary-color);
+        }
+        
+        body.dark-theme .section-title p,
+        body.dark-theme .feature-card p,
+        body.dark-theme .testimonial-info p,
+        body.dark-theme .countdown-label {
+            color: #aaa;
+        }
+        
+        body.dark-theme .faq-section,
+        body.dark-theme .features-section {
+            background-color: #0a0a0a;
+        }
+        
+        body.dark-theme .code-container {
+            background-color: #333;
+        }
+        
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+        
+        .language-btn {
+            background-color: white;
+            border: 1px solid #eaeaea;
+            border-radius: var(--border-radius);
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .language-btn:hover {
+            background-color: var(--light-color);
+        }
+        
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
             right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, 
-                transparent 0%, 
-                rgba(255, 215, 0, 0.1) 45%, 
-                rgba(255, 215, 0, 0.2) 50%, 
-                rgba(255, 215, 0, 0.1) 55%, 
-                transparent 100%);
-            pointer-events: none;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+            overflow: hidden;
+        }
+        
+        .language-dropdown.show {
+            display: block;
+            animation: dropdownFadeIn 0.3s ease;
+        }
+        
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .language-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .language-option:hover {
+            background-color: var(--light-color);
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0;
+            background-color: var(--primary-color);
+            z-index: 1001;
+            transition: width 0.3s;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            .hero p {
+                font-size: 18px;
+            }
+            .pricing-card {
+                padding: 30px;
+            }
+            .comparison-table {
+                font-size: 14px;
+            }
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px;
+            }
+            .nav-menu {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .nav-links {
+                margin-top: 15px;
+                flex-direction: column;
+                width: 100%;
+            }
+            .theme-switch {
+                bottom: 20px;
+                left: 20px;
+            }
+            .language-switcher {
+                top: 70px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo metallic-effect">JorkAI</div>
-            <p class="subtitle">尊享AI智慧 • 开启无限可能</p>
-        </header>
-
-        <div class="features">
-            <div class="feature-card">
-                <div class="feature-icon">👑</div>
-                <h2 class="feature-title">尊享特权</h2>
-                <p class="feature-description">享受专属会员特权，优先访问最新AI功能，让您永远领先一步。</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <h2 class="feature-title">极速响应</h2>
-                <p class="feature-description">采用顶尖AI技术，毫秒级响应，为您提供流畅的对话体验。</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🎯</div>
-                <h2 class="feature-title">精准洞察</h2>
-                <p class="feature-description">深度解析您的需求，提供最精准的解决方案和建议。</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🌟</div>
-                <h2 class="feature-title">创意激发</h2>
-                <p class="feature-description">AI驱动的创意助手，帮助您突破思维限制，激发无限灵感。</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h2 class="feature-title">隐私保护</h2>
-                <p class="feature-description">军级加密技术，为您的数据提供最严密的安全保障。</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🎁</div>
-                <h2 class="feature-title">专属礼遇</h2>
-                <p class="feature-description">尊享会员专属权益，独家功能抢先体验。</p>
-            </div>
-        </div>
-
-        <div class="cta-section">
-            <button class="cta-button" id="tryButton">立即开启尊享之旅</button>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="theme-switch" id="themeSwitch">
+        <div class="theme-switch-handle"></div>
+    </div>
+    
+    <div class="language-switcher">
+        <button class="language-btn" id="languageBtn">中文 (CN) <span>▼</span></button>
+        <div class="language-dropdown" id="languageDropdown">
+            <div class="language-option" data-lang="cn">中文 (CN)</div>
+            <div class="language-option" data-lang="en">English (EN)</div>
+            <div class="language-option" data-lang="jp">日本語 (JP)</div>
+            <div class="language-option" data-lang="kr">한국어 (KR)</div>
+            <div class="language-option" data-lang="fr">Français (FR)</div>
         </div>
     </div>
+    
+    <div class="notification" id="notification">
+        <div class="notification-icon">✓</div>
+        <div class="notification-text">
+            <strong>提示</strong>
+            <p>限时优惠：立即注册可获得额外赠送3天会员！</p>
+        </div>
+        <div class="notification-close" id="notificationClose">×</div>
+    </div>
 
-    <div class="modal" id="trialModal">
-        <div class="modal-content">
-            <button class="close-modal" id="closeModal">×</button>
-            <h2 class="modal-title">您的专属尊享邀请码</h2>
-            <p class="modal-subtitle">使用以下兑换码，即刻开启7天豪华体验特权</p>
-            <div class="code-container">
-                <span class="code">Aq7Rz9TwLk3JqXc5VbNm2OpQr1StUvWxYz8</span>
-                <button class="copy-button" id="copyButton">复制代码</button>
+    <div class="floating-elements">
+        <div class="float-element" style="top: 15%; left: 10%; animation-delay: 0s; width: 80px; height: 80px;"></div>
+        <div class="float-element" style="top: 50%; left: 20%; animation-delay: 5s; width: 60px; height: 60px;"></div>
+        <div class="float-element" style="top: 30%; left: 80%; animation-delay: 2s; width: 100px; height: 100px;"></div>
+        <div class="float-element" style="top: 70%; left: 75%; animation-delay: 7s; width: 50px; height: 50px;"></div>
+        <div class="float-element" style="top: 80%; left: 40%; animation-delay: 3s; width: 70px; height: 70px;"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="nav-menu">
+                <div class="logo">
+                    <div class="logo-icon">J</div>
+                    JorkAI
+                </div>
+                <div class="nav-links">
+                    <a href="#features">功能</a>
+                    <a href="#pricing">会员计划</a>
+                    <a href="#comparison">对比</a>
+                    <a href="#testimonials">用户评价</a>
+                    <a href="#faq">常见问题</a>
+                </div>
             </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>JorkAI 会员计划</h1>
+            <p>解锁JorkAI语言大模型的全部潜力，体验更强大的AI能力</p>
+            <button class="btn" id="getCodeBtn">获取专属会员码</button>
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-value" id="days">00</div>
+                    <div class="countdown-label">天</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="hours">00</div>
+                    <div class="countdown-label">时</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="minutes">00</div>
+                    <div class="countdown-label">分</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="seconds">00</div>
+                    <div class="countdown-label">秒</div>
+                </div>
+            </div>
+            <p style="font-size: 14px; margin-top: 5px; color: #666;">限时优惠截止时间</p>
+        </div>
+    </section>
+
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>强大功能解锁</h2>
+                <p>JorkAI为会员提供强大功能和优质体验，满足不同场景需求</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔍</div>
+                    <h3>超强搜索能力</h3>
+                    <p>直接通过AI进行网络搜索，获取最新信息和精准回答，无需自行检索</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📊</div>
+                    <h3>数据可视化</h3>
+                    <p>自动将复杂数据转换为直观图表，帮助您更好理解和展示信息</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔒</div>
+                    <h3>隐私保护</h3>
+                    <p>会员对话不会用于模型训练，保障您的数据和创意安全</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">⚡</div>
+                    <h3>优先响应</h3>
+                    <p>会员享有优先响应权限，高峰时段也能快速获得回复</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🧠</div>
+                    <h3>高级模型访问</h3>
+                    <p>独家访问最先进的大语言模型，享受更精准、更智能的回答</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📱</div>
+                    <h3>多设备同步</h3>
+                    <p>在手机、平板和电脑间无缝切换，对话历史和偏好设置自动同步</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing-section" id="pricing">
+        <div class="container">
+            <div class="section-title">
+                <h2>选择适合您的计划</h2>
+                <p>我们提供多种会员方案，满足个人和企业的不同需求</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>免费版</h3>
+                    <div class="price">¥0<span class="price-period">/永久</span></div>
+                    <p>基础AI体验</p>
+                    <div class="features">
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>每日有限使用次数</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>对Jork-3-Canto的限制访问</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>标准响应速度</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>对Jork-3-Tanka的无限制访问</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" style="margin-top: 20px;">开始使用</button>
+                </div>
+                
+                <div class="pricing-card" style="border: 2px solid var(--primary-color); transform: scale(1.05);">
+                    <div class="popular-badge">最受欢迎</div>
+                    <h3>高级会员</h3>
+                    <div class="price">¥99<span class="price-period">/月</span></div>
+                    <p>全面AI能力</p>
+                    <div class="features">
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>无限使用次数</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>优先访问新功能</span>
+                        </div>
+                        <div class="feature feature-tooltip">
+                            <div class="feature-icon">✓</div>
+                            <span>高级AI模型访问</span>
+                            <div class="tooltip-text">访问我们最强大的Jork-3-Epic模型，能处理更复杂的问题</div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>更快响应速度</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>专属客户支持</span>
+                        </div>
+                        <div class="feature feature-tooltip">
+                            <div class="feature-icon">✓</div>
+                            <span>高级数据分析</span>
+                            <div class="tooltip-text">深度分析数据并生成专业图表</div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>无广告体验</span>
+                        </div>
+                    </div>
+                    <button class="btn" style="margin-top: 20px;" id="getCodeBtn2">获取7天免费体验</button>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3>企业版</h3>
+                    <div class="price">联系销售</div>
+                    <p>为企业量身定制</p>
+                    <div class="features">
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>团队成员无限访问</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>专属模型定制</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>企业级安全保障</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>专属技术支持</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>API开发支持</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>专属培训服务</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">✓</div>
+                            <span>数据私有化部署</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline" style="margin-top: 20px;">联系我们</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="comparison-section" id="comparison">
+        <div class="container">
+            <div class="section-title">
+                <h2>功能对比</h2>
+                <p>各会员等级详细功能对比，帮助您做出最佳选择</p>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>功能</th>
+                            <th>免费版</th>
+                            <th>高级会员</th>
+                            <th>企业版</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>每日使用次数</td>
+                            <td>20次</td>
+                            <td>无限</td>
+                            <td>无限</td>
+                        </tr>
+                        <tr>
+                            <td>模型版本</td>
+                            <td>基础版</td>
+                            <td>高级版</td>
+                            <td>企业专属版</td>
+                        </tr>
+                        <tr>
+                            <td>响应优先级</td>
+                            <td>标准</td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>网络搜索功能</td>
+                            <td><span class="x-icon">×</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>数据可视化</td>
+                            <td>基础图表</td>
+                            <td>高级图表</td>
+                            <td>定制图表</td>
+                        </tr>
+                        <tr>
+                            <td>对话历史保存</td>
+                            <td>7天</td>
+                            <td>永久</td>
+                            <td>永久</td>
+                        </tr>
+                        <tr>
+                            <td>文件处理大小</td>
+                            <td>5MB</td>
+                            <td>50MB</td>
+                            <td>500MB</td>
+                        </tr>
+                        <tr>
+                            <td>多设备同步</td>
+                            <td><span class="x-icon">×</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                            <td><span class="check-icon">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>API接口</td>
+                            <td><span class="x-icon">×</span></td>
+                            <td>基础</td>
+                            <td>完整</td>
+                        </tr>
+                        <tr>
+                            <td>隐私保护</td>
+                            <td>标准</td>
+                            <td>高级</td>
+                            <td>企业级</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials-section" id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>用户评价</h2>
+                <p>听听用户们怎么说</p>
+            </div>
+            <div class="testimonials-container">
+                <div class="testimonial-card active" data-index="0">
+                    <p class="testimonial-quote">"JorkAI彻底改变了我的工作方式。作为一名作家，它不仅帮我克服了写作瓶颈，还提供了宝贵的研究见解。高级会员绝对值得投资！"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">L</div>
+                        <div class="testimonial-info">
+                            <h4>李文强</h4>
+                            <p>自由作家 | 高级会员</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card" data-index="1">
+                    <p class="testimonial-quote">"我们团队使用JorkAI企业版已经6个月了，效率提升明显。客户服务响应迅速，定制功能满足了我们特殊的行业需求。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">Z</div>
+                        <div class="testimonial-info">
+                            <h4>张志远</h4>
+                            <p>技术总监 | 企业会员</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card" data-index="2">
+                    <p class="testimonial-quote">"作为学生，JorkAI帮助我更高效地学习和研究。高级会员的无限使用和快速响应功能让我在紧张的考试季节也能得心应手。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">W</div>
+                        <div class="testimonial-info">
+                            <h4>开朗的网友1028</h4>
+                            <p>研究生 | 高级会员</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-nav">
+                <div class="testimonial-dot active" data-index="0"></div>
+                <div class="testimonial-dot" data-index="1"></div>
+                <div class="testimonial-dot" data-index="2"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <div class="section-title">
+                <h2>常见问题</h2>
+                <p>关于JorkAI会员的常见疑问解答</p>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        如何使用兑换码激活会员？
+                        <div class="faq-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        获取兑换码后，请登录JorkAI应用或网站，在"账户设置"→"会员管理"中找到"兑换码"输入框，输入您的兑换码并点击"激活"即可。系统会立即为您开通相应的会员权益。
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        会员到期后会自动续费吗？
+                        <div class="faq-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        是的，为了保证您的使用体验不中断，会员到期前会自动续费。如果您不希望自动续费，可以在"账户设置"→"会员管理"中关闭自动续费功能。我们会在到期前7天发送提醒邮件，您可以随时取消。
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        免费试用期结束后会自动扣费吗？
+                        <div class="faq-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        不会。7天免费试用期结束后，您的会员权益会自动变为免费版，不会产生任何费用。如果您希望继续享受高级会员服务，需要手动订阅会员计划。
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        可以更换会员计划吗？
+                        <div class="faq-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        可以。您可以随时在"账户设置"→"会员管理"中升级会员计划，升级后将立即生效，并按剩余天数比例补差价。如需降级，当前计划到期后才能生效。
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        企业版如何申请？
+                        <div class="faq-icon"></div>
+                    </div>
+                    <div class="faq-answer">
+                        企业版需要联系我们的销售团队定制方案。请通过官网的"联系我们"页面填写表单，或直接发送邮件至enterprise@jorkai.com，我们的专属顾问会在24小时内与您联系。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal" id="codeModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>您的专属兑换码</h2>
+            <p>恭喜！您获得了7天JorkAI高级会员限时体验资格</p>
+            <div class="code-container">
+                <div class="code" id="promoCode">Aq7Rz9TwLk3JqXc5VbNm2OpQr1StUvWxYz8</div>
+                <button class="copy-btn" id="copyBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="success-message" id="copySuccess">兑换码已复制到剪贴板！</div>
+            <p>请在7天内在JorkAI应用内使用此兑换码激活您的会员权益</p>
+            <div class="countdown" style="margin-top: 20px;">
+                <div class="countdown-item">
+                    <div class="countdown-value">07</div>
+                    <div class="countdown-label">天</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value">00</div>
+                    <div class="countdown-label">时</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value">00</div>
+                    <div class="countdown-label">分</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value">00</div>
+                    <div class="countdown-label">秒</div>
+                </div>
+            </div>
+            <p style="font-size: 14px; margin: 5px 0 20px;">兑换码有效期</p>
+            <button class="btn" id="activateBtn">立即前往JorkAI应用</button>
         </div>
     </div>
 
     <script>
-        const modal = document.getElementById('trialModal');
-        const tryButton = document.getElementById('tryButton');
-        const closeModal = document.getElementById('closeModal');
-        const copyButton = document.getElementById('copyButton');
-        const codeText = document.querySelector('.code').textContent;
+        // 获取元素
+        const modal = document.getElementById('codeModal');
+        const getCodeBtn = document.getElementById('getCodeBtn');
+        const getCodeBtn2 = document.getElementById('getCodeBtn2');
+        const closeBtn = document.querySelector('.close-modal');
+        const copyBtn = document.getElementById('copyBtn');
+        const promoCode = document.getElementById('promoCode');
+        const copySuccess = document.getElementById('copySuccess');
+        const faqItems = document.querySelectorAll('.faq-item');
+        const testimonialDots = document.querySelectorAll('.testimonial-dot');
+        const testimonialCards = document.querySelectorAll('.testimonial-card');
+        const themeSwitch = document.getElementById('themeSwitch');
+        const languageBtn = document.getElementById('languageBtn');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const notification = document.getElementById('notification');
+        const notificationClose = document.getElementById('notificationClose');
+        const progressBar = document.getElementById('progressBar');
+        const activateBtn = document.getElementById('activateBtn');
 
-        tryButton.addEventListener('click', () => {
+        // 打开弹窗
+        function openModal() {
             modal.style.display = 'flex';
-        });
+            document.body.style.overflow = 'hidden';
+        }
 
-        closeModal.addEventListener('click', () => {
+        // 关闭弹窗
+        function closeModal() {
             modal.style.display = 'none';
-        });
+            document.body.style.overflow = 'auto';
+            copySuccess.style.display = 'none';
+        }
 
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-
-        copyButton.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(codeText);
-                copyButton.textContent = '复制成功';
-                copyButton.style.background = '#4CAF50';
+        // 复制兑换码
+        function copyCode() {
+            const textToCopy = promoCode.innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                copySuccess.style.display = 'block';
                 setTimeout(() => {
-                    copyButton.textContent = '复制代码';
-                    copyButton.style.background = '#FFD700';
-                }, 2000);
-            } catch (err) {
-                console.error('复制失败:', err);
+                    copySuccess.style.display = 'none';
+                }, 3000);
+            }).catch(err => {
+                console.error('复制失败: ', err);
+            });
+        }
+        
+        // FAQ手风琴效果
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            const answer = item.querySelector('.faq-answer');
+            
+            question.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                
+                // 关闭所有FAQ
+                faqItems.forEach(faqItem => {
+                    faqItem.classList.remove('active');
+                    faqItem.querySelector('.faq-answer').classList.remove('active');
+                });
+                
+                // 如果当前不是激活状态，则激活当前FAQ
+                if (!isActive) {
+                    item.classList.add('active');
+                    answer.classList.add('active');
+                }
+            });
+        });
+        
+        // 轮播图效果
+        testimonialDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = dot.getAttribute('data-index');
+                
+                // 更新激活状态
+                testimonialDots.forEach(d => d.classList.remove('active'));
+                testimonialCards.forEach(card => card.classList.remove('active'));
+                
+                dot.classList.add('active');
+                document.querySelector(`.testimonial-card[data-index="${index}"]`).classList.add('active');
+            });
+        });
+        
+        // 自动轮播
+        let currentTestimonial = 0;
+        
+        function nextTestimonial() {
+            testimonialCards[currentTestimonial].classList.remove('active');
+            testimonialDots[currentTestimonial].classList.remove('active');
+            
+            currentTestimonial = (currentTestimonial + 1) % testimonialCards.length;
+            
+            testimonialCards[currentTestimonial].classList.add('active');
+            testimonialDots[currentTestimonial].classList.add('active');
+        }
+        
+        // 设置自动轮播间隔
+        setInterval(nextTestimonial, 5000);
+        
+        // 暗色模式切换
+        themeSwitch.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            themeSwitch.classList.toggle('dark');
+        });
+        
+        // 语言切换
+        languageBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            languageDropdown.classList.toggle('show');
+        });
+        
+        document.addEventListener('click', () => {
+            languageDropdown.classList.remove('show');
+        });
+        
+        languageDropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (e.target.classList.contains('language-option')) {
+                const lang = e.target.getAttribute('data-lang');
+                languageBtn.innerHTML = e.target.innerText + ' <span>▼</span>';
+                languageDropdown.classList.remove('show');
+                // 这里可以添加实际的语言切换逻辑
             }
+        });
+        
+        // 显示通知
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 3000);
+        
+        notificationClose.addEventListener('click', () => {
+            notification.classList.remove('show');
+        });
+        
+        // 页面滚动进度条
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+            const clientHeight = document.documentElement.clientHeight || window.innerHeight;
+            const scrolled = (scrollTop / (scrollHeight - clientHeight)) * 100;
+            
+            progressBar.style.width = scrolled + '%';
+        });
+        
+        // 倒计时
+        const countdownDate = new Date();
+        countdownDate.setDate(countdownDate.getDate() + 3); // 3天后
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = countdownDate - now;
+            
+            // 计算天、时、分、秒
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // 更新显示
+            document.getElementById('days').innerText = days.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+        }
+        
+        // 立即更新一次倒计时
+        updateCountdown();
+        // 设置每秒更新一次
+        setInterval(updateCountdown, 1000);
+        
+        // 激活按钮点击事件
+        activateBtn.addEventListener('click', () => {
+            alert('即将跳转到JorkAI应用激活页面...');
+        });
+
+        // 事件监听
+        getCodeBtn.addEventListener('click', openModal);
+        getCodeBtn2.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        copyBtn.addEventListener('click', copyCode);
+
+        // 点击模态框外部关闭模态框
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        // 创建浮动元素动画
+        const floatElements = document.querySelectorAll('.float-element');
+        floatElements.forEach((element, index) => {
+            const size = Math.random() * 50 + 30;
+            element.style.width = `${size}px`;
+            element.style.height = `${size}px`;
+            element.style.animationDuration = `${Math.random() * 10 + 15}s`;
+            element.style.animationDelay = `${index * 2}s`;
         });
     </script>
 </body>

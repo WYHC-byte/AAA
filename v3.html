@@ -1496,8 +1496,6 @@ body.dark-mode .action-btn {
         </div>
     </div>
 </div>
-
-<!-- Add these styles to your existing CSS -->
                 <!-- 聊天消息将在这里动态加载 -->
             </div>
               
@@ -1522,19 +1520,12 @@ body.dark-mode .action-btn {
         <button class="input-button upload-button" title="上传附件">
           <i class="fas fa-paperclip"></i>
         </button>
-        <button class="input-button voice-button" title="语音输入">
-            <i class="fas fa-microphone"></i>
-        </button>
 
         <button class="input-button send-button" title="发送">
           <i class="fas fa-paper-plane"></i>
         </button>
       </div>
       <!-- 添加语音状态提示 -->
-<div class="voice-status">
-    <i class="fas fa-microphone"></i>
-    <span>正在聆听...</span>
-</div>
     </div>
   </div>
   
@@ -1895,64 +1886,7 @@ body.dark-mode .api-test-btn {
                 sidebar.classList.toggle('collapsed');
             });
 
-        // 语音识别逻辑
-let recognition;
-if ('webkitSpeechRecognition' in window) {
-    recognition = new webkitSpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = true;
 
-    document.querySelector('.voice-button').addEventListener('click', () => {
-        recognition.start();
-        document.querySelector('.voice-status').style.display = 'flex';
-    });
-
-    recognition.onresult = (e) => {
-        const transcript = Array.from(e.results)
-            .map(result => result[0].transcript)
-            .join('');
-        chatInput.value = transcript;
-    };
-
-    recognition.onerror = () => {
-        document.querySelector('.voice-status').style.display = 'none';
-    };
-} else {
-    document.querySelector('.voice-button').style.display = 'none';
-}
-
-// 监听输入事件
-chatInput.addEventListener('keyup', (e) => {
-    if (e.key === '/') {
-        showCommandPalette();
-    }
-});
-
-// 命令面板
-function showCommandPalette() {
-    const commands = [
-        {icon: 'fa-language', name: '翻译', prompt: '将以下内容翻译成英文：'},
-        {icon: 'fa-code', name: '优化代码', prompt: '优化这段代码的可读性：'},
-        {icon: 'fa-file-alt', name: '总结', prompt: '用三点总结以下内容：'}
-    ];
-
-    const palette = `<div class="command-palette">
-        ${commands.map(cmd => `
-            <div class="command-item" data-prompt="${cmd.prompt}">
-                <i class="fas ${cmd.icon}"></i>${cmd.name}
-            </div>
-        `).join('')}
-    </div>`;
-
-    // 插入到输入框下方并处理点击
-    document.body.insertAdjacentHTML('beforeend', palette);
-    document.querySelectorAll('.command-item').forEach(item => {
-        item.addEventListener('click', () => {
-            chatInput.value = item.dataset.prompt;
-            document.querySelector('.command-palette').remove();
-        });
-    });
-}
 
             function saveCreditsToStorage() {
     try {
