@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>青冥修仙录</title>
+    <style>
+        :root {
+            --primary: #2c5f2d;
+            --secondary: #97c1a9;
+            --gold: #ffd700;
+        }
+
+        body {
+            font-family: 'Microsoft Yahei', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            background: #e9f5e9;
+        }
+
+        /* 建筑面板 */
+        .building-panel {
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .building {
+            padding: 15px;
+            margin: 10px 0;
+            background: var(--secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .building:hover {
+            transform: translateX(5px);
+        }
+
+        /* 主游戏区 */
+        .main-content {
+            padding: 20px;
+            position: relative;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* 灵田 */
+        .field {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .plot {
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            background: #fff;
+        }
+
+        .herb-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: grow 0.5s ease-out;
+        }
+
+        @keyframes grow {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .timer {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        /* NPC对话框 */
+        .npc-dialog {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            padding: 20px;
+            display: none;
+        }
+
+        /* 炼丹界面 */
+        .alchemy-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .ingredient {
+            border: 2px solid var(--primary);
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .selected {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- 建筑面板 -->
+    <div class="building-panel">
+        <div class="building" onclick="showAlchemyPanel()">炼丹房</div>
+        <div class="building" onclick="showLibrary()">藏经阁</div>
+        <div class="building" onclick="showTaskNPC()">任务堂</div>
+    </div>
+
+    <!-- 主游戏区 -->
+    <div class="main-content">
+        <div class="status-bar">
+            <span>💰功德: <span id="gold">0</span></span>
+            <span>🌿灵草: <span id="herbs">0</span></span>
+            <span>⚡境界: <span id="realm">凡人</span></span>
+        </div>
+
+        <div class="field" id="field"></div>
+
+        <!-- 炼丹面板 -->
+        <div class="npc-dialog" id="alchemyPanel">
+            <h3>九转炼丹炉</h3>
+            <div class="alchemy-panel" id="ingredients"></div>
+            <button onclick="startAlchemy()">开炉炼丹</button>
+            <button onclick="closeDialog('alchemyPanel')">关闭</button>
+        </div>
+
+        <!-- 任务对话框 -->
+        <div class="npc-dialog" id="taskDialog">
+            <h3 id="npcName">药老</h3>
+            <p id="questDesc"></p>
+            <p>奖励：<span id="questReward"></span></p>
+            <button onclick="acceptQuest()">接受任务</button>
+            <button onclick="closeDialog('taskDialog')">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // 游戏状态
+        const state = {
+            gold: 0,
+            herbs: 0,
+            realm: '凡人',
+            exp: 0,
+            plantingTime: 10,
+            plots: Array(6).fill({ planted: false }),
+            inventory: {
+                herbs: { '七星草': 0, '龙涎香': 0 },
+                pills: {}
+            },
+            currentQuest: null
+        };
+
+        // 初始化灵田
+        function initField() {
+            const field = document.getElementById('field');
+            field.innerHTML = state.plots.map((plot, index) => `
+                <div class="plot" data-index="${index}" onclick="handlePlot(${index})">
+                    ${plot.planted ? `
+                        <div class="herb-icon"></div>
+                        <div class="timer">${getTimerText(index)}</div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // 处理地块点击
+        function handlePlot(index) {
+            state.plots[index].planted ? harvest(index) : plant(index);
+        }
+
+        // 种植逻辑
+        function plant(index) {
+            state.plots[index] = {
+                planted: true,
+                startTime: Date.now(),
+                duration: state.plantingTime * 1000
+            };
+            updatePlot(index);
+            startGrowthTimer(index);
+        }
+
+        // 收获逻辑
+        function harvest(index) {
+            const plot = state.plots[index];
+            if (Date.now() - plot.startTime < plot.duration) return;
+
+            state.herbs++;
+            state.exp += 10;
+            checkRealm();
+            state.plots[index].planted = false;
+            updateDisplay();
+        }
+
+        // 境界突破
+        function checkRealm() {
+            const realms = [
+                { exp: 100, name: '炼气期' },
+                { exp: 500, name: '筑基期' },
+                { exp: 2000, name: '金丹期' }
+            ];
+
+            const newRealm = realms.reduce((acc, r) => 
+                state.exp >= r.exp ? r.name : acc, '凡人'
+            );
+
+            if (newRealm !== state.realm) {
+                state.realm = newRealm;
+                alert(`✨突破至${newRealm}！✨`);
+                updateDisplay();
+            }
+        }
+
+        // 显示炼丹面板
+        function showAlchemyPanel() {
+            document.getElementById('ingredients').innerHTML = 
+                Object.entries(state.inventory.herbs).map(([name, count]) => `
+                    <div class="ingredient" onclick="selectIngredient('${name}')">
+                        <h4>${name}</h4>
+                        <span>库存: ${count}</span>
+                    </div>
+                `).join('');
+            showDialog('alchemyPanel');
+        }
+
+        // 材料选择
+        let selectedIngredients = [];
+        function selectIngredient(name) {
+            const index = selectedIngredients.indexOf(name);
+            if (index > -1) {
+                selectedIngredients.splice(index, 1);
+            } else if (selectedIngredients.length < 3) {
+                selectedIngredients.push(name);
+            }
+            updateSelection();
+        }
+
+        function updateSelection() {
+            document.querySelectorAll('.ingredient').forEach(el => {
+                el.classList.toggle('selected', 
+                    selectedIngredients.includes(el.querySelector('h4').textContent)
+                );
+            });
+        }
+
+        // 炼丹逻辑
+        function startAlchemy() {
+            if (selectedIngredients.length !== 3) {
+                alert('需要选择三种材料！');
+                return;
+            }
+
+            // 检查配方
+            const recipe = Object.entries({
+                '筑基丹': ['七星草', '龙涎香', '七星草'],
+                '回春散': ['七星草', '七星草', '七星草']
+            }).find(([name, recipe]) => 
+                JSON.stringify([...selectedIngredients].sort()) === 
+                JSON.stringify([...recipe].sort())
+            );
+
+            if (recipe) {
+                state.inventory.pills[recipe[0]] = (state.inventory.pills[recipe[0]] || 0) + 1;
+                alert(`成功炼制${recipe[0]}！`);
+            } else {
+                alert('炼丹失败...');
+            }
+            closeDialog('alchemyPanel');
+        }
+
+        // 任务系统
+        function showTaskNPC() {
+            const quest = {
+                desc: '收集5株七星草',
+                requirement: { herb: '七星草', count: 5 },
+                reward: { gold: 100, item: '筑基丹' }
+            };
+
+            document.getElementById('questDesc').textContent = quest.desc;
+            document.getElementById('questReward').textContent = 
+                `${quest.reward.gold}金币 + ${quest.reward.item}`;
+            state.currentQuest = quest;
+            showDialog('taskDialog');
+        }
+
+        function acceptQuest() {
+            if (state.inventory.herbs['七星草'] >= 5) {
+                state.gold += 100;
+                state.inventory.pills['筑基丹'] = 1;
+                alert('任务完成！获得筑基丹');
+            } else {
+                alert('灵草不足，继续努力吧！');
+            }
+            closeDialog('taskDialog');
+        }
+
+        // 通用对话框控制
+        function showDialog(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeDialog(id) {
+            document.getElementById(id).style.display = 'none';
+            selectedIngredients = [];
+        }
+
+        // 更新显示
+        function updateDisplay() {
+            document.getElementById('gold').textContent = state.gold;
+            document.getElementById('herbs').textContent = state.herbs;
+            document.getElementById('realm').textContent = state.realm;
+            initField();
+        }
+
+        // 定时器
+        function startGrowthTimer(index) {
+            const interval = setInterval(() => {
+                if (!state.plots[index].planted) {
+                    clearInterval(interval);
+                    return;
+                }
+                updatePlot(index);
+            }, 1000);
+        }
+
+        function updatePlot(index) {
+            const plot = document.querySelector(`[data-index="${index}"]`);
+            if (!state.plots[index].planted) {
+                plot.innerHTML = '';
+                return;
+            }
+            
+            const remaining = Math.ceil(
+                (state.plots[index].duration - (Date.now() - state.plots[index].startTime)) / 1000
+            );
+            
+            plot.innerHTML = `
+                <div class="herb-icon"></div>
+                <div class="timer">${remaining > 0 ? `${remaining}s` : '可收获'}
+            `;
+        }
+
+        // 初始化游戏
+        initField();
+        setInterval(() => {
+            state.gold++;
+            updateDisplay();
+        }, 1000);
+    </script>
+</body>
+</html>
