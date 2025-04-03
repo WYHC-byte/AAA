@@ -1,205 +1,557 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JorkAI - 登录</title>
+    <title>JorkAI 登录</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .input-error {
+            border-color: #ef4444 !important;
+        }
+
+        .input-error:focus {
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        /* 添加成功提示样式 */
+        .success-message {
+            color: #10b981;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        /* 添加加载动画 */
+        .loading {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-text {
+            display: inline-block;
         }
 
         body {
             min-height: 100vh;
-            background: linear-gradient(45deg, #0f172a, #1e293b);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
         }
 
         .container {
-            position: relative;
-            width: 400px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            gap: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            flex-wrap: wrap;
         }
 
-        .background-lines {
+        .login-form {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 440px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .chat-animation {
+            background: var(--surface);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 540px;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .message {
+            padding: 16px 20px;
+            border-radius: 16px;
+            margin: 16px;
+            max-width: 80%;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            margin-left: auto;
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .ai-message {
+            background: #f8fafc;
+            color: var(--text);
+            border: 1px solid #e2e8f0;
+        }
+
+        .show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .team-section {
+            padding: 80px 20px;
+            background: var(--surface);
+        }
+
+        .section-title {
+            font-size: 36px;
+            margin-bottom: 60px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .team-member {
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .team-member h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .team-member p {
+            color: var(--text-light);
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        .why-us {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto 80px auto;
+            padding: 20px;
+        }
+
+        .feature {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+
+        .feature p {
+            color: var(--text-light);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                gap: 30px;
+            }
+            
+            .login-form, .chat-animation {
+                max-width: 100%;
+            }
+
+            .form-title {
+                font-size: 28px;
+            }
+
+            .section-title {
+                font-size: 28px;
+                margin-bottom: 40px;
+            }
+        }
+
+        /* 添加炫酷的背景动画 */
+        .background-animation {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
             z-index: -1;
+            overflow: hidden;
         }
 
-        .line {
+        .background-animation::before {
+            content: "";
             position: absolute;
-            width: 2px;
-            height: 100%;
-            background: linear-gradient(to bottom, transparent, #4f46e5, transparent);
-            animation: moveLine 8s infinite linear;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                rgba(99, 102, 241, 0.1),
+                rgba(16, 185, 129, 0.1),
+                rgba(99, 102, 241, 0.1)
+            );
+            animation: rotate 20s linear infinite;
+            transform-origin: 0 0;
         }
 
-        @keyframes moveLine {
-            0% {
-                transform: translateY(-100%);
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg) translate(-50%, -50%);
             }
-            100% {
-                transform: translateY(100%);
+            to {
+                transform: rotate(360deg) translate(-50%, -50%);
             }
-        }
-
-        h2 {
-            color: #fff;
-            text-align: center;
-            font-size: 2em;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 30px;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border: none;
-            outline: none;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.3s;
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        input:focus {
-            border-color: #4f46e5;
-            box-shadow: 0 0 15px rgba(79, 70, 229, 0.3);
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background: #4f46e5;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        button:hover {
-            background: #6366f1;
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
-        }
-
-        .error-message {
-            color: #ef4444;
-            text-align: center;
-            margin-top: 10px;
-            font-size: 14px;
-            opacity: 0;
-            transition: 0.3s;
-        }
-
-        .error-message.show {
-            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <div class="background-lines">
-        <div class="line" style="left: 20%"></div>
-        <div class="line" style="left: 40%"></div>
-        <div class="line" style="left: 60%"></div>
-        <div class="line" style="left: 80%"></div>
+    <div class="background-animation"></div>
+    <div class="container">
+        <div class="login-form">
+            <h2 class="form-title">JorkAI 登录</h2>
+            <div class="input-group">
+                <label>昵称</label>
+                <input type="text" id="username" placeholder="Enter your username">
+                <div class="error-message" id="username-error">请输入您的用户名</div>
+            </div>
+            <div class="input-group">
+                <label>密码</label>
+                <input type="password" id="password" placeholder="Enter your password">
+                <div class="error-message" id="password-error">请输入您的密码</div>
+            </div>
+            <div class="input-group">
+                <label>会员码</label>
+                <input type="text" id="inviteCode" placeholder="Enter invitation code">
+                <div class="error-message" id="invite-error">会员码</div>
+                <div class="success-message" id="invite-success">Valid invitation code!</div>
+            </div>
+            <button class="login-btn" id="loginBtn" onclick="validateAndLogin()">
+                <span class="btn-text">登入</span>
+                <div class="loading"></div>
+            </button>
+        </div>
+
+        <div class="chat-animation" id="chatAnimation">
+            <!-- Messages will be added here dynamically -->
+        </div>
     </div>
 
-    <div class="container">
-        <h2>登录/注册</h2>
-        <form id="loginForm">
-            <div class="input-group">
-                <input type="text" id="username" placeholder="用户名" required>
+    <div class="team-section">
+        <h2 class="section-title">Why Choose Us</h2>
+        <div class="why-us">
+            <div class="feature">
+                <h3>Smart Dialogue</h3>
+                <p>Advanced AI models providing precise and natural conversations</p>
             </div>
-            <div class="input-group">
-                <input type="password" id="password" placeholder="密码" required>
+            <div class="feature">
+                <h3>Enterprise Security</h3>
+                <p>Bank-level encryption protecting your data privacy</p>
             </div>
-            <div class="input-group">
-                <input type="text" id="inviteCode" placeholder="邀请码" required>
+            <div class="feature">
+                <h3>Continuous Innovation</h3>
+                <p>Regular updates and improvements to enhance your experience</p>
             </div>
-            <button type="submit">登 录</button>
-        </form>
-        <div class="error-message" id="errorMessage">登录信息有误，请重试</div>
+        </div>
+
+        <h2 class="section-title">Core Team</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <h3>Wu Yihu</h3>
+                <p>Chief Technology Officer</p>
+                <p>AI Architecture & Optimization</p>
+            </div>
+            <div class="team-member">
+                <h3>Loby Chen</h3>
+                <p>Product Director</p>
+                <p>Product Strategy & UX Design</p>
+            </div>
+            <div class="team-member">
+                <h3>Kathy Chen</h3>
+                <p>Operations Director</p>
+                <p>Growth & Market Strategy</p>
+            </div>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('loginForm');
-            const errorMessage = document.getElementById('errorMessage');
+        const chatAnimation = document.getElementById('chatAnimation');
+        const messages = [
+            { text: "你好！Jork！我该如何使用你？", type: "user" },
+            { text: "您好！我是Jork！你可以直接向我提问或提出需求，我会基于截至2024年10月的知识库提供精准解答。无论是知识查询、内容创作、学习辅助还是实用工具，只需清晰描述需求即可。对于复杂问题，建议拆分成多轮对话；需要特定格式时，可直接说明（如”用表格对比“）。", type: "ai" },
+            { text: "Can you show me an example?", type: "user" },
+            { text: "Of course! For instance, you can ask me to 'Write an article about artificial intelligence' and I'll generate relevant content for you.", type: "ai" }
+        ];
 
-            // 检查是否有保存的登录信息
-            const savedUsername = localStorage.getItem('username');
-            const savedPassword = localStorage.getItem('password');
+        let messageIndex = 0;
+
+        function validateAndLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const inviteCode = document.getElementById('inviteCode').value;
             
-            if (savedUsername && savedPassword) {
-                document.getElementById('username').value = savedUsername;
-                document.getElementById('password').value = savedPassword;
+            // 重置所有错误状态
+            resetErrors();
+
+            let hasError = false;
+
+            // 验证用户名
+            if (!username.trim()) {
+                showError('username');
+                hasError = true;
             }
 
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
+            // 验证密码
+            if (!password.trim()) {
+                showError('password');
+                hasError = true;
+            }
 
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                const inviteCode = document.getElementById('inviteCode').value;
+            // 验证邀请码
+            if (inviteCode !== 'Aq7Rz9TwLk3JqXc5VbNm2OpQr1StUvWxYz8') {
+                showError('invite');
+                hasError = true;
+            } else {
+                showSuccess('invite');
+            }
 
-                if (username.length > 3 && password.length > 6 && inviteCode === "wxhnylkchcyf") {
-                    // 保存登录信息
-                    localStorage.setItem('username', username);
-                    localStorage.setItem('password', password);
-                    
-                    // 登录成功，跳转到v3.html
-                    window.location.href = 'v3.html';
-                } else {
-                    // 显示错误信息
-                    errorMessage.classList.add('show');
-                    setTimeout(() => {
-                        errorMessage.classList.remove('show');
-                    }, 3000);
-                }
-            });
-        });
+            if (!hasError) {
+                // 显示加载动画
+                const loginBtn = document.getElementById('loginBtn');
+                const btnText = loginBtn.querySelector('.btn-text');
+                const loading = loginBtn.querySelector('.loading');
+                
+                btnText.style.display = 'none';
+                loading.style.display = 'block';
+                loginBtn.disabled = true;
 
-        // 创建动态背景效果
-        function createLines() {
-            const lines = document.querySelectorAll('.line');
-            lines.forEach(line => {
-                line.style.animationDelay = Math.random() * 4 + 's';
-            });
+                // 模拟登录过程
+                setTimeout(() => {
+                    window.location.href = 'chat.html';
+                }, 1500);
+            }
         }
 
-        createLines();
+        function showError(field) {
+            const input = document.getElementById(field === 'invite' ? 'inviteCode' : field);
+            const error = document.getElementById(`${field}-error`);
+            input.classList.add('input-error');
+            error.style.display = 'block';
+            
+            if (field === 'invite') {
+                const success = document.getElementById('invite-success');
+                success.style.display = 'none';
+            }
+        }
+
+        function showSuccess(field) {
+            if (field === 'invite') {
+                const success = document.getElementById('invite-success');
+                const error = document.getElementById('invite-error');
+                const input = document.getElementById('inviteCode');
+                
+                success.style.display = 'block';
+                error.style.display = 'none';
+                input.classList.remove('input-error');
+            }
+        }
+
+        function resetErrors() {
+            const inputs = ['username', 'password', 'inviteCode'];
+            inputs.forEach(id => {
+                const input = document.getElementById(id);
+                const error = document.getElementById(`${id.replace('Code', '')}-error`);
+                input.classList.remove('input-error');
+                error.style.display = 'none';
+            });
+            document.getElementById('invite-success').style.display = 'none';
+        }
+
+        // 添加输入事件监听器
+        document.getElementById('username').addEventListener('input', () => {
+            resetFieldError('username');
+        });
+
+        document.getElementById('password').addEventListener('input', () => {
+            resetFieldError('password');
+        });
+
+        document.getElementById('inviteCode').addEventListener('input', () => {
+            resetFieldError('invite');
+        });
+
+        function resetFieldError(field) {
+            const input = document.getElementById(field === 'invite' ? 'inviteCode' : field);
+            const error = document.getElementById(`${field}-error`);
+            input.classList.remove('input-error');
+            error.style.display = 'none';
+            
+            if (field === 'invite') {
+                const success = document.getElementById('invite-success');
+                success.style.display = 'none';
+            }
+        }
+
+        function addMessage() {
+            if (messageIndex >= messages.length) {
+                messageIndex = 0;
+                chatAnimation.innerHTML = '';
+                setTimeout(addMessage, 1000);
+                return;
+            }
+
+            const message = messages[messageIndex];
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${message.type}-message`;
+            messageElement.textContent = message.text;
+            chatAnimation.appendChild(messageElement);
+
+            setTimeout(() => {
+                messageElement.classList.add('show');
+            }, 100);
+
+            messageIndex++;
+            setTimeout(addMessage, 2000);
+        }
+
+        addMessage();
     </script>
 </body>
 </html>
