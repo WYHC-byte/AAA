@@ -1,2826 +1,2009 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JorkAI - 未来已来</title>
+    <title>jork-3.7-Epic AI Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f0ff',
+                            100: '#e0e0ff',
+                            200: '#c2c1ff',
+                            300: '#a3a1ff',
+                            400: '#8583ff',
+                            500: '#6663ff',
+                            600: '#5D5CDE',
+                            700: '#4b4ab2',
+                            800: '#383786',
+                            900: '#252459',
+                        },
+                        dark: {
+                            100: '#d5d5d5',
+                            200: '#ababab',
+                            300: '#808080',
+                            400: '#565656',
+                            500: '#2b2b2b',
+                            600: '#232323',
+                            700: '#1a1a1a',
+                            800: '#121212',
+                            900: '#0a0a0a',
+                        },
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 2s infinite',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'thinking': 'thinking 2s infinite',
+                    },
+                    keyframes: {
+                        thinking: {
+                            '0%, 100%': { opacity: '0.2' },
+                            '50%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --primary: #8A2BE2;
-            --primary-dark: #7B1FA2;
-            --secondary: #00E5FF;
-            --accent: #FF18F9;
-            --text-primary: #FFFFFF;
-            --text-secondary: #E0E0E0;
-            --background: #0A0A1A;
-            --card-bg: rgba(30, 30, 60, 0.5);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --gradient-1: linear-gradient(120deg, #8A2BE2, #00E5FF);
-            --gradient-2: linear-gradient(45deg, #FF18F9, #8A2BE2);
-            --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        /* For WebKit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(156, 163, 175, 0.5);
+            border-radius: 20px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(156, 163, 175, 0.7);
         }
 
+        /* For Firefox */
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+        }
+
+        /* Global styles */
+        .dark body {
+            background-color: #181818;
+            color: #e5e5e5;
         }
 
         body {
-            background-color: var(--background);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.2) 0%, transparent 30%),
-                radial-gradient(circle at 90% 80%, rgba(0, 229, 255, 0.2) 0%, transparent 30%),
-                radial-gradient(circle at 50% 50%, rgba(255, 24, 249, 0.1) 0%, transparent 50%);
-            background-attachment: fixed;
+            background-color: #FFFFFF;
+            color: #1a1a1a;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(30, 30, 60, 0.5);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        /* Loader Animation */
-        .loader-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: var(--background);
-            z-index: 9999;
-            transition: opacity 0.5s ease-out, visibility 0.5s;
-        }
-
-        .loader {
-            width: 80px;
-            height: 80px;
-            position: relative;
-        }
-
-        .loader:before, .loader:after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background-color: var(--primary);
-            opacity: 0.6;
-            animation: pulse 2s infinite ease-in-out;
-        }
-
-        .loader:after {
-            animation-delay: 1s;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(0);
-            }
-            50% {
-                transform: scale(1.0);
-            }
-        }
-
-        /* Header */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            background: rgba(10, 10, 26, 0.8);
-            z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        header.scrolled {
-            padding: 12px 40px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 1.8rem;
-            text-decoration: none;
-            color: var(--text-primary);
-            position: relative;
-        }
-
-        .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: var(--gradient-1);
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: 700;
-        }
-
-        .logo::after {
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--gradient-1);
-            transition: width 0.3s ease;
-        }
-
-        .logo:hover::after {
-            width: 100%;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 30px;
-        }
-
-        nav a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            position: relative;
-            padding: 5px 0;
-            transition: color 0.3s ease;
-        }
-
-        nav a:hover {
-            color: var(--text-primary);
-        }
-
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--gradient-1);
-            transition: width 0.3s ease;
-        }
-
-        nav a:hover::after {
-            width: 100%;
-        }
-
-        .cta-button {
-            padding: 10px 25px;
-            background: var(--gradient-1);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
+        .dot-typing {
             display: inline-block;
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
-        }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.6);
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 120px 40px 80px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-content {
-            max-width: 1200px;
-            text-align: center;
-            z-index: 2;
-        }
-
-        .hero h1 {
-            font-size: 4.5rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            line-height: 1.2;
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: fadeUp 0.8s ease-out forwards;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .hero p {
-            font-size: 1.4rem;
-            color: var(--text-secondary);
-            margin-bottom: 40px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            animation: fadeUp 0.8s ease-out 0.2s forwards;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            animation: fadeUp 0.8s ease-out 0.4s forwards;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .secondary-button {
-            padding: 10px 25px;
-            background: transparent;
-            color: var(--text-primary);
-            border: 2px solid var(--primary);
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .secondary-button:hover {
-            background: rgba(138, 43, 226, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .floating-shapes {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .shape {
-            position: absolute;
-            opacity: 0.3;
-            filter: blur(10px);
-            animation: float 8s infinite ease-in-out;
-        }
-
-        .shape.circle {
-            width: 150px;
-            height: 150px;
-            background: var(--primary);
-            border-radius: 50%;
-        }
-
-        .shape.circle.blue {
-            top: 20%;
-            right: 15%;
-            background: var(--secondary);
-            animation-delay: 1s;
-        }
-
-        .shape.circle.purple {
-            bottom: 15%;
-            left: 10%;
-            background: var(--primary);
-            animation-delay: 2s;
-        }
-
-        .shape.square {
-            width: 100px;
-            height: 100px;
-            background: var(--accent);
-            border-radius: 20px;
-            animation-delay: 3s;
-            top: 60%;
-            right: 20%;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            50% {
-                transform: translateY(-20px) rotate(10deg);
-            }
-        }
-
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Features */
-        .features {
-            padding: 100px 40px;
-            background: linear-gradient(to bottom, rgba(10, 10, 26, 0), rgba(10, 10, 26, 0.8), rgba(10, 10, 26, 0));
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 60px;
-            position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: var(--gradient-1);
-            border-radius: 2px;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: var(--gradient-glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            transition: all 0.3s ease;
-            border: 1px solid var(--card-border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            background: var(--gradient-glass);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            font-size: 2rem;
-            color: var(--secondary);
-            border: 1px solid var(--card-border);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card h3 {
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .feature-card p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .learn-more {
-            color: var(--secondary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-weight: 600;
-            margin-top: auto;
-            transition: all 0.3s ease;
-        }
-
-        .learn-more:hover {
-            gap: 10px;
-        }
-
-        /* Model Cards Section */
-        .models {
-            padding: 100px 40px;
-            background: linear-gradient(to bottom, rgba(10, 10, 26, 0), rgba(10, 10, 26, 0.3));
-        }
-
-        .models-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .models-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
-
-        .model-card {
-            background: var(--gradient-glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            transition: all 0.3s ease;
-            border: 1px solid var(--card-border);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .model-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .model-card.featured::before {
-            content: '最受欢迎';
-            position: absolute;
-            top: 20px;
-            right: -25px;
-            background: var(--gradient-1);
-            color: white;
-            padding: 5px 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            transform: rotate(45deg);
-        }
-
-        .model-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .model-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            background: var(--gradient-1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .model-info h3 {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
-
-        .model-info p {
-            color: var(--secondary);
-            font-size: 0.9rem;
-        }
-
-        .model-description {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .model-features {
-            list-style: none;
-            margin-bottom: 20px;
-        }
-
-        .model-feature {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            color: var(--text-secondary);
-        }
-
-        .model-feature i {
-            color: var(--secondary);
-        }
-
-        .model-card .cta-button {
-            margin-top: auto;
-            align-self: flex-start;
-        }
-
-        /* Comparison Table */
-        .comparison {
-            padding: 100px 40px;
-            background: linear-gradient(to bottom, rgba(10, 10, 26, 0.3), rgba(10, 10, 26, 0));
-        }
-
-        .comparison-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .comparison-intro {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto 50px;
-        }
-
-        .comparison-intro p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-top: 20px;
-        }
-
-        .comparison-table-wrapper {
-            overflow-x: auto;
-            margin-top: 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--card-border);
-        }
-
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
-
-        .comparison-table th,
-        .comparison-table td {
-            padding: 15px 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        .comparison-table th {
-            background: rgba(30, 30, 60, 0.5);
-            color: var(--text-primary);
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-
-        .comparison-table tr:nth-child(odd) {
-            background: rgba(30, 30, 60, 0.2);
-        }
-
-        .comparison-table tr:nth-child(even) {
-            background: rgba(30, 30, 60, 0.1);
-        }
-
-        .comparison-table tr:hover {
-            background: rgba(30, 30, 60, 0.3);
-        }
-
-        .comparison-table th:first-child,
-        .comparison-table td:first-child {
-            text-align: left;
-            font-weight: 500;
-        }
-
-        .comparison-table .jork-col {
-            background: rgba(138, 43, 226, 0.1);
-            border-left: 2px solid var(--primary);
-            border-right: 2px solid var(--primary);
-        }
-
-        .comparison-table tr:last-child .jork-col {
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .comparison-table thead th.jork-col {
-            background: rgba(138, 43, 226, 0.2);
-            border-top: 2px solid var(--primary);
-        }
-
-        .check-icon {
-            color: #4CAF50;
-        }
-
-        .times-icon {
-            color: #F44336;
-        }
-
-        .rating {
-            display: flex;
-            justify-content: center;
-            color: var(--secondary);
-        }
-
-        /* Demo Section */
-        .demo {
-            padding: 100px 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 60px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .demo-content {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .demo-content h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            background: var(--gradient-2);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .demo-content p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        .demo-points {
-            margin-bottom: 30px;
-        }
-
-        .demo-point {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .demo-point-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--gradient-1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.8rem;
-            flex-shrink: 0;
-        }
-
-        .demo-point-text h4 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .demo-point-text p {
-            margin-bottom: 0;
-            font-size: 0.95rem;
-        }
-
-        .demo-visual {
-            flex: 1;
-            min-width: 300px;
-            position: relative;
-        }
-
-        .chat-demo {
-            width: 100%;
-            height: 500px;
-            background: var(--gradient-glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid var(--card-border);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .chat-header {
-            padding: 15px 20px;
-            background: rgba(30, 30, 60, 0.5);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        .chat-header-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .chat-header-title .logo-icon {
-            width: 28px;
-            height: 28px;
-            font-size: 0.8rem;
-        }
-
-        .chat-header-title h3 {
-            font-size: 1rem;
-        }
-
-        .chat-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .chat-action {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .chat-action:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .message {
-            max-width: 80%;
-            padding: 12px 15px;
-            border-radius: 15px;
-            line-height: 1.5;
-            animation: fadeIn 0.3s ease forwards;
-            position: relative;
-            font-size: 0.95rem;
-        }
-
-        .message.user {
-            align-self: flex-end;
-            background: var(--primary-dark);
-            border-bottom-right-radius: 0;
-        }
-
-        .message.bot {
-            align-self: flex-start;
-            background: rgba(30, 30, 60, 0.7);
-            border-bottom-left-radius: 0;
-            border: 1px solid var(--card-border);
-        }
-
-        .typing-indicator {
-            display: flex;
-            gap: 5px;
-            padding: 12px 15px;
-            max-width: 80px;
-            background: rgba(30, 30, 60, 0.7);
-            border-radius: 15px;
-            border-bottom-left-radius: 0;
-            align-self: flex-start;
-            border: 1px solid var(--card-border);
-            margin-top: 5px;
-        }
-
-        .typing-dot {
             width: 8px;
             height: 8px;
-            background: var(--text-secondary);
             border-radius: 50%;
-            animation: typingBounce 1.4s infinite;
+            background-color: currentColor;
+            margin-right: 4px;
+            animation: thinking 1.5s infinite linear;
         }
 
-        .typing-dot:nth-child(2) {
+        .dot-typing:nth-child(2) {
             animation-delay: 0.2s;
         }
 
-        .typing-dot:nth-child(3) {
+        .dot-typing:nth-child(3) {
             animation-delay: 0.4s;
         }
 
-        @keyframes typingBounce {
-            0%, 60%, 100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-5px);
-            }
+        /* Conversation styles */
+        .message-container {
+            padding: 1rem;
+            transition: background-color 0.3s ease;
         }
 
-        .chat-input {
-            padding: 15px 20px;
-            border-top: 1px solid var(--card-border);
-            display: flex;
-            gap: 15px;
+        .user-message {
+            background-color: #f9fafb;
         }
 
-        .chat-input-field {
-            flex: 1;
-            background: rgba(30, 30, 60, 0.3);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            padding: 12px 15px;
-            color: var(--text-primary);
-            outline: none;
-            transition: all 0.3s ease;
+        .dark .user-message {
+            background-color: #1e1e1e;
         }
 
-        .chat-input-field:focus {
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.3);
+        .ai-message {
+            background-color: #ffffff;
         }
 
-        .chat-input-field::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+        .dark .ai-message {
+            background-color: #181818;
         }
 
-        .chat-send {
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
-            background: var(--gradient-1);
-            border: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(138, 43, 226, 0.3);
+        .message-content {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            font-size: 1rem;
         }
 
-        .chat-send:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.5);
+        .message-content h1, .message-content h2, .message-content h3,
+        .message-content h4, .message-content h5, .message-content h6 {
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-content h1 {
+            font-size: 1.875rem;
+            line-height: 2.25rem;
+        }
+
+        .message-content h2 {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+
+        .message-content h3 {
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+        }
+
+        .message-content p {
+            margin-bottom: 1rem;
+        }
+
+        .message-content ul, .message-content ol {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            margin-left: 1.25rem;
+        }
+
+        .message-content ul {
+            list-style-type: disc;
+        }
+
+        .message-content ol {
+            list-style-type: decimal;
+        }
+
+        .message-content li {
+            margin-bottom: 0.25rem;
+        }
+
+        .message-content pre {
+            background-color: #f3f4f6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .dark .message-content pre {
+            background-color: #2d2d2d;
+        }
+
+        .message-content code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            color: #616161;
+            background-color: #f3f4f6;
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.25rem;
+        }
+
+        .dark .message-content code {
+            color: #d4d4d4;
+            background-color: #2d2d2d;
+        }
+
+        .message-content blockquote {
+            border-left: 4px solid #e5e7eb;
+            padding-left: 1rem;
+            margin-left: 0;
+            margin-right: 0;
+            font-style: italic;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .dark .message-content blockquote {
+            border-left-color: #4b5563;
+        }
+
+        .message-content a {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+
+        .dark .message-content a {
+            color: #3b82f6;
+        }
+
+        .message-content table {
+            width: 100%;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            border-collapse: collapse;
+        }
+
+        .message-content th, .message-content td {
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+
+        .dark .message-content th, .dark .message-content td {
+            border-color: #4b5563;
+        }
+
+        .message-content th {
+            font-weight: 600;
+            background-color: #f9fafb;
+        }
+
+        .dark .message-content th {
+            background-color: #374151;
+        }
+
+        .message-content tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        .dark .message-content tr:nth-child(even) {
+            background-color: #1f2937;
+        }
+
+        /* Citation styles */
+        .citation {
+            background-color: #f0f9ff;
+            border-left: 3px solid #3b82f6;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .dark .citation {
+            background-color: #172033;
+            border-left-color: #3b82f6;
+        }
+
+        /* Syntax highlighting */
+        .hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 1rem;
+            border-radius: 0.375rem;
+        }
+
+        /* Thinking process visualization */
+        .thinking-container {
+            background-color: #f9fafb;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .dark .thinking-container {
+            background-color: #2d2d2d;
+        }
+
+        .thinking-step {
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            border-left: 3px solid #5D5CDE;
+            animation: fadeIn 0.5s ease-in;
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        /* Testimonials */
-        .testimonials {
-            padding: 100px 40px;
-            background: linear-gradient(to bottom, rgba(10, 10, 26, 0.8), var(--background));
+        /* Sidebar animation */
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
         }
 
-        .testimonials-container {
-            max-width: 1200px;
-            margin: 0 auto;
+        @keyframes slideOut {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
         }
 
-        .testimonials-slider {
-            margin-top: 50px;
-            display: flex;
-            overflow-x: auto;
-            gap: 30px;
-            padding: 20px 10px;
-            scroll-behavior: smooth;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+        .sidebar-show {
+            animation: slideIn 0.3s forwards;
         }
 
-        .testimonials-slider::-webkit-scrollbar {
-            display: none;
+        .sidebar-hide {
+            animation: slideOut 0.3s forwards;
         }
 
-        .testimonial-card {
-            min-width: 350px;
-            flex: 0 0 auto;
-            background: var(--gradient-glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid var(--card-border);
-            transition: all 0.3s ease;
-        }
-
-        .testimonial-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .testimonial-content {
-            margin-bottom: 20px;
-            line-height: 1.6;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .testimonial-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--gradient-1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: 700;
-        }
-
-        .testimonial-info h4 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .testimonial-info p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .testimonial-nav {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 40px;
-        }
-
-        .testimonial-nav-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(30, 30, 60, 0.5);
-            border: 1px solid var(--card-border);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .testimonial-nav-btn:hover {
-            background: rgba(30, 30, 60, 0.8);
-            transform: translateY(-2px);
-        }
-
-        /* Pricing */
-        .pricing {
-            padding: 100px 40px;
-        }
-
-        .pricing-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .pricing-plans {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-            margin-top: 50px;
-        }
-
-        .pricing-card {
-            flex: 1;
-            min-width: 300px;
-            max-width: 350px;
-            background: var(--gradient-glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px 30px;
-            border: 1px solid var(--card-border);
-            transition: all 0.3s ease;
+        /* File upload styling */
+        .file-upload-container {
             display: flex;
             flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pricing-card.popular {
-            transform: scale(1.05);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .pricing-card.popular::before {
-            content: '最受欢迎';
-            position: absolute;
-            top: 20px;
-            right: -25px;
-            background: var(--gradient-1);
-            color: white;
-            padding: 5px 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            transform: rotate(45deg);
-        }
-
-        .pricing-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .pricing-card.popular:hover {
-            transform: scale(1.05) translateY(-10px);
-        }
-
-        .pricing-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .pricing-name {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .pricing-price {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            margin-bottom: 5px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .pricing-price span {
-            font-size: 1rem;
-            position: absolute;
-            top: 0;
-            right: -15px;
-            color: var(--text-secondary);
-        }
-
-        .pricing-period {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .pricing-features {
-            list-style: none;
-            margin-bottom: 30px;
-            flex: 1;
-        }
-
-        .pricing-feature {
-            display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            color: var(--text-secondary);
-        }
-
-        .pricing-feature i {
-            color: var(--secondary);
-        }
-
-        .pricing-cta {
-            display: block;
-            text-align: center;
-            padding: 12px 0;
-            background: var(--gradient-1);
-            color: white;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
-        }
-
-        .pricing-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.5);
-        }
-
-        /* Recruiting Section */
-        .recruiting {
-            padding: 100px 40px;
-            background: linear-gradient(to bottom, var(--background), rgba(10, 10, 26, 0.5));
-        }
-
-        .recruiting-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 60px;
-            flex-wrap: wrap;
-        }
-
-        .recruiting-image {
-            flex: 1;
-            min-width: 300px;
-            max-width: 600px;
-            position: relative;
-        }
-
-        .team-image {
-            width: 100%;
-            height: auto;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--card-border);
-            position: relative;
-            z-index: 1;
-        }
-
-        .image-decoration {
-            position: absolute;
-            border-radius: 20px;
-            background: var(--gradient-1);
-            width: 100%;
-            height: 100%;
-            top: 20px;
-            left: 20px;
-            z-index: 0;
-            opacity: 0.5;
-            filter: blur(15px);
-        }
-
-        .recruiting-content {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .recruiting-content h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            background: var(--gradient-2);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .recruiting-content p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        .recruiting-benefits {
-            margin-bottom: 30px;
-        }
-
-        .recruiting-benefit {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .benefit-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--gradient-glass);
-            border: 1px solid var(--card-border);
-            display: flex;
             justify-content: center;
-            align-items: center;
-            color: var(--secondary);
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-
-        .benefit-text h4 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .benefit-text p {
-            margin-bottom: 0;
-            font-size: 0.95rem;
-        }
-
-        .openings-btn {
-            padding: 12px 25px;
-            background: var(--gradient-1);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
         }
 
-        .openings-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.5);
+        .file-upload-container:hover {
+            border-color: #5D5CDE;
         }
 
-        /* Call to Action */
-        .cta-section {
-            padding: 100px 40px;
-            text-align: center;
-            background: linear-gradient(to bottom, var(--background), rgba(10, 10, 26, 0.8));
+        .dark .file-upload-container {
+            border-color: #4b5563;
         }
 
-        .cta-container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--gradient-glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 60px 40px;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        .dark .file-upload-container:hover {
+            border-color: #5D5CDE;
+        }
+
+        /* News card styling */
+        .news-card {
+            border-radius: 0.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .news-card {
+            background-color: #1e1e1e;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark .news-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Chat history items */
+        .chat-history-item {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chat-history-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dark .chat-history-item {
+            border-color: #374151;
+        }
+
+        .dark .chat-history-item:hover {
+            background-color: #1f2937;
+        }
+
+        .chat-history-item.active {
+            background-color: #e0e7ff;
+            border-left: 3px solid #6663ff;
+        }
+
+        .dark .chat-history-item.active {
+            background-color: #272c36;
+            border-left: 3px solid #6663ff;
+        }
+
+        /* Button animations */
+        .btn-hover-effect {
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .cta-container::before {
+        .btn-hover-effect:before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
-            pointer-events: none;
-            animation: rotate 20s linear infinite;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
         }
 
-        @keyframes rotate {
-            to {
-                transform: rotate(360deg);
-            }
+        .btn-hover-effect:hover:before {
+            transform: translateX(0);
         }
 
-        .cta-content h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            background: var(--gradient-2);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* Animation for streaming effect */
+        @keyframes blink {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
         }
 
-        .cta-content p {
-            color: var(--text-secondary);
-            margin-bottom: 40px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-        }
-
-        .cta-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        /* Footer */
-        footer {
-            padding: 60px 40px 30px;
-            background: rgba(10, 10, 26, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid var(--card-border);
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 1.5rem;
-            text-decoration: none;
-            color: var(--text-primary);
-            margin-bottom: 20px;
-        }
-
-        .footer-about p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-        }
-
-        .social-link {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(30, 30, 60, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .social-link:hover {
-            background: var(--primary);
-            transform: translateY(-3px);
-        }
-
-        .footer-links h3 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-        }
-
-        .footer-links ul {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-
-        .footer-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.3s ease;
+        .cursor-blink {
             display: inline-block;
+            width: 0.5rem;
+            height: 1.25rem;
+            background-color: currentColor;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+            vertical-align: middle;
         }
 
-        .footer-links a:hover {
-            color: var(--text-primary);
-            transform: translateX(5px);
-        }
-
-        .contact-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .contact-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(30, 30, 60, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--secondary);
-        }
-
-        .contact-details {
-            flex: 1;
-        }
-
-        .contact-details h4 {
-            color: var(--text-primary);
-            margin-bottom: 5px;
-        }
-
-        .contact-details p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .newsletter h3 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-        }
-
-        .newsletter p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .newsletter-form {
-            display: flex;
-            gap: 10px;
-        }
-
-        .newsletter-input {
-            flex: 1;
-            background: rgba(30, 30, 60, 0.3);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            padding: 12px 15px;
-            color: var(--text-primary);
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .newsletter-input:focus {
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.3);
-        }
-
-        .newsletter-btn {
-            padding: 0 20px;
-            background: var(--gradient-1);
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background-color: #4b5563;
             color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 50;
             transition: all 0.3s ease;
+            transform: translateY(100%);
+            opacity: 0;
         }
 
-        .newsletter-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
         }
 
-        .copyright {
-            margin-top: 60px;
-            padding-top: 20px;
-            border-top: 1px solid var(--card-border);
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        /* Responsive */
-        @media screen and (max-width: 1024px) {
-            .hero h1 {
-                font-size: 3.5rem;
-            }
-
-            .hero p {
-                font-size: 1.2rem;
-            }
-
-            .recruiting-container {
-                flex-direction: column-reverse;
-            }
-
-            .recruiting-image {
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
                 max-width: 100%;
             }
         }
-
-        @media screen and (max-width: 768px) {
-            header {
-                padding: 15px 20px;
-            }
-
-            header.scrolled {
-                padding: 10px 20px;
-            }
-
-            .nav-desktop {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .hero {
-                padding: 100px 20px 60px;
-            }
-
-            .hero h1 {
-                font-size: 2.8rem;
-            }
-
-            .hero p {
-                font-size: 1.1rem;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .features, .demo, .testimonials, .pricing, .cta-section, .models, .comparison, .recruiting {
-                padding: 60px 20px;
-            }
-
-            .demo {
-                flex-direction: column;
-            }
-
-            .cta-container {
-                padding: 40px 20px;
-            }
-
-            .cta-content h2 {
-                font-size: 2rem;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            footer {
-                padding: 40px 20px 20px;
-            }
-        }
-
-        @media screen and (max-width: 480px) {
-            .logo {
-                font-size: 1.5rem;
-            }
-
-            .hero h1 {
-                font-size: 2.3rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .section-title h2 {
-                font-size: 2rem;
-            }
-
-            .pricing-card, .model-card {
-                min-width: 100%;
-            }
-        }
-
-        /* Mobile Menu */
-        .mobile-menu-btn {
-            display: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: rgba(30, 30, 60, 0.5);
-            border: 1px solid var(--card-border);
-            color: var(--text-primary);
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-menu-btn:hover {
-            background: rgba(30, 30, 60, 0.8);
-        }
-
-        .mobile-menu {
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 300px;
-            height: 100vh;
-            background: rgba(10, 10, 26, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 60px 30px;
-            transition: all 0.3s ease;
-            border-left: 1px solid var(--card-border);
-            overflow-y: auto;
-        }
-
-        .mobile-menu.active {
-            right: 0;
-        }
-
-        .close-menu {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(30, 30, 60, 0.5);
-            border: 1px solid var(--card-border);
-            color: var(--text-primary);
-            font-size: 1.2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-menu:hover {
-            background: rgba(30, 30, 60, 0.8);
-            transform: rotate(90deg);
-        }
-
-        .mobile-nav ul {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .mobile-nav a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            display: block;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--card-border);
-            transition: all 0.3s ease;
-        }
-
-        .mobile-nav a:hover {
-            color: var(--text-primary);
-            padding-left: 10px;
-        }
     </style>
 </head>
-<body>
-    <div class="loader-container">
-        <div class="loader"></div>
-    </div>
-
-    <header>
-        <a href="#" class="logo">
-            <div class="logo-icon">J</div>
-            <span>JorkAI</span>
-        </a>
-        <nav class="nav-desktop">
-            <ul>
-                <li><a href="#features">功能</a></li>
-                <li><a href="#models">模型</a></li>
-                <li><a href="#comparison">对比</a></li>
-                <li><a href="#demo">演示</a></li>
-                <li><a href="#testimonials">用户评价</a></li>
-                <li><a href="#pricing">价格</a></li>
-                <li><a href="#recruiting">加入我们</a></li>
-                <li><a href="#contact">联系我们</a></li>
-            </ul>
-        </nav>
-        <a href="#cta" class="cta-button">立即开始</a>
-        <button class="mobile-menu-btn">
-            <i class="fas fa-bars"></i>
-        </button>
-    </header>
-
-    <div class="mobile-menu">
-        <button class="close-menu">
-            <i class="fas fa-times"></i>
-        </button>
-        <nav class="mobile-nav">
-            <ul>
-                <li><a href="#features">功能</a></li>
-                <li><a href="#models">模型</a></li>
-                <li><a href="#comparison">对比</a></li>
-                <li><a href="#demo">演示</a></li>
-                <li><a href="#testimonials">用户评价</a></li>
-                <li><a href="#pricing">价格</a></li>
-                <li><a href="#recruiting">加入我们</a></li>
-                <li><a href="#contact">联系我们</a></li>
-            </ul>
-        </nav>
-    </div>
-
-    <section class="hero">
-        <div class="floating-shapes">
-            <div class="shape circle blue"></div>
-            <div class="shape circle purple"></div>
-            <div class="shape square"></div>
-        </div>
-        <div class="hero-content">
-            <h1>重新定义人工智能<br>超越人类想象</h1>
-            <p>JorkAI 是下一代人工智能助手，通过革命性的深度学习和自然语言处理，提供前所未有的智能体验。探索无限可能，让AI为您工作。</p>
-            <div class="hero-buttons">
-                <a href="login.html" class="cta-button">开始使用</a>
-                <a href="#demo" class="secondary-button">了解更多</a>
+<body class="min-h-screen">
+    <div id="app" class="flex flex-col min-h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="fixed top-0 left-0 h-full bg-white dark:bg-dark-700 w-64 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-40 flex flex-col">
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="text-primary-600 dark:text-primary-400 text-xl font-bold">Jork</span>
+                    <span class="bg-green-500 h-2 w-2 rounded-full"></span>
+                </div>
+                <button id="closeSidebar" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Chat History -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">聊天历史</h2>
+                    <div id="chat-history-list" class="space-y-1">
+                        <!-- Chat history items will be inserted here -->
+                        <div class="text-sm text-gray-500 dark:text-gray-400 p-2 text-center">
+                            没有聊天历史
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-auto p-4 border-t border-gray-200 dark:border-gray-700">
+                <button id="clear-history" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800">
+                    <i class="fas fa-trash-alt mr-2"></i> 删除历史对话
+                </button>
             </div>
         </div>
-    </section>
-
-    <section class="features" id="features">
-        <div class="section-title">
-            <h2>无与伦比的AI能力</h2>
-        </div>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-brain"></i>
-                </div>
-                <h3>超级智能</h3>
-                <p>JorkAI采用最先进的大语言模型，理解并响应复杂指令，即使是模糊的要求也能准确理解。</p>
-                <a href="#" class="learn-more">了解更多 <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-bolt"></i>
-                </div>
-                <h3>极速响应</h3>
-                <p>优化的性能架构确保每次交互都能获得极速响应，无需等待，即时获取所需信息。</p>
-                <a href="#" class="learn-more">了解更多 <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3>安全可靠</h3>
-                <p>严格的数据保护措施和先进的安全协议确保您的信息安全，让您放心使用。</p>
-                <a href="#" class="learn-more">了解更多 <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-code"></i>
-                </div>
-                <h3>代码生成</h3>
-                <p>轻松生成高质量代码，支持多种编程语言，提高开发效率，减少编码错误。</p>
-                <a href="#" class="learn-more">了解更多 <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-paint-brush"></i>
-                </div>
-                <h3>创意创作</h3>
-                <p>从文章撰写到创意构思，JorkAI能够协助您实现创意灵感，提升创作质量。</p>
-                <a href="#" class="learn-more">了解更多 <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h3>商业分析</h3>
-                <p>深度分析数据，提供商业洞察，帮助决策制定，优化业务策略。</p>
-                <a href="#" class="learn-more">了解更多 <i class="fas fa-arrow-right"></i></a>
-            </div>
-        </div>
-    </section>
-
-    <!-- 新增：模型介绍部分 -->
-    <section class="models" id="models">
-        <div class="models-container">
-            <div class="section-title">
-                <h2>强大的AI模型家族</h2>
-            </div>
-            <div class="models-grid">
-                <div class="model-card">
-                    <div class="model-header">
-                        <div class="model-icon">
-                            <i class="fas fa-crown"></i>
-                        </div>
-                        <div class="model-info">
-                            <h3>Jork-3.7-Epic</h3>
-                            <p>最先进旗舰模型</p>
+        
+        <!-- Main content area -->
+        <div id="main-content" class="flex-1 transition-all duration-300 ease-in-out">
+            <!-- Header -->
+            <header class="bg-white dark:bg-dark-700 shadow-sm sticky top-0 z-10">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <button id="toggleSidebar" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-primary-600 dark:text-primary-400 text-xl font-bold">Jork-3</span>
+                            <span class="bg-green-500 h-2 w-2 rounded-full"></span>
                         </div>
                     </div>
-                    <div class="model-description">
-                        JorkAI最强大、最智能的模型。拥有卓越的推理能力和深度思考能力，可以解决最复杂的问题，处理各种专业领域的任务。
+                    <div class="flex items-center space-x-4">
+                        <button id="toggle-dark-mode-header" class="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                            <i id="dark-mode-icon" class="fas fa-moon text-xl"></i>
+                        </button>
+                        <button id="btn-new-chat" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md shadow-sm">
+                            <i class="fas fa-plus mr-2"></i> 新的聊天
+                        </button>
                     </div>
-                    <ul class="model-features">
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>超强推理能力和深度思考</span>
-                        </li>
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>多步骤复杂问题解决</span>
-                        </li>
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>精确的长文本理解与生成</span>
-                        </li>
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>专业领域深度知识</span>
-                        </li>
-                    </ul>
-                    <a href="login.html" class="cta-button">了解更多</a>
                 </div>
-                <div class="model-card featured">
-                    <div class="model-header">
-                        <div class="model-icon">
-                            <i class="fas fa-star"></i>
+            </header>
+            
+            <!-- Welcome screen -->
+            <div id="welcome-screen" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="text-center">
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">欢迎来到JorkAI</h1>
+                    <p id="greeting" class="text-xl text-gray-600 dark:text-gray-300 mb-8">...</p>
+                </div>
+                
+                <div class="mb-12">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">新闻</h2>
+                    <div id="trending-news" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- News cards will be inserted here -->
+                        <div class="news-card">
+                            <div class="p-4">
+                                <div class="animate-pulse">
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="model-info">
-                            <h3>Jork-3.5-Epic</h3>
-                            <p>平衡性能与效率</p>
+                        <div class="news-card">
+                            <div class="p-4">
+                                <div class="animate-pulse">
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="model-description">
-                        我们最受欢迎的模型，提供出色的性能和效率平衡。适合大多数日常任务和专业工作，响应速度快，结果准确。
-                    </div>
-                    <ul class="model-features">
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>优秀的通用能力</span>
-                        </li>
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>快速的响应时间</span>
-                        </li>
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>高效的资源利用率</span>
-                        </li>
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>丰富的知识库</span>
-                        </li>
-                    </ul>
-                    <a href="login.html" class="cta-button">立即尝试</a>
-                </div>
-                <div class="model-card">
-                    <div class="model-header">
-                        <div class="model-icon">
-                            <i class="fas fa-feather-alt"></i>
-                        </div>
-                        <div class="model-info">
-                            <h3>Jork-3.5-Canto</h3>
-                            <p>轻量级高效模型</p>
-                        </div>
-                    </div>
-                    <div class="model-description">
-                        为日常使用设计的轻量级模型。反应迅速，能够有效处理常见任务，适合移动设备和需要快速响应的场景。
-                    </div>
-                    <ul class="model-features">
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>超快响应速度</span>
-                        </li>
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>低资源消耗</span>
-                        </li>
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>适合移动设备</span>
-                        </li>
-                        <li class="model-feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>高效处理日常任务</span>
-                        </li>
-                    </ul>
-                    <a href="login.html" class="cta-button">了解更多</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 新增：对比表格部分 -->
-    <section class="comparison" id="comparison">
-        <div class="comparison-container">
-            <div class="section-title">
-                <h2>领先的AI性能对比</h2>
-            </div>
-            <div class="comparison-intro">
-                <p>JorkAI在各个关键指标上都超越了其他领先的AI模型。从推理能力到响应速度，我们都设立了新的行业标准。</p>
-            </div>
-            <div class="comparison-table-wrapper">
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>性能指标</th>
-                            <th class="jork-col">JorkAI</th>
-                            <th>ChatGPT</th>
-                            <th>Claude</th>
-                            <th>Gemini</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>推理能力</td>
-                            <td class="jork-col">
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
+                        <div class="news-card">
+                            <div class="p-4">
+                                <div class="animate-pulse">
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
                                 </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>响应速度</td>
-                            <td class="jork-col">
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>代码生成</td>
-                            <td class="jork-col">
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>知识准确性</td>
-                            <td class="jork-col">
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>多语言支持</td>
-                            <td class="jork-col"><i class="fas fa-check check-icon"></i></td>
-                            <td><i class="fas fa-check check-icon"></i></td>
-                            <td><i class="fas fa-check check-icon"></i></td>
-                            <td><i class="fas fa-check check-icon"></i></td>
-                        </tr>
-                        <tr>
-                            <td>插件支持</td>
-                            <td class="jork-col"><i class="fas fa-check check-icon"></i></td>
-                            <td><i class="fas fa-check check-icon"></i></td>
-                            <td><i class="fas fa-times times-icon"></i></td>
-                            <td><i class="fas fa-times times-icon"></i></td>
-                        </tr>
-                        <tr>
-                            <td>长文本处理</td>
-                            <td class="jork-col"><i class="fas fa-check check-icon"></i></td>
-                            <td><i class="fas fa-check check-icon"></i></td>
-                            <td><i class="fas fa-check check-icon"></i></td>
-                            <td><i class="fas fa-times times-icon"></i></td>
-                        </tr>
-                        <tr>
-                            <td>API访问</td>
-                            <td class="jork-col"><i class="fas fa-check check-icon"></i></td>
-                            <td><i class="fas fa-check check-icon"></i></td>
-                            <td><i class="fas fa-check check-icon"></i></td>
-                            <td><i class="fas fa-check check-icon"></i></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <section class="demo" id="demo">
-        <div class="demo-content">
-            <h2>体验智能的差异</h2>
-            <p>JorkAI不只是一个聊天机器人，它是你的智能助手、创意伙伴和问题解决者。看看它如何改变你的工作和生活。</p>
-            <div class="demo-points">
-                <div class="demo-point">
-                    <div class="demo-point-icon">1</div>
-                    <div class="demo-point-text">
-                        <h4>自然对话</h4>
-                        <p>与JorkAI的对话如同与人交流，流畅自然，理解上下文。</p>
-                    </div>
-                </div>
-                <div class="demo-point">
-                    <div class="demo-point-icon">2</div>
-                    <div class="demo-point-text">
-                        <h4>多模态能力</h4>
-                        <p>不仅理解文本，还能处理图像和音频，提供全方位智能体验。</p>
-                    </div>
-                </div>
-                <div class="demo-point">
-                    <div class="demo-point-icon">3</div>
-                    <div class="demo-point-text">
-                        <h4>个性化学习</h4>
-                        <p>会记住你的偏好和习惯，提供量身定制的服务。</p>
-                    </div>
-                </div>
-            </div>
-            <a href="login.html" class="cta-button">立即开始</a>
-        </div>
-        <div class="demo-visual">
-            <div class="chat-demo">
-                <div class="chat-header">
-                    <div class="chat-header-title">
-                        <div class="logo-icon">J</div>
-                        <h3>JorkAI 助手</h3>
-                    </div>
-                    <div class="chat-actions">
-                        <div class="chat-action">
-                            <i class="fas fa-microphone"></i>
-                        </div>
-                        <div class="chat-action">
-                            <i class="fas fa-image"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="chat-messages">
-                    <div class="message bot">
-                        你好！我是JorkAI，你的智能助手。今天我能为你做些什么？
-                    </div>
-                    <div class="message user">
-                        你能帮我写一篇关于未来技术趋势的文章吗？
-                    </div>
-                    <div class="message bot">
-                        当然可以。请告诉我你希望关注哪些方面的未来技术？例如AI、量子计算、可再生能源等，以及文章的大致长度和风格。
-                    </div>
-                    <div class="message user">
-                        重点关注AI和量子计算，大约1000字，风格专业但易懂。
-                    </div>
-                    <div class="typing-indicator">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
+                
+                <div class="mb-12">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">特点</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white dark:bg-dark-700 rounded-lg shadow-md p-6">
+                            <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">联网搜索</h3>
+                            <p class="text-gray-600 dark:text-gray-400">从网络访问实时信息以获取最新的答案。</p>
+                        </div>
+                        <div class="bg-white dark:bg-dark-700 rounded-lg shadow-md p-6">
+                            <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">深度思考</h3>
+                            <p class="text-gray-600 dark:text-gray-400">将人工智能的思维过程可视化，以进行复杂的推理和解决问题。</p>
+                        </div>
+                        <div class="bg-white dark:bg-dark-700 rounded-lg shadow-md p-6">
+                            <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">附件支持</h3>
+                            <p class="text-gray-600 dark:text-gray-400">通过丰富的输出功能生成代码、表格、格式化文本等。</p>
+                        </div>
                     </div>
                 </div>
-                <div class="chat-input">
-                    <input type="text" class="chat-input-field" placeholder="输入您的问题...">
-                    <button class="chat-send">
-                        <i class="fas fa-paper-plane"></i>
+                
+                <div class="text-center">
+                    <button id="start-conversation" class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-md shadow-md text-lg">
+                        开始对话
                     </button>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section class="testimonials" id="testimonials">
-        <div class="testimonials-container">
-            <div class="section-title">
-                <h2>用户的心声</h2>
-            </div>
-            <div class="testimonials-slider">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        "JorkAI彻底改变了我的工作方式。作为一名内容创作者，它帮助我克服了创作瓶颈，提供了令人惊叹的创意灵感。它不仅仅是一个工具，更像是我的创作伙伴。"
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">L</div>
-                        <div class="testimonial-info">
-                            <h4>陈先生</h4>
-                            <p>内容创作者</p>
+            
+            <!-- Chat UI -->
+            <div id="chat-ui" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 hidden">
+                <div id="conversation-container" class="mb-4">
+                    <!-- Messages will be inserted here -->
+                </div>
+                
+                <!-- Attachment preview area -->
+                <div id="attachment-preview" class="mb-4 hidden">
+                    <div class="bg-gray-100 dark:bg-dark-600 rounded-lg p-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-medium text-gray-700 dark:text-gray-300">附件</span>
+                            <button id="clear-attachments" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div id="attachment-list" class="flex flex-wrap gap-2">
+                            <!-- Attachment previews will go here -->
                         </div>
                     </div>
                 </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        "作为一家初创公司的CTO，我们使用JorkAI加速了我们的开发流程。它生成的代码质量超出预期，帮助我们在紧张的时间线内完成了项目。投资回报率是惊人的。"
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">Z</div>
-                        <div class="testimonial-info">
-                            <h4>吴董事长</h4>
-                            <p>科技公司CTO</p>
+                
+                <!-- Input area -->
+                <div class="bg-white dark:bg-dark-700 rounded-lg shadow-md p-4">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-1">
+                            <textarea id="message-input" rows="3" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-dark-800 text-gray-900 dark:text-gray-100 resize-none" placeholder="Type your message here..."></textarea>
+                            
+                            <!-- Input actions -->
+                            <div class="flex justify-between items-center mt-2">
+                                <div class="flex space-x-2">
+                                    <label for="file-upload" class="flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer">
+                                        <i class="fas fa-paperclip text-lg"></i>
+                                        <span class="ml-1 text-sm">附件</span>
+                                        <input id="file-upload" type="file" class="hidden" multiple>
+                                    </label>
+                                    <button id="toggle-web-search" class="flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                        <i class="fas fa-globe text-lg"></i>
+                                        <span class="ml-1 text-sm">联网搜索</span>
+                                    </button>
+                                    <button id="toggle-deep-thinking" class="flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                        <i class="fas fa-brain text-lg"></i>
+                                        <span class="ml-1 text-sm">深度思考</span>
+                                    </button>
+                                </div>
+                                <div>
+                                    <button id="send-message" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <i class="fas fa-paper-plane mr-2"></i> 发送
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        "JorkAI的联网搜索功能为我节省了数小时的文献搜索时间。它能够理解复杂的学术概念，并提供相关的见解和摘要。这是每个研究人员都应该拥有的工具。"
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">W</div>
-                        <div class="testimonial-info">
-                            <h4>王女士</h4>
-                            <p>研究学者</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        "比起其他AI产品，JorkAI的回答更加准确、深入且有洞察力。它不仅回答问题，还能理解问题背后的意图，提供全面而有价值的信息。这是市场上最好的AI助手。"
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">C</div>
-                        <div class="testimonial-info">
-                            <h4>陈同学</h4>
-                            <p>初二学生</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="testimonial-nav">
-                <div class="testimonial-nav-btn prev">
-                    <i class="fas fa-chevron-left"></i>
-                </div>
-                <div class="testimonial-nav-btn next">
-                    <i class="fas fa-chevron-right"></i>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="pricing" id="pricing">
-        <div class="pricing-container">
-            <div class="section-title">
-                <h2>灵活的价格方案</h2>
-            </div>
-            <div class="pricing-plans">
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">基础版</h3>
-                        <div class="pricing-price">0<span>¥</span></div>
-                        <div class="pricing-period">永久免费</div>
-                    </div>
-                    <ul class="pricing-features">
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>基本AI对话</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>每日50次请求</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>基础知识库访问</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>标准响应速度</span>
-                        </li>
-                    </ul>
-                    <a href="login.html" class="pricing-cta">免费开始</a>
-                </div>
-                <div class="pricing-card popular">
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">专业版</h3>
-                        <div class="pricing-price">99<span>¥</span></div>
-                        <div class="pricing-period">每月</div>
-                    </div>
-                    <ul class="pricing-features">
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>高级AI对话</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>无限请求次数</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>优先访问最新功能</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>高级知识库访问</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>优先响应速度</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>文件上传和分析</span>
-                        </li>
-                    </ul>
-                    <a href="huiyuan.html" class="pricing-cta">立即订阅</a>
-                </div>
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">企业版</h3>
-                        <div class="pricing-price">399<span>¥</span></div>
-                        <div class="pricing-period">每月</div>
-                    </div>
-                    <ul class="pricing-features">
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>所有专业版功能</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>团队成员协作</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>自定义模型训练</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>API访问权限</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>专属客户支持</span>
-                        </li>
-                        <li class="pricing-feature">
-                            <i class="fas fa-check"></i>
-                            <span>增强数据安全保障</span>
-                        </li>
-                    </ul>
-                    <a href="huiyuan.html" class="pricing-cta">联系销售</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 新增：招贤纳士部分 -->
-    <section class="recruiting" id="recruiting">
-        <div class="recruiting-container">
-            <div class="recruiting-image">
-                <div class="image-decoration"></div>
-                <svg class="team-image" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="teamGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#8A2BE2" />
-                            <stop offset="100%" stop-color="#00E5FF" />
-                        </linearGradient>
-                    </defs>
-                    <!-- 背景 -->
-                    <rect width="800" height="500" fill="#1E1E3C" rx="20" />
-                    <!-- 办公场景 -->
-                    <rect x="50" y="340" width="700" height="120" fill="#16162C" rx="10" />
-                    <!-- 桌子 -->
-                    <rect x="100" y="280" width="600" height="20" fill="#2A2A4C" rx="5" />
-                    <!-- 电脑屏幕 -->
-                    <rect x="200" y="150" width="180" height="120" fill="#2D2D50" rx="5" />
-                    <rect x="205" y="155" width="170" height="110" fill="#0A0A1A" rx="3" />
-                    <circle cx="290" cy="210" r="30" fill="url(#teamGradient)" opacity="0.8" />
-                    <!-- 另一个电脑屏幕 -->
-                    <rect x="420" y="150" width="180" height="120" fill="#2D2D50" rx="5" />
-                    <rect x="425" y="155" width="170" height="110" fill="#0A0A1A" rx="3" />
-                    <circle cx="510" cy="210" r="30" fill="url(#teamGradient)" opacity="0.8" />
-                    <!-- 人物轮廓 1 -->
-                    <circle cx="250" cy="350" r="35" fill="#8A2BE2" opacity="0.7" />
-                    <rect x="235" y="385" width="30" height="60" rx="10" fill="#8A2BE2" opacity="0.7" />
-                    <!-- 人物轮廓 2 -->
-                    <circle cx="350" cy="350" r="35" fill="#00E5FF" opacity="0.7" />
-                    <rect x="335" y="385" width="30" height="60" rx="10" fill="#00E5FF" opacity="0.7" />
-                    <!-- 人物轮廓 3 -->
-                    <circle cx="450" cy="350" r="35" fill="#FF18F9" opacity="0.7" />
-                    <rect x="435" y="385" width="30" height="60" rx="10" fill="#FF18F9" opacity="0.7" />
-                    <!-- 人物轮廓 4 -->
-                    <circle cx="550" cy="350" r="35" fill="#8A2BE2" opacity="0.7" />
-                    <rect x="535" y="385" width="30" height="60" rx="10" fill="#8A2BE2" opacity="0.7" />
-                    <!-- 悬浮粒子效果 -->
-                    <circle cx="150" cy="150" r="10" fill="#8A2BE2" opacity="0.5" />
-                    <circle cx="650" cy="200" r="15" fill="#00E5FF" opacity="0.5" />
-                    <circle cx="700" cy="300" r="8" fill="#FF18F9" opacity="0.5" />
-                    <circle cx="100" cy="250" r="12" fill="#8A2BE2" opacity="0.5" />
-                </svg>
-            </div>
-            <div class="recruiting-content">
-                <h2>加入JorkAI，共创AI未来</h2>
-                <p>我们正在寻找充满激情的人才加入我们的团队，一起探索AI的无限可能，解决人类面临的最具挑战性的问题。在JorkAI，你将与业内顶尖人才共事，开发下一代人工智能技术。</p>
-                <div class="recruiting-benefits">
-                    <div class="recruiting-benefit">
-                        <div class="benefit-icon">
-                            <i class="fas fa-rocket"></i>
-                        </div>
-                        <div class="benefit-text">
-                            <h4>前沿技术</h4>
-                            <p>直接参与最前沿的AI研发，使用业内领先的技术和资源。</p>
-                        </div>
-                    </div>
-                    <div class="recruiting-benefit">
-                        <div class="benefit-icon">
-                            <i class="fas fa-seedling"></i>
-                        </div>
-                        <div class="benefit-text">
-                            <h4>成长空间</h4>
-                            <p>充分的个人发展空间，完善的培训体系和导师指导。</p>
-                        </div>
-                    </div>
-                    <div class="recruiting-benefit">
-                        <div class="benefit-icon">
-                            <i class="fas fa-hands-helping"></i>
-                        </div>
-                        <div class="benefit-text">
-                            <h4>卓越团队</h4>
-                            <p>与来自世界各地的AI专家、工程师和创新者共同工作。</p>
-                        </div>
-                    </div>
-                    <div class="recruiting-benefit">
-                        <div class="benefit-icon">
-                            <i class="fas fa-globe"></i>
-                        </div>
-                        <div class="benefit-text">
-                            <h4>全球影响</h4>
-                            <p>你的工作将直接影响数千名用户，推动AI技术的普及与发展。</p>
-                        </div>
-                    </div>
-                </div>
-                <a href="zhiwei.html" class="openings-btn">
-                    <i class="fas fa-briefcase"></i>
-                    查看详情
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section class="cta-section" id="cta">
-        <div class="cta-container">
-            <div class="cta-content">
-                <h2>准备好体验未来了吗？</h2>
-                <p>加入数千名已经使用JorkAI提升工作效率的用户。无论您是创作者、开发者、研究人员还是企业主，JorkAI都能为您提供智能解决方案。</p>
-                <div class="cta-buttons">
-                    <a href="login.html" class="cta-button">立即开始</a>
-                    <a href="#contact" class="secondary-button">安排演示</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer id="contact">
-        <div class="footer-container">
-            <div class="footer-about">
-                <a href="#" class="footer-logo">
-                    <div class="logo-icon">J</div>
-                    <span>JorkAI</span>
-                </a>
-                <p>JorkAI是下一代人工智能助手，通过革命性的深度学习和自然语言处理，为用户提供前所未有的智能体验。</p>
-                <div class="social-links">
-                    <a href="https://www.x.com" class="social-link">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="https://www.weixin.com" class="social-link">
-                        <i class="fab fa-weixin"></i>
-                    </a>
-                    <a href="https://www.weibo.com" class="social-link">
-                        <i class="fab fa-weibo"></i>
-                    </a>
-                    <a href="https://www.linkedin.com" class="social-link">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a href="#" class="social-link">
-                        <i class="fab fa-github"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="footer-links">
-                <h3>快速链接</h3>
-                <ul>
-                    <li><a href="#features">功能</a></li>
-                    <li><a href="#models">模型</a></li>
-                    <li><a href="#comparison">对比</a></li>
-                    <li><a href="#demo">演示</a></li>
-                    <li><a href="#testimonials">用户评价</a></li>
-                    <li><a href="#pricing">价格</a></li>
-                    <li><a href="#recruiting">加入我们</a></li>
-                </ul>
-            </div>
-            <div class="footer-links">
-                <h3>支持</h3>
-                <ul>
-                    <li><a href="login.html">Jork-3.5-Canto</a></li>
-                    <li><a href="login.html">Jork-3.5-Epic</a></li>
-                    <li><a href="login.html">Jork-3.7-Epic</a></li>
-                    <li><a href="api.html">API</a></li>
-                    <li><a href="donation.html">支持我们</a></li>
-                </ul>
-            </div>
-            <div class="footer-contact">
-                <h3>联系我们</h3>
-                <div class="contact-info">
-                    <div class="contact-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <div class="contact-details">
-                        <h4>地址</h4>
-                        <p>中国北京市朝阳区</p>
-                    </div>
-                </div>
-                <div class="contact-info">
-                    <div class="contact-icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <div class="contact-details">
-                        <h4>邮箱</h4>
-                        <p>contact@jorkai.cn</p>
-                    </div>
-                </div>
-                <div class="contact-info">
-                    <div class="contact-icon">
-                        <i class="fas fa-phone-alt"></i>
-                    </div>
-                    <div class="contact-details">
-                        <h4>电话</h4>
-                        <p>+86 131-6115-2899</p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="copyright">
-            <p>&copy; 2023 - 2025 JorkAI. ALL Right Reserved.</p>
-        </div>
-    </footer>
-
+    </div>
+    
+    <!-- Toast notification -->
+    <div id="toast" class="toast">
+        这是一条通知
+    </div>
+    
     <script>
-        // 页面加载动画
-        window.addEventListener('load', function() {
-            const loader = document.querySelector('.loader-container');
-            setTimeout(function() {
-                loader.style.opacity = '0';
-                setTimeout(function() {
-                    loader.style.display = 'none';
-                }, 500);
-            }, 1500);
-        });
-
-        // 滚动时导航栏效果
-        window.addEventListener('scroll', function() {
-            const header = document.querySelector('header');
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
+        // App state
+        const appState = {
+            darkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
+            sidebarVisible: false,
+            attachments: [],
+            webSearchEnabled: false,
+            deepThinkingEnabled: false,
+            streamingEnabled: true,
+            conversations: [],
+            currentConversationId: null,
+            isWelcomeScreen: true,
+            isProcessing: false,
+            lastMessageId: 0,
+            selectedModel: 'jork-3.7-Epic-Reasoning',
+            apiKey: 'sk-e1ed90c2effc4415beeee85845f66d05',
+            mockNewsData: [
+                {
+                    title: "量子计算取得突破",
+                    summary: "科学家展示了一种新的量子计算技术，可以显著加速该领域的进步。",
+                    source: "Tech Innovations"
+                },
+                {
+                    title: "Global Climate Summit Results in New Agreements",
+                    summary: "World leaders have committed to more ambitious climate goals following intensive negotiations.",
+                    source: "Global News"
+                },
+                {
+                    title: "Claude3.7-Sonnet发布",
+                    summary: "Claude-3.7-Sonnet在哪些方面强势？",
+                    source: "AI Research Today"
+                },
+                {
+                    title: "Major Breakthrough in Renewable Energy Storage",
+                    summary: "Engineers announce new battery technology that could solve intermittency issues in renewable energy.",
+                    source: "Energy Weekly"
+                },
+                {
+                    title: "International Space Mission Discovers Evidence of Water on Distant Planet",
+                    summary: "Astronomical observations reveal strong indicators of water presence on an exoplanet 40 light years away.",
+                    source: "Space Exploration"
+                },
+                {
+                    title: "Global Economic Forum Predicts Growth Despite Challenges",
+                    summary: "Economic experts forecast moderate growth for the coming year despite ongoing supply chain issues.",
+                    source: "Financial Times"
+                }
+            ],
+            thinkingSteps: [
+                "Analyzing the query to identify key requirements...",
+                "Retrieving relevant information from my knowledge base...",
+                "Searching for up-to-date information on the internet...",
+                "Evaluating and comparing information from different sources...",
+                "Considering potential biases or limitations in the information...",
+                "Organizing the most relevant points in a coherent structure...",
+                "Formulating a comprehensive and balanced response...",
+                "Reviewing for accuracy, completeness, and clarity..."
+            ],
+            // Web search API configuration
+            searchEndpoint: "https://api.search.example.com/v1/search",
+            // DeepSeek API configuration
+            deepseekEndpoint: "https://api.deepseek.com/v1/chat/completions",
+            deepseekModels: {
+                "jork-3.7-Epic-Reasoning": "deepseek-chat",
+                "jork-3.5-Epic": "deepseek-chat"
             }
-        });
-
-        // 移动菜单
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const closeMenuBtn = document.querySelector('.close-menu');
-        const mobileMenu = document.querySelector('.mobile-menu');
-        const mobileMenuLinks = document.querySelectorAll('.mobile-nav a');
-
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', function() {
-                mobileMenu.classList.add('active');
-            });
-        }
-
-        if (closeMenuBtn) {
-            closeMenuBtn.addEventListener('click', function() {
-                mobileMenu.classList.remove('active');
-            });
-        }
-
-        mobileMenuLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                mobileMenu.classList.remove('active');
-            });
-        });
-
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    window.scrollTo({
-                        top: target.offsetTop - 80,
-                        behavior: 'smooth'
+        };
+        
+        // Utility functions
+        const utils = {
+            generateId: () => Math.random().toString(36).substring(2, 11),
+            
+            formatDate: (date) => {
+                return new Intl.DateTimeFormat('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                }).format(date);
+            },
+            
+            formatTime: (date) => {
+                return new Intl.DateTimeFormat('en-US', {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true
+                }).format(date);
+            },
+            
+            getBeijingTime: () => {
+                const options = {
+                    timeZone: 'Asia/Shanghai',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true
+                };
+                return new Intl.DateTimeFormat('en-US', options).format(new Date());
+            },
+            
+            getBeijingDate: () => {
+                const options = {
+                    timeZone: 'Asia/Shanghai',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'long'
+                };
+                return new Intl.DateTimeFormat('en-US', options).format(new Date());
+            },
+            
+            getGreeting: () => {
+                const beijingHour = new Date().toLocaleString('en-US', {
+                    timeZone: 'Asia/Shanghai',
+                    hour: 'numeric',
+                    hour12: false
+                });
+                
+                const hour = parseInt(beijingHour);
+                
+                if (hour >= 5 && hour < 12) {
+                    return "Good morning!";
+                } else if (hour >= 12 && hour < 18) {
+                    return "Good afternoon!";
+                } else {
+                    return "Good evening!";
+                }
+            },
+            
+            showToast: (message, duration = 3000) => {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            },
+            
+            toggleDarkMode: () => {
+                appState.darkMode = !appState.darkMode;
+                document.documentElement.classList.toggle('dark', appState.darkMode);
+                
+                // Update toggle button
+                const toggleDarkMode = document.getElementById('toggle-dark-mode');
+                if (toggleDarkMode) {
+                    toggleDarkMode.checked = appState.darkMode;
+                }
+                
+                // Update icon
+                const darkModeIcon = document.getElementById('dark-mode-icon');
+                if (darkModeIcon) {
+                    darkModeIcon.className = appState.darkMode ? 'fas fa-sun text-xl' : 'fas fa-moon text-xl';
+                }
+                
+                // Save preference
+                localStorage.setItem('jork3_dark_mode', appState.darkMode);
+            },
+            
+            toggleSidebar: () => {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('main-content');
+                
+                if (appState.sidebarVisible) {
+                    sidebar.classList.remove('translate-x-0');
+                    sidebar.classList.add('-translate-x-full');
+                    mainContent.classList.remove('md:ml-64');
+                } else {
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebar.classList.add('translate-x-0');
+                    mainContent.classList.add('md:ml-64');
+                }
+                
+                appState.sidebarVisible = !appState.sidebarVisible;
+            },
+            
+            generateMessageId: () => {
+                appState.lastMessageId++;
+                return `msg-${appState.lastMessageId}`;
+            },
+            
+            createConversation: () => {
+                const id = utils.generateId();
+                const newConversation = {
+                    id: id,
+                    title: 'New Conversation',
+                    messages: [],
+                    createdAt: new Date().toISOString()
+                };
+                
+                appState.conversations.push(newConversation);
+                appState.currentConversationId = id;
+                
+                // Save to localStorage
+                localStorage.setItem('jork3_conversations', JSON.stringify(appState.conversations));
+                
+                // Update chat history in sidebar
+                uiManager.updateChatHistoryList();
+                
+                return newConversation;
+            },
+            
+            getCurrentConversation: () => {
+                return appState.conversations.find(conv => conv.id === appState.currentConversationId) || null;
+            },
+            
+            addMessageToConversation: (message) => {
+                const conversation = utils.getCurrentConversation();
+                if (conversation) {
+                    conversation.messages.push(message);
+                    
+                    // Update conversation title if this is the first user message
+                    if (conversation.messages.filter(msg => msg.role === 'user').length === 1 && message.role === 'user') {
+                        // Use the first ~25 chars of the message as the title
+                        conversation.title = message.content.substring(0, 25) + (message.content.length > 25 ? '...' : '');
+                    }
+                    
+                    // Save to localStorage
+                    localStorage.setItem('jork3_conversations', JSON.stringify(appState.conversations));
+                    
+                    // Update chat history in sidebar
+                    uiManager.updateChatHistoryList();
+                }
+            },
+            
+            clearConversations: () => {
+                appState.conversations = [];
+                appState.currentConversationId = null;
+                localStorage.removeItem('jork3_conversations');
+                
+                // Update chat history in sidebar
+                uiManager.updateChatHistoryList();
+            },
+            
+            sanitizeHTML: (html) => {
+                return DOMPurify.sanitize(html);
+            },
+            
+            renderMarkdown: (text) => {
+                return marked.parse(text);
+            },
+            
+            // Web search function
+            performWebSearch: async (query) => {
+                try {
+                    // In a real implementation, this would call an actual search API
+                    // For demonstration purposes, we'll simulate search results
+                    console.log("Performing web search for:", query);
+                    
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // Return mock search results based on query
+                    const mockResults = [
+                        {
+                            title: `Search results for: ${query}`,
+                            content: `This is simulated search content for "${query}". In a real implementation, this would contain actual search results from the web.`,
+                            url: "https://example.com/result1",
+                            source: "Example Source",
+                            date: new Date().toISOString()
+                        },
+                        {
+                            title: `More information about: ${query}`,
+                            content: `Additional information about "${query}" from a different source. This would typically contain excerpts from relevant web pages.`,
+                            url: "https://example.org/result2",
+                            source: "Another Source",
+                            date: new Date().toISOString()
+                        },
+                        {
+                            title: `Latest news on: ${query}`,
+                            content: `Recent developments related to "${query}". This is mockup content but would contain the latest information available online.`,
+                            url: "https://news.example.com/result3",
+                            source: "News Source",
+                            date: new Date().toISOString()
+                        }
+                    ];
+                    
+                    return mockResults;
+                } catch (error) {
+                    console.error("Web search error:", error);
+                    throw error;
+                }
+            },
+            
+            // Function to generate deep thinking steps
+            generateThinkingSteps: async (query) => {
+                try {
+                    // In a real implementation, this would call an API to generate thinking steps
+                    // For demonstration, we'll customize the steps based on the query
+                    console.log("Generating thinking steps for:", query);
+                    
+                    // Start with default steps
+                    let steps = [...appState.thinkingSteps];
+                    
+                    // Add query-specific customization
+                    if (query.toLowerCase().includes("history") || query.toLowerCase().includes("historical")) {
+                        steps.splice(2, 0, "Examining historical context and chronology of events...");
+                    }
+                    
+                    if (query.toLowerCase().includes("compare") || query.toLowerCase().includes("difference")) {
+                        steps.splice(3, 0, "Creating a structured comparison with key similarities and differences...");
+                    }
+                    
+                    if (query.toLowerCase().includes("code") || query.toLowerCase().includes("programming")) {
+                        steps.splice(2, 0, "Analyzing programming concepts and best practices...");
+                        steps.splice(4, 0, "Evaluating code efficiency and potential edge cases...");
+                    }
+                    
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    return steps;
+                } catch (error) {
+                    console.error("Error generating thinking steps:", error);
+                    return appState.thinkingSteps; // Fallback to default steps
+                }
+            },
+            
+            // DeepSeek API functions
+            callDeepSeekAPI: async (messages, options = {}) => {
+                try {
+                    const model = appState.deepseekModels[appState.selectedModel] || "deepseek-chat";
+                    
+                    const requestBody = {
+                        model: model,
+                        messages: messages,
+                        temperature: options.temperature || 0.7,
+                        max_tokens: options.max_tokens || 4000,
+                        stream: options.stream || false
+                    };
+                    
+                    // For streaming responses
+                    if (options.stream && options.onUpdate) {
+                        return await utils.streamDeepSeekResponse(requestBody, options.onUpdate, options.onComplete);
+                    }
+                    
+                    // For non-streaming responses
+                    const response = await fetch(appState.deepseekEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${appState.apiKey}`
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error?.message || `API error: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    return data.choices[0].message.content;
+                } catch (error) {
+                    console.error("DeepSeek API Error:", error);
+                    throw error;
+                }
+            },
+            
+            streamDeepSeekResponse: async (requestBody, onUpdate, onComplete) => {
+                try {
+                    const response = await fetch(appState.deepseekEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${appState.apiKey}`
+                        },
+                        body: JSON.stringify({ ...requestBody, stream: true })
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error?.message || `API error: ${response.status}`);
+                    }
+                    
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let fullContent = '';
+                    
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n').filter(line => line.trim() !== '');
+                        
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const data = line.slice(6);
+                                if (data === '[DONE]') {
+                                    if (onComplete) onComplete(fullContent);
+                                    return fullContent;
+                                }
+                                
+                                try {
+                                    const parsed = JSON.parse(data);
+                                    if (parsed.choices && parsed.choices[0].delta.content) {
+                                        const content = parsed.choices[0].delta.content;
+                                        fullContent += content;
+                                        if (onUpdate) onUpdate(fullContent);
+                                    }
+                                } catch (e) {
+                                    console.error("Error parsing stream data:", e);
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (onComplete) onComplete(fullContent);
+                    return fullContent;
+                } catch (error) {
+                    console.error("DeepSeek API Stream Error:", error);
+                    throw error;
+                }
+            },
+            
+            // Prepare messages for DeepSeek API call
+            prepareMessagesForAPI: (includeContext = true, customInstructions = "") => {
+                const conversation = utils.getCurrentConversation();
+                if (!conversation) return [];
+                
+                // Start with a system message
+                const systemMessage = {
+                    role: 'system',
+                    content: "You are Jork-3, a helpful, creative, and knowledgeable AI assistant. You excel at understanding complex queries and providing insightful, accurate responses. Your knowledge cutoff date is October 2024." + 
+                             (customInstructions ? " " + customInstructions : "")
+                };
+                
+                const messages = [systemMessage];
+                
+                // Add conversation history
+                if (includeContext) {
+                    conversation.messages.forEach(msg => {
+                        messages.push({
+                            role: msg.role,
+                            content: msg.content
+                        });
+                    });
+                } else {
+                    // Just add the last user message
+                    const lastUserMessage = conversation.messages.filter(msg => msg.role === 'user').pop();
+                    if (lastUserMessage) {
+                        messages.push({
+                            role: 'user',
+                            content: lastUserMessage.content
+                        });
+                    }
+                }
+                
+                return messages;
+            }
+        };
+        
+        // UI Manager
+        const uiManager = {
+            init: () => {
+                // Initialize UI state
+                uiManager.loadSavedState();
+                uiManager.setupEventListeners();
+                uiManager.updateDarkModeUI();
+                uiManager.setupWelcomeScreen();
+                
+                // Render initial screen
+                if (appState.conversations.length > 0 && appState.currentConversationId) {
+                    uiManager.showChatUI();
+                    uiManager.renderCurrentConversation();
+                    uiManager.updateChatHistoryList();
+                } else {
+                    uiManager.showWelcomeScreen();
+                }
+            },
+            
+            loadSavedState: () => {
+                // Load dark mode preference
+                const savedDarkMode = localStorage.getItem('jork3_dark_mode');
+                if (savedDarkMode !== null) {
+                    appState.darkMode = savedDarkMode === 'true';
+                    document.documentElement.classList.toggle('dark', appState.darkMode);
+                } else {
+                    // If no saved preference, use system preference
+                    appState.darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    document.documentElement.classList.toggle('dark', appState.darkMode);
+                }
+                
+                // Load saved conversations
+                const savedConversations = localStorage.getItem('jork3_conversations');
+                if (savedConversations) {
+                    appState.conversations = JSON.parse(savedConversations);
+                    
+                    // Set current conversation to the most recent one
+                    if (appState.conversations.length > 0) {
+                        appState.conversations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                        appState.currentConversationId = appState.conversations[0].id;
+                    }
+                }
+                
+                // Load API key if saved
+                const savedAPIKey = localStorage.getItem('jork3_api_key');
+                if (savedAPIKey) {
+                    appState.apiKey = savedAPIKey;
+                }
+                
+                // Load feature preferences
+                const webSearchEnabled = localStorage.getItem('jork3_web_search');
+                if (webSearchEnabled !== null) {
+                    appState.webSearchEnabled = webSearchEnabled === 'true';
+                }
+                
+                const deepThinkingEnabled = localStorage.getItem('jork3_deep_thinking');
+                if (deepThinkingEnabled !== null) {
+                    appState.deepThinkingEnabled = deepThinkingEnabled === 'true';
+                }
+                
+                const streamingEnabled = localStorage.getItem('jork3_streaming');
+                if (streamingEnabled !== null) {
+                    appState.streamingEnabled = streamingEnabled === 'true';
+                }
+                
+                const selectedModel = localStorage.getItem('jork3_selected_model');
+                if (selectedModel) {
+                    appState.selectedModel = selectedModel;
+                }
+            },
+            
+            setupEventListeners: () => {
+                // Dark mode toggle
+                const toggleDarkMode = document.getElementById('toggle-dark-mode');
+                if (toggleDarkMode) {
+                    toggleDarkMode.checked = appState.darkMode;
+                    toggleDarkMode.addEventListener('change', utils.toggleDarkMode);
+                }
+                
+                // Header dark mode toggle
+                const toggleDarkModeHeader = document.getElementById('toggle-dark-mode-header');
+                if (toggleDarkModeHeader) {
+                    toggleDarkModeHeader.addEventListener('click', utils.toggleDarkMode);
+                }
+                
+                // Sidebar toggle
+                const toggleSidebar = document.getElementById('toggleSidebar');
+                if (toggleSidebar) {
+                    toggleSidebar.addEventListener('click', utils.toggleSidebar);
+                }
+                
+                // Close sidebar
+                const closeSidebar = document.getElementById('closeSidebar');
+                if (closeSidebar) {
+                    closeSidebar.addEventListener('click', utils.toggleSidebar);
+                }
+                
+                // Send message button
+                const sendMessageBtn = document.getElementById('send-message');
+                if (sendMessageBtn) {
+                    sendMessageBtn.addEventListener('click', uiManager.handleSendMessage);
+                }
+                
+                // Message input
+                const messageInput = document.getElementById('message-input');
+                if (messageInput) {
+                    messageInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            uiManager.handleSendMessage();
+                        }
                     });
                 }
-            });
-        });
-
-        // 聊天演示动画
-        const demoMessages = [
-            {
-                text: "下面是关于AI和量子计算的未来技术趋势文章：\n\n**未来科技潮流：AI与量子计算的交汇**\n\n在技术快速发展的时代，人工智能(AI)和量子计算正引领着创新的前沿。这两个领域的进步不仅各自革命性，它们的交叉融合更是开启了前所未有的可能性。\n\nAI技术正从专用系统转向通用人工智能(AGI)，能够像人类一样理解、学习并执行各种任务。大型语言模型的出现使AI系统能够生成几乎无法与人类创作区分的内容，从创意写作到编程代码。同时，AI在医疗诊断、气候建模和材料科学等领域的应用也取得了突破性进展。\n\n另一方面，量子计算正迅速从理论走向实践。量子计算机利用量子力学原理，能够以指数级速度解决传统计算机难以处理的复杂问题。最新的量子处理器已经展示了「量子优势」，完成了传统超级计算机需要数千年才能完成的计算任务。",
-                delay: 3000,
-                type: 'bot'
-            },
-            {
-                text: "太棒了！这正是我需要的。能否再详细说明一下AI和量子计算结合的具体应用案例？",
-                delay: 2000,
-                type: 'user'
-            },
-            {
-                text: "当然可以。AI和量子计算结合的应用案例包括：\n\n1. **药物研发**：量子计算能够精确模拟分子结构，而AI可以预测这些分子的药理特性，大大加速新药研发过程，从几年缩短到几个月。\n\n2. **金融建模**：量子算法解决复杂优化问题，AI系统分析市场模式，共同创建更准确的风险评估和投资组合优化模型。\n\n3. **气候预测**：结合量子计算的处理能力和AI的模式识别能力，科学家可以创建更精确的气候模型，预测极端天气事件。\n\n4. **材料科学**：AI辅助量子计算机设计新型超导体、电池材料和催化剂，有望在能源领域取得突破性进展。\n\n这些技术的融合正在创造出我们之前无法想象的解决方案，加速科学发现和技术创新的步伐。",
-                delay: 4000,
-                type: 'bot'
-            }
-        ];
-
-        let demoIndex = 0;
-
-        function showNextDemo() {
-            if (demoIndex < demoMessages.length) {
-                const message = demoMessages[demoIndex];
-                const messagesContainer = document.querySelector('.chat-messages');
-                const typingIndicator = document.querySelector('.typing-indicator');
                 
-                if (message.type === 'bot') {
-                    // 显示输入指示器
-                    if (typingIndicator) {
-                        typingIndicator.style.display = 'flex';
+                // New chat button
+                const newChatBtn = document.getElementById('btn-new-chat');
+                if (newChatBtn) {
+                    newChatBtn.addEventListener('click', () => {
+                        utils.createConversation();
+                        uiManager.showChatUI();
+                        uiManager.renderCurrentConversation();
+                        document.getElementById('message-input').focus();
+                    });
+                }
+                
+                // Start conversation button on welcome screen
+                const startConversationBtn = document.getElementById('start-conversation');
+                if (startConversationBtn) {
+                    startConversationBtn.addEventListener('click', () => {
+                        utils.createConversation();
+                        uiManager.showChatUI();
+                        uiManager.renderCurrentConversation();
+                        document.getElementById('message-input').focus();
+                    });
+                }
+                
+                // Clear history button
+                const clearHistoryBtn = document.getElementById('clear-history');
+                if (clearHistoryBtn) {
+                    clearHistoryBtn.addEventListener('click', () => {
+                        if (confirm('Are you sure you want to clear all chat history? This cannot be undone.')) {
+                            utils.clearConversations();
+                            uiManager.showWelcomeScreen();
+                            utils.showToast('Chat history cleared');
+                        }
+                    });
+                }
+                
+                // File upload
+                const fileUpload = document.getElementById('file-upload');
+                if (fileUpload) {
+                    fileUpload.addEventListener('change', (e) => {
+                        if (e.target.files.length > 0) {
+                            for (let i = 0; i < e.target.files.length; i++) {
+                                const file = e.target.files[i];
+                                appState.attachments.push(file);
+                            }
+                            uiManager.updateAttachmentPreview();
+                        }
+                    });
+                }
+                
+                // Clear attachments
+                const clearAttachmentsBtn = document.getElementById('clear-attachments');
+                if (clearAttachmentsBtn) {
+                    clearAttachmentsBtn.addEventListener('click', () => {
+                        appState.attachments = [];
+                        uiManager.updateAttachmentPreview();
+                    });
+                }
+                
+                // Web search toggle
+                const toggleWebSearch = document.getElementById('toggle-web-search');
+                if (toggleWebSearch) {
+                    toggleWebSearch.classList.toggle('text-primary-600', appState.webSearchEnabled);
+                    
+                    toggleWebSearch.addEventListener('click', () => {
+                        appState.webSearchEnabled = !appState.webSearchEnabled;
+                        toggleWebSearch.classList.toggle('text-primary-600', appState.webSearchEnabled);
+                        localStorage.setItem('jork3_web_search', appState.webSearchEnabled);
+                        
+                        utils.showToast(`Web search ${appState.webSearchEnabled ? 'enabled' : 'disabled'}`);
+                    });
+                }
+                
+                // Deep thinking toggle
+                const toggleDeepThinking = document.getElementById('toggle-deep-thinking');
+                if (toggleDeepThinking) {
+                    toggleDeepThinking.classList.toggle('text-primary-600', appState.deepThinkingEnabled);
+                    
+                    toggleDeepThinking.addEventListener('click', () => {
+                        appState.deepThinkingEnabled = !appState.deepThinkingEnabled;
+                        toggleDeepThinking.classList.toggle('text-primary-600', appState.deepThinkingEnabled);
+                        localStorage.setItem('jork3_deep_thinking', appState.deepThinkingEnabled);
+                        
+                        utils.showToast(`Deep thinking ${appState.deepThinkingEnabled ? 'enabled' : 'disabled'}`);
+                    });
+                }
+                
+                // News cards click event
+                document.querySelectorAll('.news-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const titleElement = card.querySelector('.news-title');
+                        if (titleElement) {
+                            const title = titleElement.textContent;
+                            uiManager.handleNewsSelection(title);
+                        }
+                    });
+                });
+            },
+            
+            updateDarkModeUI: () => {
+                // Update toggle button
+                const toggleDarkMode = document.getElementById('toggle-dark-mode');
+                if (toggleDarkMode) {
+                    toggleDarkMode.checked = appState.darkMode;
+                }
+                
+                // Update icon
+                const darkModeIcon = document.getElementById('dark-mode-icon');
+                if (darkModeIcon) {
+                    darkModeIcon.className = appState.darkMode ? 'fas fa-sun text-xl' : 'fas fa-moon text-xl';
+                }
+            },
+            
+            setupWelcomeScreen: () => {
+                // Set greeting based on Beijing time
+                const greetingElement = document.getElementById('greeting');
+                if (greetingElement) {
+                    const greeting = utils.getGreeting();
+                    const beijingTime = utils.getBeijingTime();
+                    const beijingDate = utils.getBeijingDate();
+                    greetingElement.textContent = `${greeting} It's ${beijingDate}, ${beijingTime} in Beijing.`;
+                }
+                
+                // Generate news cards
+                const trendingNewsContainer = document.getElementById('trending-news');
+                if (trendingNewsContainer) {
+                    trendingNewsContainer.innerHTML = '';
+                    
+                    // Randomly select 3 news items
+                    const randomNews = [...appState.mockNewsData]
+                        .sort(() => 0.5 - Math.random())
+                        .slice(0, 3);
+                    
+                    randomNews.forEach(news => {
+                        const newsCard = document.createElement('div');
+                        newsCard.className = 'news-card cursor-pointer';
+                        newsCard.innerHTML = `
+                            <div class="p-4">
+                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2 news-title">${news.title}</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">${news.summary}</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs text-gray-500 dark:text-gray-500">${news.source}</span>
+                                    <button class="text-primary-600 dark:text-primary-400 text-xs">Read more →</button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Add click event
+                        newsCard.addEventListener('click', () => {
+                            uiManager.handleNewsSelection(news.title);
+                        });
+                        
+                        trendingNewsContainer.appendChild(newsCard);
+                    });
+                }
+            },
+            
+            showWelcomeScreen: () => {
+                const welcomeScreen = document.getElementById('welcome-screen');
+                const chatUI = document.getElementById('chat-ui');
+                
+                if (welcomeScreen && chatUI) {
+                    welcomeScreen.classList.remove('hidden');
+                    chatUI.classList.add('hidden');
+                    appState.isWelcomeScreen = true;
+                }
+                
+                // Update welcome screen data
+                uiManager.setupWelcomeScreen();
+            },
+            
+            showChatUI: () => {
+                const welcomeScreen = document.getElementById('welcome-screen');
+                const chatUI = document.getElementById('chat-ui');
+                
+                if (welcomeScreen && chatUI) {
+                    welcomeScreen.classList.add('hidden');
+                    chatUI.classList.remove('hidden');
+                    appState.isWelcomeScreen = false;
+                }
+            },
+            
+            updateChatHistoryList: () => {
+                const chatHistoryList = document.getElementById('chat-history-list');
+                
+                if (chatHistoryList) {
+                    if (appState.conversations.length === 0) {
+                        chatHistoryList.innerHTML = `
+                            <div class="text-sm text-gray-500 dark:text-gray-400 p-2 text-center">
+                                没有聊天历史
+                            </div>
+                        `;
+                        return;
                     }
                     
-                    // 延迟后显示消息
-                    setTimeout(() => {
-                        if (typingIndicator) {
-                            typingIndicator.style.display = 'none';
+                    chatHistoryList.innerHTML = '';
+                    
+                    // Sort conversations by date (newest first)
+                    const sortedConversations = [...appState.conversations]
+                        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    
+                    sortedConversations.forEach(conv => {
+                        const chatItem = document.createElement('div');
+                        chatItem.className = `chat-history-item ${conv.id === appState.currentConversationId ? 'active' : ''}`;
+                        chatItem.dataset.id = conv.id;
+                        
+                        // Format date
+                        const date = new Date(conv.createdAt);
+                        const formattedDate = date.toLocaleDateString();
+                        
+                        chatItem.innerHTML = `
+                            <div class="flex items-start">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">${conv.title}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</p>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Add click event
+                        chatItem.addEventListener('click', () => {
+                            appState.currentConversationId = conv.id;
+                            uiManager.renderCurrentConversation();
+                            uiManager.showChatUI();
+                            
+                            // Update active state in chat history
+                            document.querySelectorAll('.chat-history-item').forEach(item => {
+                                item.classList.toggle('active', item.dataset.id === conv.id);
+                            });
+                        });
+                        
+                        chatHistoryList.appendChild(chatItem);
+                    });
+                }
+            },
+            
+            renderCurrentConversation: () => {
+                const conversation = utils.getCurrentConversation();
+                const container = document.getElementById('conversation-container');
+                
+                if (container && conversation) {
+                    container.innerHTML = '';
+                    
+                    // Render all messages
+                    conversation.messages.forEach(message => {
+                        uiManager.appendMessageToUI(message);
+                    });
+                    
+                    // Scroll to bottom
+                    container.scrollTop = container.scrollHeight;
+                }
+            },
+            
+            updateAttachmentPreview: () => {
+                const attachmentPreview = document.getElementById('attachment-preview');
+                const attachmentList = document.getElementById('attachment-list');
+                
+                if (attachmentPreview && attachmentList) {
+                    if (appState.attachments.length > 0) {
+                        attachmentPreview.classList.remove('hidden');
+                        attachmentList.innerHTML = '';
+                        
+                        appState.attachments.forEach((file, index) => {
+                            const attachmentItem = document.createElement('div');
+                            attachmentItem.className = 'bg-white dark:bg-dark-800 rounded-md shadow-sm p-2 flex items-center';
+                            
+                            // Preview icon or thumbnail
+                            let previewHtml = '';
+                            if (file.type.startsWith('image/')) {
+                              const imgUrl = URL.createObjectURL(file);
+                                previewHtml = `<img src="${imgUrl}" class="h-10 w-10 object-cover rounded mr-2" alt="Preview">`;
+                            } else {
+                                previewHtml = `<i class="fas fa-file text-gray-500 text-xl mr-2"></i>`;
+                            }
+                            
+                            attachmentItem.innerHTML = `
+                                ${previewHtml}
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">${file.name}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">${(file.size / 1024).toFixed(1)} KB</p>
+                                </div>
+                                <button class="remove-attachment ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" data-index="${index}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            `;
+                            
+                            attachmentList.appendChild(attachmentItem);
+                        });
+                        
+                        // Add event listeners to remove buttons
+                        document.querySelectorAll('.remove-attachment').forEach(btn => {
+                            btn.addEventListener('click', (e) => {
+                                const index = parseInt(e.currentTarget.getAttribute('data-index'));
+                                appState.attachments.splice(index, 1);
+                                uiManager.updateAttachmentPreview();
+                            });
+                        });
+                    } else {
+                        attachmentPreview.classList.add('hidden');
+                    }
+                }
+            },
+            
+            createMessageElement: (message) => {
+                const messageId = message.id || utils.generateMessageId();
+                const isUser = message.role === 'user';
+                
+                const messageElement = document.createElement('div');
+                messageElement.id = messageId;
+                messageElement.className = `message-container ${isUser ? 'user-message' : 'ai-message'} border-b border-gray-100 dark:border-gray-800`;
+                
+                let avatarHtml = '';
+                
+                if (isUser) {
+                    avatarHtml = `
+                        <div class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    `;
+                } else {
+                    avatarHtml = `
+                        <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                    `;
+                }
+                
+                // Format the content based on message type
+                let contentHtml = '';
+                
+                if (isUser) {
+                    // User messages are displayed as plain text
+                    contentHtml = `<div class="message-content whitespace-pre-wrap">${message.content}</div>`;
+                } else {
+                    // AI messages are rendered as markdown
+                    contentHtml = `<div class="message-content">${utils.sanitizeHTML(utils.renderMarkdown(message.content))}</div>`;
+                }
+                
+                // Add attachments if any
+                let attachmentsHtml = '';
+                if (message.attachments && message.attachments.length > 0) {
+                    attachmentsHtml = `
+                        <div class="mt-2 space-y-2">
+                            ${message.attachments.map(attachment => {
+                                if (attachment.type.startsWith('image/')) {
+                                    return `<img src="${attachment.url}" class="max-w-full h-auto rounded" alt="Attachment">`;
+                                } else {
+                                    return `
+                                        <div class="flex items-center p-2 bg-gray-100 dark:bg-dark-600 rounded">
+                                            <i class="fas fa-file mr-2 text-gray-600 dark:text-gray-400"></i>
+                                            <span class="text-sm">${attachment.name}</span>
+                                        </div>
+                                    `;
+                                }
+                            }).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Add citations if any
+                let citationsHtml = '';
+                if (!isUser && message.citations && message.citations.length > 0) {
+                    citationsHtml = `
+                        <div class="mt-3">
+                            <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sources:</div>
+                            ${message.citations.map((citation, index) => `
+                                <div class="citation mb-2">
+                                    <div class="flex items-start">
+                                        <span class="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-1.5 py-0.5 rounded mr-2">${index + 1}</span>
+                                        <div>
+                                            <div class="text-sm font-medium">${citation.title}</div>
+                                            <a href="${citation.url}" target="_blank" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+                                                ${citation.source} - ${new Date(citation.date).toLocaleDateString()}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Add thinking process if enabled and it's an AI message
+                let thinkingHtml = '';
+                if (!isUser && message.thinking && appState.deepThinkingEnabled) {
+                    thinkingHtml = `
+                        <div class="thinking-container mt-2">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium text-gray-700 dark:text-gray-300">Thinking Process</span>
+                                <button class="toggle-thinking text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                    <i class="fas fa-chevron-up"></i>
+                                </button>
+                            </div>
+                            <div class="thinking-content">
+                                ${message.thinking.map(step => `<div class="thinking-step">${step}</div>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                messageElement.innerHTML = `
+                    <div class="flex space-x-4">
+                        ${avatarHtml}
+                        <div class="flex-1">
+                            <div class="flex items-center mb-1">
+                                <div class="font-medium text-gray-900 dark:text-white">${isUser ? 'You' : 'Jork-3'}</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400 ml-2">${message.timestamp || utils.formatTime(new Date())}</div>
+                            </div>
+                            ${contentHtml}
+                            ${attachmentsHtml}
+                            ${citationsHtml}
+                            ${thinkingHtml}
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listeners for thinking toggle if present
+                const toggleThinking = messageElement.querySelector('.toggle-thinking');
+                if (toggleThinking) {
+                    toggleThinking.addEventListener('click', () => {
+                        const thinkingContent = messageElement.querySelector('.thinking-content');
+                        const icon = toggleThinking.querySelector('i');
+                        
+                        if (thinkingContent.style.display === 'none') {
+                            thinkingContent.style.display = 'block';
+                            icon.className = 'fas fa-chevron-up';
+                        } else {
+                            thinkingContent.style.display = 'none';
+                            icon.className = 'fas fa-chevron-down';
+                        }
+                    });
+                }
+                
+                return messageElement;
+            },
+            
+            appendMessageToUI: (message) => {
+                const container = document.getElementById('conversation-container');
+                if (container) {
+                    const messageElement = uiManager.createMessageElement(message);
+                    container.appendChild(messageElement);
+                    
+                    // Scroll to bottom
+                    container.scrollTop = container.scrollHeight;
+                    
+                    // Highlight code blocks
+                    try {
+                        if (typeof hljs !== 'undefined') {
+                            messageElement.querySelectorAll('pre code').forEach((block) => {
+                                hljs.highlightElement(block);
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Syntax highlighting error:', e);
+                    }
+                }
+            },
+            
+            updateMessageInUI: (messageId, content, isComplete = false, citations = null) => {
+                const messageElement = document.getElementById(messageId);
+                if (messageElement) {
+                    const contentElement = messageElement.querySelector('.message-content');
+                    if (contentElement) {
+                        // Render markdown and sanitize
+                        contentElement.innerHTML = utils.sanitizeHTML(utils.renderMarkdown(content));
+                        
+                        // Add cursor if still streaming
+                        if (!isComplete && appState.streamingEnabled) {
+                            const cursorElement = document.createElement('span');
+                            cursorElement.className = 'cursor-blink';
+                            contentElement.appendChild(cursorElement);
                         }
                         
-                        const messageEl = document.createElement('div');
-                        messageEl.className = `message ${message.type}`;
-                        messageEl.innerHTML = message.text;
-                        messagesContainer.appendChild(messageEl);
+                        // Add citations if provided and complete
+                        if (isComplete && citations && citations.length > 0) {
+                            let citationsContainer = messageElement.querySelector('.citations-container');
+                            
+                            if (!citationsContainer) {
+                                citationsContainer = document.createElement('div');
+                                citationsContainer.className = 'citations-container mt-3';
+                                
+                                const citationsHtml = `
+                                    <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sources:</div>
+                                    ${citations.map((citation, index) => `
+                                        <div class="citation mb-2">
+                                            <div class="flex items-start">
+                                                <span class="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-1.5 py-0.5 rounded mr-2">${index + 1}</span>
+                                                <div>
+                                                    <div class="text-sm font-medium">${citation.title}</div>
+                                                    <a href="${citation.url}" target="_blank" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+                                                        ${citation.source} - ${new Date(citation.date).toLocaleDateString()}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                `;
+                                
+                                citationsContainer.innerHTML = citationsHtml;
+                                
+                                // Insert after content
+                                const messageContentWrapper = contentElement.parentNode;
+                                messageContentWrapper.insertBefore(citationsContainer, contentElement.nextSibling);
+                            }
+                        }
                         
-                        // 自动滚动到底部
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                        // Highlight code blocks
+                        try {
+                            if (typeof hljs !== 'undefined') {
+                                messageElement.querySelectorAll('pre code').forEach((block) => {
+                                    hljs.highlightElement(block);
+                                });
+                            }
+                        } catch (e) {
+                            console.error('Syntax highlighting error in updateMessageInUI:', e);
+                        }
                         
-                        demoIndex++;
-                        showNextDemo();
-                    }, message.delay);
-                } else {
-                    // 用户消息直接显示
-                    const messageEl = document.createElement('div');
-                    messageEl.className = `message ${message.type}`;
-                    messageEl.innerHTML = message.text;
-                    messagesContainer.appendChild(messageEl);
-                    
-                    // 自动滚动到底部
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    
-                    demoIndex++;
-                    setTimeout(showNextDemo, message.delay);
+                        // Scroll to bottom
+                        const container = document.getElementById('conversation-container');
+                        if (container) {
+                            container.scrollTop = container.scrollHeight;
+                        }
+                    }
                 }
-            }
-        }
-
-        // 当演示部分可见时开始动画
-        const demoSection = document.getElementById('demo');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && demoIndex === 0) {
-                    showNextDemo();
-                }
-            });
-        }, {
-            threshold: 0.3
-        });
-
-        observer.observe(demoSection);
-
-        // 添加输入框交互
-        const chatInput = document.querySelector('.chat-input-field');
-        const chatSend = document.querySelector('.chat-send');
-
-        if (chatInput && chatSend) {
-            chatInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
-            });
-
-            chatSend.addEventListener('click', sendMessage);
-        }
-
-        function sendMessage() {
-            const messagesContainer = document.querySelector('.chat-messages');
-            const inputValue = chatInput.value.trim();
+            },
             
-            if (inputValue !== '') {
-                // 创建用户消息
-                const userMessage = document.createElement('div');
-                userMessage.className = 'message user';
-                userMessage.textContent = inputValue;
-                messagesContainer.appendChild(userMessage);
+            createLoadingMessage: () => {
+                const messageId = utils.generateMessageId();
+                const message = {
+                    id: messageId,
+                    role: 'assistant',
+                    content: '<div class="flex items-center"><span class="dot-typing"></span><span class="dot-typing"></span><span class="dot-typing"></span></div>',
+                    timestamp: utils.formatTime(new Date())
+                };
                 
-                // 清空输入框
-                chatInput.value = '';
+                // Append to UI but don't add to conversation yet
+                uiManager.appendMessageToUI(message);
                 
-                // 自动滚动到底部
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                return messageId;
+            },
+            
+            handleSendMessage: async () => {
+                const messageInput = document.getElementById('message-input');
+                const sendButton = document.getElementById('send-message');
                 
-                // 显示输入指示器
-                const typingIndicator = document.querySelector('.typing-indicator');
-                if (typingIndicator) {
-                    typingIndicator.style.display = 'flex';
-                }
-                
-                // 模拟回复
-                setTimeout(() => {
-                    if (typingIndicator) {
-                        typingIndicator.style.display = 'none';
+                if (messageInput && sendButton && !appState.isProcessing) {
+                    const messageText = messageInput.value.trim();
+                    
+                    if (messageText === '' && appState.attachments.length === 0) {
+                        return;
                     }
                     
-                    const botMessage = document.createElement('div');
-                    botMessage.className = 'message bot';
-                    botMessage.textContent = "感谢您的提问。我是JorkAI演示版本，目前只能显示预设的演示消息。在完整版本中，我能够理解并响应您的所有问题和需求，提供个性化的智能服务。";
-                    messagesContainer.appendChild(botMessage);
+                    // Disable input and button while processing
+                    appState.isProcessing = true;
+                    messageInput.disabled = true;
+                    sendButton.disabled = true;
                     
-                    // 自动滚动到底部
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                }, 2000);
-            }
-        }
-
-        // 轮播导航
-        const prevBtn = document.querySelector('.testimonial-nav-btn.prev');
-        const nextBtn = document.querySelector('.testimonial-nav-btn.next');
-        const slider = document.querySelector('.testimonials-slider');
-
-        if (prevBtn && nextBtn && slider) {
-            prevBtn.addEventListener('click', function() {
-                slider.scrollBy({
-                    left: -380,
-                    behavior: 'smooth'
-                });
-            });
-
-            nextBtn.addEventListener('click', function() {
-                slider.scrollBy({
-                    left: 380,
-                    behavior: 'smooth'
-                });
-            });
-        }
-
-        // 添加滚动动画
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const fadeElements = document.querySelectorAll('.feature-card, .pricing-card, .testimonial-card, .model-card');
-
-        const fadeObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                    fadeObserver.unobserve(entry.target);
+                    // Create user message
+                    const userMessage = {
+                        role: 'user',
+                        content: messageText,
+                        timestamp: utils.formatTime(new Date())
+                    };
+                    
+                    // Add attachments if any
+                    if (appState.attachments.length > 0) {
+                        userMessage.attachments = appState.attachments.map(file => {
+                            return {
+                                name: file.name,
+                                type: file.type,
+                                url: URL.createObjectURL(file)
+                            };
+                        });
+                    }
+                    
+                    // Add to conversation and UI
+                    utils.addMessageToConversation(userMessage);
+                    uiManager.appendMessageToUI(userMessage);
+                    
+                    // Clear input and attachments
+                    messageInput.value = '';
+                    appState.attachments = [];
+                    uiManager.updateAttachmentPreview();
+                    
+                    // Create loading message
+                    const loadingMessageId = uiManager.createLoadingMessage();
+                    
+                    try {
+                        let finalResponse = '';
+                        let searchResults = null;
+                        let thinkingSteps = null;
+                        
+                        // 1. Perform web search if enabled
+                        if (appState.webSearchEnabled) {
+                            try {
+                                searchResults = await utils.performWebSearch(messageText);
+                                console.log("Search results:", searchResults);
+                            } catch (error) {
+                                console.error("Web search failed:", error);
+                                // Continue without search results
+                            }
+                        }
+                        
+                        // 2. Generate thinking steps if enabled
+                        if (appState.deepThinkingEnabled) {
+                            try {
+                                thinkingSteps = await utils.generateThinkingSteps(messageText);
+                                console.log("Thinking steps:", thinkingSteps);
+                            } catch (error) {
+                                console.error("Generating thinking steps failed:", error);
+                                // Continue with default thinking steps
+                                thinkingSteps = [...appState.thinkingSteps];
+                            }
+                        }
+                        
+                        // 3. Prepare messages for API call
+                        let messages = utils.prepareMessagesForAPI();
+                        let customInstructions = '';
+                        
+                        // 4. Add web search results to prompt if available
+                        if (searchResults && searchResults.length > 0) {
+                            const searchResultsText = searchResults.map((result, index) => 
+                                `[${index + 1}] "${result.title}"\n${result.content}\nSource: ${result.source}\nURL: ${result.url}\nDate: ${new Date(result.date).toISOString()}`
+                            ).join('\n\n');
+                            
+                            customInstructions += `\nThe following search results were found for the user's query. Please use this information to provide an accurate and up-to-date response. When referencing these sources, please include citations: \n\n${searchResultsText}\n\n`;
+                            
+                            // Update system message with search results
+                            messages[0].content += customInstructions;
+                        }
+                        
+                        // 5. Call the API with streaming
+                        if (appState.streamingEnabled) {
+                            await utils.callDeepSeekAPI(messages, {
+                                stream: true,
+                                onUpdate: (content) => {
+                                    uiManager.updateMessageInUI(loadingMessageId, content);
+                                },
+                                onComplete: (content) => {
+                                    finalResponse = content;
+                                    
+                                    // Add citations to UI if search was used
+                                    if (searchResults && searchResults.length > 0) {
+                                        uiManager.updateMessageInUI(loadingMessageId, content, true, searchResults);
+                                    } else {
+                                        uiManager.updateMessageInUI(loadingMessageId, content, true);
+                                    }
+                                    
+                                    // Add to conversation
+                                    const aiMessage = {
+                                        role: 'assistant',
+                                        content: content,
+                                        timestamp: utils.formatTime(new Date())
+                                    };
+                                    
+                                    // Add thinking steps if deep thinking was enabled
+                                    if (appState.deepThinkingEnabled && thinkingSteps) {
+                                        aiMessage.thinking = thinkingSteps;
+                                    }
+                                    
+                                    // Add citations if search was used
+                                    if (searchResults && searchResults.length > 0) {
+                                        aiMessage.citations = searchResults;
+                                    }
+                                    
+                                    utils.addMessageToConversation(aiMessage);
+                                }
+                            });
+                        } else {
+                            // Non-streaming API call
+                            finalResponse = await utils.callDeepSeekAPI(messages, {
+                                temperature: 0.7,
+                                max_tokens: 4000
+                            });
+                            
+                            // Update the UI
+                            if (searchResults && searchResults.length > 0) {
+                                uiManager.updateMessageInUI(loadingMessageId, finalResponse, true, searchResults);
+                            } else {
+                                uiManager.updateMessageInUI(loadingMessageId, finalResponse, true);
+                            }
+                            
+                            // Add to conversation
+                            const aiMessage = {
+                                role: 'assistant',
+                                content: finalResponse,
+                                timestamp: utils.formatTime(new Date())
+                            };
+                            
+                            // Add thinking steps if deep thinking was enabled
+                            if (appState.deepThinkingEnabled && thinkingSteps) {
+                                aiMessage.thinking = thinkingSteps;
+                            }
+                            
+                            // Add citations if search was used
+                            if (searchResults && searchResults.length > 0) {
+                                aiMessage.citations = searchResults;
+                            }
+                            
+                            utils.addMessageToConversation(aiMessage);
+                        }
+                    } catch (error) {
+                        console.error("Error sending message:", error);
+                        
+                        // Update the loading message with error
+                        document.getElementById(loadingMessageId).remove();
+                        
+                        const errorMessage = {
+                            role: 'assistant',
+                            content: `Error: ${error.message || 'Failed to connect to DeepSeek API'}`,
+                            timestamp: utils.formatTime(new Date())
+                        };
+                        
+                        utils.addMessageToConversation(errorMessage);
+                        uiManager.appendMessageToUI(errorMessage);
+                        
+                        utils.showToast("Error: Failed to connect to DeepSeek API");
+                    } finally {
+                        // Re-enable input and button
+                        appState.isProcessing = false;
+                        messageInput.disabled = false;
+                        sendButton.disabled = false;
+                        messageInput.focus();
+                    }
                 }
-            });
-        }, observerOptions);
-
-        fadeElements.forEach(element => {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(30px)';
-            element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            fadeObserver.observe(element);
+            },
+            
+            handleNewsSelection: (newsTitle) => {
+                // Create new conversation
+                utils.createConversation();
+                
+                // Show chat UI
+                uiManager.showChatUI();
+                
+                // Set the message input to a query about the news
+                const messageInput = document.getElementById('message-input');
+                if (messageInput) {
+                    messageInput.value = `Tell me more about "${newsTitle}" with the latest information.`;
+                    
+                    // Enable web search for news queries
+                    appState.webSearchEnabled = true;
+                    
+                    // Update UI for web search
+                    const toggleWebSearch = document.getElementById('toggle-web-search');
+                    if (toggleWebSearch) {
+                        toggleWebSearch.classList.add('text-primary-600');
+                    }
+                    
+                    // Focus the input
+                    messageInput.focus();
+                }
+            }
+        };
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            uiManager.init();
         });
     </script>
 </body>
