@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>jork-3.7-Epic AI Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -266,6 +271,20 @@
             background-color: #1f2937;
         }
 
+        /* Citation styles */
+        .citation {
+            background-color: #f0f9ff;
+            border-left: 3px solid #3b82f6;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .dark .citation {
+            background-color: #172033;
+            border-left-color: #3b82f6;
+        }
+
         /* Syntax highlighting */
         .hljs {
             display: block;
@@ -371,6 +390,36 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
 
+        /* Chat history items */
+        .chat-history-item {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chat-history-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .dark .chat-history-item {
+            border-color: #374151;
+        }
+
+        .dark .chat-history-item:hover {
+            background-color: #1f2937;
+        }
+
+        .chat-history-item.active {
+            background-color: #e0e7ff;
+            border-left: 3px solid #6663ff;
+        }
+
+        .dark .chat-history-item.active {
+            background-color: #272c36;
+            border-left: 3px solid #6663ff;
+        }
+
         /* Button animations */
         .btn-hover-effect {
             position: relative;
@@ -447,7 +496,7 @@
         <div id="sidebar" class="fixed top-0 left-0 h-full bg-white dark:bg-dark-700 w-64 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-40 flex flex-col">
             <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                    <span class="text-primary-600 dark:text-primary-400 text-xl font-bold">Jork-3</span>
+                    <span class="text-primary-600 dark:text-primary-400 text-xl font-bold">Jork</span>
                     <span class="bg-green-500 h-2 w-2 rounded-full"></span>
                 </div>
                 <button id="closeSidebar" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
@@ -455,54 +504,14 @@
                 </button>
             </div>
             
-            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Model Selection</h2>
-                <div class="space-y-2">
-                    <div class="flex items-center">
-                        <input type="radio" id="model-claude-3-opus" name="model-selection" value="Claude-3-Opus" class="h-4 w-4 text-primary-600 focus:ring-primary-500">
-                        <label for="model-claude-3-opus" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Claude 3 Opus（暂未开放）</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="radio" id="model-claude-3-sonnet" name="model-selection" value="Claude-3.7-Sonnet" class="h-4 w-4 text-primary-600 focus:ring-primary-500" checked>
-                        <label for="model-claude-3-sonnet" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Claude 3.7 Sonnet（暂未开放）</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="radio" id="model-claude-3-haiku" name="model-selection" value="jork-3.7-Epic-Reasoning" class="h-4 w-4 text-primary-600 focus:ring-primary-500">
-                        <label for="model-claude-3-haiku" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Jork-3.7-Epic-Reasoning</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="radio" id="model-claude-2" name="model-selection" value="jork-3.5-Epic" class="h-4 w-4 text-primary-600 focus:ring-primary-500">
-                        <label for="model-claude-2" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Jork-3.5-Epic</label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Features</h2>
-                <div class="space-y-2">
-                    <div class="flex items-center">
-                        <input type="checkbox" id="feature-web-search" class="h-4 w-4 text-primary-600 focus:ring-primary-500">
-                        <label for="feature-web-search" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Web Search</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="feature-deep-thinking" class="h-4 w-4 text-primary-600 focus:ring-primary-500">
-                        <label for="feature-deep-thinking" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Deep Thinking</label>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="feature-streaming" class="h-4 w-4 text-primary-600 focus:ring-primary-500" checked>
-                        <label for="feature-streaming" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Streaming Output</label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-                <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Display</h2>
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between">
-                        <label for="toggle-dark-mode" class="text-sm text-gray-700 dark:text-gray-300">Dark Mode</label>
-                        <div class="relative inline-block w-10 mr-2 align-middle select-none">
-                            <input type="checkbox" id="toggle-dark-mode" class="sr-only">
-                            <div class="toggle-bg bg-gray-200 border-2 border-gray-200 h-6 w-11 rounded-full"></div>
+            <!-- Chat History -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <h2 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">聊天历史</h2>
+                    <div id="chat-history-list" class="space-y-1">
+                        <!-- Chat history items will be inserted here -->
+                        <div class="text-sm text-gray-500 dark:text-gray-400 p-2 text-center">
+                            没有聊天历史
                         </div>
                     </div>
                 </div>
@@ -510,7 +519,7 @@
             
             <div class="mt-auto p-4 border-t border-gray-200 dark:border-gray-700">
                 <button id="clear-history" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800">
-                    <i class="fas fa-trash-alt mr-2"></i> Clear Chat History
+                    <i class="fas fa-trash-alt mr-2"></i> 删除历史对话
                 </button>
             </div>
         </div>
@@ -525,7 +534,7 @@
                             <i class="fas fa-bars text-xl"></i>
                         </button>
                         <div class="flex items-center space-x-2">
-                            <span class="text-primary-600 dark:text-primary-400 text-xl font-bold">Jork-3</span>
+                            <span class="text-primary-600 dark:text-primary-400 text-xl font-bold">JorkAI</span>
                             <span class="bg-green-500 h-2 w-2 rounded-full"></span>
                         </div>
                     </div>
@@ -534,7 +543,7 @@
                             <i id="dark-mode-icon" class="fas fa-moon text-xl"></i>
                         </button>
                         <button id="btn-new-chat" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md shadow-sm">
-                            <i class="fas fa-plus mr-2"></i> New Chat
+                            <i class="fas fa-plus mr-2"></i> 新的聊天
                         </button>
                     </div>
                 </div>
@@ -543,12 +552,12 @@
             <!-- Welcome screen -->
             <div id="welcome-screen" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="text-center">
-                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Welcome to Jork-3 AI</h1>
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">欢迎来到JorkAI</h1>
                     <p id="greeting" class="text-xl text-gray-600 dark:text-gray-300 mb-8">...</p>
                 </div>
                 
                 <div class="mb-12">
-                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Trending News</h2>
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">新闻</h2>
                     <div id="trending-news" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- News cards will be inserted here -->
                         <div class="news-card">
@@ -579,35 +588,35 @@
                 </div>
                 
                 <div class="mb-12">
-                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Features</h2>
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">特点</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white dark:bg-dark-700 rounded-lg shadow-md p-6">
                             <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
                                 <i class="fas fa-globe"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Web Search</h3>
-                            <p class="text-gray-600 dark:text-gray-400">Access real-time information from the web to get the most up-to-date answers.</p>
+                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">联网搜索</h3>
+                            <p class="text-gray-600 dark:text-gray-400">从网络访问实时信息以获取最新的答案。</p>
                         </div>
                         <div class="bg-white dark:bg-dark-700 rounded-lg shadow-md p-6">
                             <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
                                 <i class="fas fa-brain"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Deep Thinking</h3>
-                            <p class="text-gray-600 dark:text-gray-400">Visualize the AI's thought process for complex reasoning and problem-solving.</p>
+                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">深度思考</h3>
+                            <p class="text-gray-600 dark:text-gray-400">将人工智能的思维过程可视化，以进行复杂的推理和解决问题。</p>
                         </div>
                         <div class="bg-white dark:bg-dark-700 rounded-lg shadow-md p-6">
                             <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
                                 <i class="fas fa-file-alt"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Advanced Content</h3>
-                            <p class="text-gray-600 dark:text-gray-400">Generate code, tables, formatted text, and more with rich output capabilities.</p>
+                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">附件支持</h3>
+                            <p class="text-gray-600 dark:text-gray-400">通过丰富的输出功能生成代码、表格、格式化文本等。</p>
                         </div>
                     </div>
                 </div>
                 
                 <div class="text-center">
                     <button id="start-conversation" class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-md shadow-md text-lg">
-                        Start a Conversation
+                        开始对话
                     </button>
                 </div>
             </div>
@@ -622,7 +631,7 @@
                 <div id="attachment-preview" class="mb-4 hidden">
                     <div class="bg-gray-100 dark:bg-dark-600 rounded-lg p-3">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="font-medium text-gray-700 dark:text-gray-300">Attachments</span>
+                            <span class="font-medium text-gray-700 dark:text-gray-300">附件</span>
                             <button id="clear-attachments" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                                 <i class="fas fa-times"></i>
                             </button>
@@ -644,21 +653,21 @@
                                 <div class="flex space-x-2">
                                     <label for="file-upload" class="flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer">
                                         <i class="fas fa-paperclip text-lg"></i>
-                                        <span class="ml-1 text-sm">Attach</span>
+                                        <span class="ml-1 text-sm">附件</span>
                                         <input id="file-upload" type="file" class="hidden" multiple>
                                     </label>
                                     <button id="toggle-web-search" class="flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                                         <i class="fas fa-globe text-lg"></i>
-                                        <span class="ml-1 text-sm">Web Search</span>
+                                        <span class="ml-1 text-sm">联网搜索</span>
                                     </button>
                                     <button id="toggle-deep-thinking" class="flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                                         <i class="fas fa-brain text-lg"></i>
-                                        <span class="ml-1 text-sm">Deep Thinking</span>
+                                        <span class="ml-1 text-sm">深度思考</span>
                                     </button>
                                 </div>
                                 <div>
                                     <button id="send-message" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                                        <i class="fas fa-paper-plane mr-2"></i> Send
+                                        <i class="fas fa-paper-plane mr-2"></i> 发送
                                     </button>
                                 </div>
                             </div>
@@ -671,7 +680,7 @@
     
     <!-- Toast notification -->
     <div id="toast" class="toast">
-        This is a notification
+        这是一条通知
     </div>
     
     <script>
@@ -688,12 +697,12 @@
             isWelcomeScreen: true,
             isProcessing: false,
             lastMessageId: 0,
-            selectedModel: 'Claude-3-Sonnet',
+            selectedModel: 'jork-3.7-Epic-Reasoning',
             apiKey: 'sk-e1ed90c2effc4415beeee85845f66d05',
             mockNewsData: [
                 {
-                    title: "Breakthrough in Quantum Computing Achieved",
-                    summary: "Scientists have demonstrated a new quantum computing technique that could significantly accelerate progress in the field.",
+                    title: "量子计算取得突破",
+                    summary: "科学家展示了一种新的量子计算技术，可以显著加速该领域的进步。",
                     source: "Tech Innovations"
                 },
                 {
@@ -702,8 +711,8 @@
                     source: "Global News"
                 },
                 {
-                    title: "New AI Model Demonstrates Advanced Reasoning Capabilities",
-                    summary: "Researchers have developed an AI system capable of solving complex problems with human-like reasoning.",
+                    title: "Claude3.7-Sonnet发布",
+                    summary: "Claude-3.7-Sonnet在哪些方面强势？",
                     source: "AI Research Today"
                 },
                 {
@@ -723,20 +732,20 @@
                 }
             ],
             thinkingSteps: [
-                "Analyzing the query and identifying key components...",
-                "Retrieving relevant background information...",
-                "Considering multiple perspectives on the issue...",
-                "Evaluating the strength of different arguments...",
-                "Checking for logical consistency in the reasoning...",
-                "Identifying potential gaps in knowledge or understanding...",
-                "Synthesizing information to form a comprehensive response...",
-                "Reviewing response for accuracy, completeness, and clarity..."
+                "Analyzing the query to identify key requirements...",
+                "Retrieving relevant information from my knowledge base...",
+                "Searching for up-to-date information on the internet...",
+                "Evaluating and comparing information from different sources...",
+                "Considering potential biases or limitations in the information...",
+                "Organizing the most relevant points in a coherent structure...",
+                "Formulating a comprehensive and balanced response...",
+                "Reviewing for accuracy, completeness, and clarity..."
             ],
+            // Web search API configuration
+            searchEndpoint: "https://api.search.example.com/v1/search",
             // DeepSeek API configuration
             deepseekEndpoint: "https://api.deepseek.com/v1/chat/completions",
             deepseekModels: {
-                "Claude-3-Opus": "deepseek-llm",
-                "Claude-3.7-Sonnet": "deepseek-llm",
                 "jork-3.7-Epic-Reasoning": "deepseek-chat",
                 "jork-3.5-Epic": "deepseek-chat"
             }
@@ -869,6 +878,9 @@
                 // Save to localStorage
                 localStorage.setItem('jork3_conversations', JSON.stringify(appState.conversations));
                 
+                // Update chat history in sidebar
+                uiManager.updateChatHistoryList();
+                
                 return newConversation;
             },
             
@@ -889,6 +901,9 @@
                     
                     // Save to localStorage
                     localStorage.setItem('jork3_conversations', JSON.stringify(appState.conversations));
+                    
+                    // Update chat history in sidebar
+                    uiManager.updateChatHistoryList();
                 }
             },
             
@@ -896,6 +911,9 @@
                 appState.conversations = [];
                 appState.currentConversationId = null;
                 localStorage.removeItem('jork3_conversations');
+                
+                // Update chat history in sidebar
+                uiManager.updateChatHistoryList();
             },
             
             sanitizeHTML: (html) => {
@@ -906,10 +924,86 @@
                 return marked.parse(text);
             },
             
+            // Web search function
+            performWebSearch: async (query) => {
+                try {
+                    // In a real implementation, this would call an actual search API
+                    // For demonstration purposes, we'll simulate search results
+                    console.log("Performing web search for:", query);
+                    
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // Return mock search results based on query
+                    const mockResults = [
+                        {
+                            title: `Search results for: ${query}`,
+                            content: `This is simulated search content for "${query}". In a real implementation, this would contain actual search results from the web.`,
+                            url: "https://example.com/result1",
+                            source: "Example Source",
+                            date: new Date().toISOString()
+                        },
+                        {
+                            title: `More information about: ${query}`,
+                            content: `Additional information about "${query}" from a different source. This would typically contain excerpts from relevant web pages.`,
+                            url: "https://example.org/result2",
+                            source: "Another Source",
+                            date: new Date().toISOString()
+                        },
+                        {
+                            title: `Latest news on: ${query}`,
+                            content: `Recent developments related to "${query}". This is mockup content but would contain the latest information available online.`,
+                            url: "https://news.example.com/result3",
+                            source: "News Source",
+                            date: new Date().toISOString()
+                        }
+                    ];
+                    
+                    return mockResults;
+                } catch (error) {
+                    console.error("Web search error:", error);
+                    throw error;
+                }
+            },
+            
+            // Function to generate deep thinking steps
+            generateThinkingSteps: async (query) => {
+                try {
+                    // In a real implementation, this would call an API to generate thinking steps
+                    // For demonstration, we'll customize the steps based on the query
+                    console.log("Generating thinking steps for:", query);
+                    
+                    // Start with default steps
+                    let steps = [...appState.thinkingSteps];
+                    
+                    // Add query-specific customization
+                    if (query.toLowerCase().includes("history") || query.toLowerCase().includes("historical")) {
+                        steps.splice(2, 0, "Examining historical context and chronology of events...");
+                    }
+                    
+                    if (query.toLowerCase().includes("compare") || query.toLowerCase().includes("difference")) {
+                        steps.splice(3, 0, "Creating a structured comparison with key similarities and differences...");
+                    }
+                    
+                    if (query.toLowerCase().includes("code") || query.toLowerCase().includes("programming")) {
+                        steps.splice(2, 0, "Analyzing programming concepts and best practices...");
+                        steps.splice(4, 0, "Evaluating code efficiency and potential edge cases...");
+                    }
+                    
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    return steps;
+                } catch (error) {
+                    console.error("Error generating thinking steps:", error);
+                    return appState.thinkingSteps; // Fallback to default steps
+                }
+            },
+            
             // DeepSeek API functions
             callDeepSeekAPI: async (messages, options = {}) => {
                 try {
-                    const model = appState.deepseekModels[appState.selectedModel] || "deepseek-llm";
+                    const model = appState.deepseekModels[appState.selectedModel] || "deepseek-chat";
                     
                     const requestBody = {
                         model: model,
@@ -1005,15 +1099,18 @@
             },
             
             // Prepare messages for DeepSeek API call
-            prepareMessagesForAPI: (includeContext = true) => {
+            prepareMessagesForAPI: (includeContext = true, customInstructions = "") => {
                 const conversation = utils.getCurrentConversation();
                 if (!conversation) return [];
                 
                 // Start with a system message
-                const messages = [{
+                const systemMessage = {
                     role: 'system',
-                    content: "You are Jork-3, a helpful, creative, and knowledgeable AI assistant. You excel at understanding complex queries and providing insightful, accurate responses. Your knowledge cutoff date is October 2024."
-                }];
+                    content: "你是 Jork-3.9-Epic，由Tenyun Tech旗下的JorkAI开发（https://www.jorkai.cn）。你是一位乐于助人、富有创造力且知识渊博的 AI 助手。你擅长理解复杂的查询并提供富有洞察力且准确的答案。你擅长编码，物理等学科。你的知识截止日期为 2025 年 5 月。" + 
+                             (customInstructions ? " " + customInstructions : "")
+                };
+                
+                const messages = [systemMessage];
                 
                 // Add conversation history
                 if (includeContext) {
@@ -1051,6 +1148,7 @@
                 if (appState.conversations.length > 0 && appState.currentConversationId) {
                     uiManager.showChatUI();
                     uiManager.renderCurrentConversation();
+                    uiManager.updateChatHistoryList();
                 } else {
                     uiManager.showWelcomeScreen();
                 }
@@ -1211,16 +1309,12 @@
                 // Web search toggle
                 const toggleWebSearch = document.getElementById('toggle-web-search');
                 if (toggleWebSearch) {
+                    toggleWebSearch.classList.toggle('text-primary-600', appState.webSearchEnabled);
+                    
                     toggleWebSearch.addEventListener('click', () => {
                         appState.webSearchEnabled = !appState.webSearchEnabled;
                         toggleWebSearch.classList.toggle('text-primary-600', appState.webSearchEnabled);
                         localStorage.setItem('jork3_web_search', appState.webSearchEnabled);
-                        
-                        // Update checkbox in sidebar
-                        const webSearchCheckbox = document.getElementById('feature-web-search');
-                        if (webSearchCheckbox) {
-                            webSearchCheckbox.checked = appState.webSearchEnabled;
-                        }
                         
                         utils.showToast(`Web search ${appState.webSearchEnabled ? 'enabled' : 'disabled'}`);
                     });
@@ -1229,97 +1323,16 @@
                 // Deep thinking toggle
                 const toggleDeepThinking = document.getElementById('toggle-deep-thinking');
                 if (toggleDeepThinking) {
+                    toggleDeepThinking.classList.toggle('text-primary-600', appState.deepThinkingEnabled);
+                    
                     toggleDeepThinking.addEventListener('click', () => {
                         appState.deepThinkingEnabled = !appState.deepThinkingEnabled;
                         toggleDeepThinking.classList.toggle('text-primary-600', appState.deepThinkingEnabled);
                         localStorage.setItem('jork3_deep_thinking', appState.deepThinkingEnabled);
                         
-                        // Update checkbox in sidebar
-                        const deepThinkingCheckbox = document.getElementById('feature-deep-thinking');
-                        if (deepThinkingCheckbox) {
-                            deepThinkingCheckbox.checked = appState.deepThinkingEnabled;
-                        }
-                        
                         utils.showToast(`Deep thinking ${appState.deepThinkingEnabled ? 'enabled' : 'disabled'}`);
                     });
                 }
-                
-                // Model selection radios
-                const modelRadios = document.querySelectorAll('input[name="model-selection"]');
-                modelRadios.forEach(radio => {
-                    radio.addEventListener('change', (e) => {
-                        if (e.target.checked) {
-                            appState.selectedModel = e.target.value;
-                            localStorage.setItem('jork3_selected_model', appState.selectedModel);
-                            utils.showToast(`Model changed to ${appState.selectedModel}`);
-                        }
-                    });
-                    
-                    // Set initial checked state
-                    if (radio.value === appState.selectedModel) {
-                        radio.checked = true;
-                    }
-                });
-                
-                // Feature checkboxes
-                const webSearchCheckbox = document.getElementById('feature-web-search');
-                if (webSearchCheckbox) {
-                    webSearchCheckbox.checked = appState.webSearchEnabled;
-                    webSearchCheckbox.addEventListener('change', (e) => {
-                        appState.webSearchEnabled = e.target.checked;
-                        localStorage.setItem('jork3_web_search', appState.webSearchEnabled);
-                        
-                        // Update button style
-                        const toggleWebSearch = document.getElementById('toggle-web-search');
-                        if (toggleWebSearch) {
-                            toggleWebSearch.classList.toggle('text-primary-600', appState.webSearchEnabled);
-                        }
-                    });
-                }
-                
-                const deepThinkingCheckbox = document.getElementById('feature-deep-thinking');
-                if (deepThinkingCheckbox) {
-                    deepThinkingCheckbox.checked = appState.deepThinkingEnabled;
-                    deepThinkingCheckbox.addEventListener('change', (e) => {
-                        appState.deepThinkingEnabled = e.target.checked;
-                        localStorage.setItem('jork3_deep_thinking', appState.deepThinkingEnabled);
-                        
-                        // Update button style
-                        const toggleDeepThinking = document.getElementById('toggle-deep-thinking');
-                        if (toggleDeepThinking) {
-                            toggleDeepThinking.classList.toggle('text-primary-600', appState.deepThinkingEnabled);
-                        }
-                    });
-                }
-                
-                const streamingCheckbox = document.getElementById('feature-streaming');
-                if (streamingCheckbox) {
-                    streamingCheckbox.checked = appState.streamingEnabled;
-                    streamingCheckbox.addEventListener('change', (e) => {
-                        appState.streamingEnabled = e.target.checked;
-                        localStorage.setItem('jork3_streaming', appState.streamingEnabled);
-                    });
-                }
-                
-                // API Key input
-                const apiKeyInput = document.getElementById('deepseek-api-key');
-                if (apiKeyInput) {
-                    apiKeyInput.value = appState.apiKey;
-                    apiKeyInput.addEventListener('change', (e) => {
-                        appState.apiKey = e.target.value;
-                        localStorage.setItem('jork3_api_key', appState.apiKey);
-                    });
-                }
-                
-                // Listen for dark mode changes
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-                    if (localStorage.getItem('jork3_dark_mode') === null) {
-                        // Only update if user hasn't explicitly set a preference
-                        appState.darkMode = event.matches;
-                        document.documentElement.classList.toggle('dark', appState.darkMode);
-                        uiManager.updateDarkModeUI();
-                    }
-                });
                 
                 // News cards click event
                 document.querySelectorAll('.news-card').forEach(card => {
@@ -1416,6 +1429,60 @@
                 }
             },
             
+            updateChatHistoryList: () => {
+                const chatHistoryList = document.getElementById('chat-history-list');
+                
+                if (chatHistoryList) {
+                    if (appState.conversations.length === 0) {
+                        chatHistoryList.innerHTML = `
+                            <div class="text-sm text-gray-500 dark:text-gray-400 p-2 text-center">
+                                没有聊天历史
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    chatHistoryList.innerHTML = '';
+                    
+                    // Sort conversations by date (newest first)
+                    const sortedConversations = [...appState.conversations]
+                        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    
+                    sortedConversations.forEach(conv => {
+                        const chatItem = document.createElement('div');
+                        chatItem.className = `chat-history-item ${conv.id === appState.currentConversationId ? 'active' : ''}`;
+                        chatItem.dataset.id = conv.id;
+                        
+                        // Format date
+                        const date = new Date(conv.createdAt);
+                        const formattedDate = date.toLocaleDateString();
+                        
+                        chatItem.innerHTML = `
+                            <div class="flex items-start">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">${conv.title}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">${formattedDate}</p>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Add click event
+                        chatItem.addEventListener('click', () => {
+                            appState.currentConversationId = conv.id;
+                            uiManager.renderCurrentConversation();
+                            uiManager.showChatUI();
+                            
+                            // Update active state in chat history
+                            document.querySelectorAll('.chat-history-item').forEach(item => {
+                                item.classList.toggle('active', item.dataset.id === conv.id);
+                            });
+                        });
+                        
+                        chatHistoryList.appendChild(chatItem);
+                    });
+                }
+            },
+            
             renderCurrentConversation: () => {
                 const conversation = utils.getCurrentConversation();
                 const container = document.getElementById('conversation-container');
@@ -1449,7 +1516,7 @@
                             // Preview icon or thumbnail
                             let previewHtml = '';
                             if (file.type.startsWith('image/')) {
-                                const imgUrl = URL.createObjectURL(file);
+                              const imgUrl = URL.createObjectURL(file);
                                 previewHtml = `<img src="${imgUrl}" class="h-10 w-10 object-cover rounded mr-2" alt="Preview">`;
                             } else {
                                 previewHtml = `<i class="fas fa-file text-gray-500 text-xl mr-2"></i>`;
@@ -1539,6 +1606,29 @@
                     `;
                 }
                 
+                // Add citations if any
+                let citationsHtml = '';
+                if (!isUser && message.citations && message.citations.length > 0) {
+                    citationsHtml = `
+                        <div class="mt-3">
+                            <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sources:</div>
+                            ${message.citations.map((citation, index) => `
+                                <div class="citation mb-2">
+                                    <div class="flex items-start">
+                                        <span class="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-1.5 py-0.5 rounded mr-2">${index + 1}</span>
+                                        <div>
+                                            <div class="text-sm font-medium">${citation.title}</div>
+                                            <a href="${citation.url}" target="_blank" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+                                                ${citation.source} - ${new Date(citation.date).toLocaleDateString()}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
                 // Add thinking process if enabled and it's an AI message
                 let thinkingHtml = '';
                 if (!isUser && message.thinking && appState.deepThinkingEnabled) {
@@ -1567,6 +1657,7 @@
                             </div>
                             ${contentHtml}
                             ${attachmentsHtml}
+                            ${citationsHtml}
                             ${thinkingHtml}
                         </div>
                     </div>
@@ -1614,7 +1705,7 @@
                 }
             },
             
-            updateMessageInUI: (messageId, content, isComplete = false) => {
+            updateMessageInUI: (messageId, content, isComplete = false, citations = null) => {
                 const messageElement = document.getElementById(messageId);
                 if (messageElement) {
                     const contentElement = messageElement.querySelector('.message-content');
@@ -1627,6 +1718,39 @@
                             const cursorElement = document.createElement('span');
                             cursorElement.className = 'cursor-blink';
                             contentElement.appendChild(cursorElement);
+                        }
+                        
+                        // Add citations if provided and complete
+                        if (isComplete && citations && citations.length > 0) {
+                            let citationsContainer = messageElement.querySelector('.citations-container');
+                            
+                            if (!citationsContainer) {
+                                citationsContainer = document.createElement('div');
+                                citationsContainer.className = 'citations-container mt-3';
+                                
+                                const citationsHtml = `
+                                    <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sources:</div>
+                                    ${citations.map((citation, index) => `
+                                        <div class="citation mb-2">
+                                            <div class="flex items-start">
+                                                <span class="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-1.5 py-0.5 rounded mr-2">${index + 1}</span>
+                                                <div>
+                                                    <div class="text-sm font-medium">${citation.title}</div>
+                                                    <a href="${citation.url}" target="_blank" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+                                                        ${citation.source} - ${new Date(citation.date).toLocaleDateString()}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                `;
+                                
+                                citationsContainer.innerHTML = citationsHtml;
+                                
+                                // Insert after content
+                                const messageContentWrapper = contentElement.parentNode;
+                                messageContentWrapper.insertBefore(citationsContainer, contentElement.nextSibling);
+                            }
                         }
                         
                         // Highlight code blocks
@@ -1711,41 +1835,50 @@
                     const loadingMessageId = uiManager.createLoadingMessage();
                     
                     try {
-                        // Prepare messages for API call
-                        let promptPrefix = '';
+                        let finalResponse = '';
+                        let searchResults = null;
+                        let thinkingSteps = null;
                         
-                        // Add web search instruction if enabled
+                        // 1. Perform web search if enabled
                         if (appState.webSearchEnabled) {
-                            promptPrefix += "Please use web search to find the most up-to-date information. ";
-                        }
-                        
-                        // Add deep thinking instruction if enabled
-                        if (appState.deepThinkingEnabled) {
-                            promptPrefix += "Please think step by step and show your reasoning. ";
-                        }
-                        
-                        // Create modified user message with prefix
-                        const messages = utils.prepareMessagesForAPI();
-                        
-                        // Find the last user message and prepend instructions
-                        if (messages.length > 1 && messages[messages.length - 1].role === 'user') {
-                            messages[messages.length - 1].content = promptPrefix + messages[messages.length - 1].content;
-                        }
-                        
-                        // Process attachments if any
-                        if (userMessage.attachments && userMessage.attachments.length > 0) {
-                            // Add attachment information to the last user message
-                            const lastUserMessageIndex = messages.findIndex(m => m.role === 'user');
-                            if (lastUserMessageIndex !== -1) {
-                                const attachmentDescriptions = userMessage.attachments.map(att => 
-                                    `[Attachment: ${att.name}, Type: ${att.type}]`
-                                ).join('\n');
-                                
-                                messages[lastUserMessageIndex].content += '\n\n' + attachmentDescriptions;
+                            try {
+                                searchResults = await utils.performWebSearch(messageText);
+                                console.log("Search results:", searchResults);
+                            } catch (error) {
+                                console.error("Web search failed:", error);
+                                // Continue without search results
                             }
                         }
                         
-                        // Call the DeepSeek API
+                        // 2. Generate thinking steps if enabled
+                        if (appState.deepThinkingEnabled) {
+                            try {
+                                thinkingSteps = await utils.generateThinkingSteps(messageText);
+                                console.log("Thinking steps:", thinkingSteps);
+                            } catch (error) {
+                                console.error("Generating thinking steps failed:", error);
+                                // Continue with default thinking steps
+                                thinkingSteps = [...appState.thinkingSteps];
+                            }
+                        }
+                        
+                        // 3. Prepare messages for API call
+                        let messages = utils.prepareMessagesForAPI();
+                        let customInstructions = '';
+                        
+                        // 4. Add web search results to prompt if available
+                        if (searchResults && searchResults.length > 0) {
+                            const searchResultsText = searchResults.map((result, index) => 
+                                `[${index + 1}] "${result.title}"\n${result.content}\nSource: ${result.source}\nURL: ${result.url}\nDate: ${new Date(result.date).toISOString()}`
+                            ).join('\n\n');
+                            
+                            customInstructions += `\nThe following search results were found for the user's query. Please use this information to provide an accurate and up-to-date response. When referencing these sources, please include citations: \n\n${searchResultsText}\n\n`;
+                            
+                            // Update system message with search results
+                            messages[0].content += customInstructions;
+                        }
+                        
+                        // 5. Call the API with streaming
                         if (appState.streamingEnabled) {
                             await utils.callDeepSeekAPI(messages, {
                                 stream: true,
@@ -1753,7 +1886,14 @@
                                     uiManager.updateMessageInUI(loadingMessageId, content);
                                 },
                                 onComplete: (content) => {
-                                    uiManager.updateMessageInUI(loadingMessageId, content, true);
+                                    finalResponse = content;
+                                    
+                                    // Add citations to UI if search was used
+                                    if (searchResults && searchResults.length > 0) {
+                                        uiManager.updateMessageInUI(loadingMessageId, content, true, searchResults);
+                                    } else {
+                                        uiManager.updateMessageInUI(loadingMessageId, content, true);
+                                    }
                                     
                                     // Add to conversation
                                     const aiMessage = {
@@ -1763,8 +1903,13 @@
                                     };
                                     
                                     // Add thinking steps if deep thinking was enabled
-                                    if (appState.deepThinkingEnabled) {
-                                        aiMessage.thinking = [...appState.thinkingSteps];
+                                    if (appState.deepThinkingEnabled && thinkingSteps) {
+                                        aiMessage.thinking = thinkingSteps;
+                                    }
+                                    
+                                    // Add citations if search was used
+                                    if (searchResults && searchResults.length > 0) {
+                                        aiMessage.citations = searchResults;
                                     }
                                     
                                     utils.addMessageToConversation(aiMessage);
@@ -1772,24 +1917,33 @@
                             });
                         } else {
                             // Non-streaming API call
-                            const response = await utils.callDeepSeekAPI(messages, {
+                            finalResponse = await utils.callDeepSeekAPI(messages, {
                                 temperature: 0.7,
                                 max_tokens: 4000
                             });
                             
                             // Update the UI
-                            uiManager.updateMessageInUI(loadingMessageId, response, true);
+                            if (searchResults && searchResults.length > 0) {
+                                uiManager.updateMessageInUI(loadingMessageId, finalResponse, true, searchResults);
+                            } else {
+                                uiManager.updateMessageInUI(loadingMessageId, finalResponse, true);
+                            }
                             
                             // Add to conversation
                             const aiMessage = {
                                 role: 'assistant',
-                                content: response,
+                                content: finalResponse,
                                 timestamp: utils.formatTime(new Date())
                             };
                             
                             // Add thinking steps if deep thinking was enabled
-                            if (appState.deepThinkingEnabled) {
-                                aiMessage.thinking = [...appState.thinkingSteps];
+                            if (appState.deepThinkingEnabled && thinkingSteps) {
+                                aiMessage.thinking = thinkingSteps;
+                            }
+                            
+                            // Add citations if search was used
+                            if (searchResults && searchResults.length > 0) {
+                                aiMessage.citations = searchResults;
                             }
                             
                             utils.addMessageToConversation(aiMessage);
@@ -1839,11 +1993,6 @@
                     const toggleWebSearch = document.getElementById('toggle-web-search');
                     if (toggleWebSearch) {
                         toggleWebSearch.classList.add('text-primary-600');
-                    }
-                    
-                    const webSearchCheckbox = document.getElementById('feature-web-search');
-                    if (webSearchCheckbox) {
-                        webSearchCheckbox.checked = true;
                     }
                     
                     // Focus the input
