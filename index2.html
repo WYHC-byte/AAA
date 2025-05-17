@@ -1,0 +1,187 @@
+<!--谁特么让你开开发者模式了！-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Hacked Simulation</title>
+    <style>
+        body {
+            background-color: black;
+            color: #ff0000;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .skull {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            fill: #ff0000;
+        }
+        
+        h1 {
+            font-size: 60px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .warning {
+            border: 2px solid #ff0000;
+            padding: 20px;
+            margin-bottom: 40px;
+            background-color: black;
+        }
+        
+        .warning h2 {
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .warning p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .countdown {
+            margin-bottom: 40px;
+        }
+        
+        .countdown h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .timer {
+            font-size: 50px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        .message {
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 20px;
+            text-align: left;
+            background-color: black;
+            margin-bottom: 40px;
+        }
+        
+        .signature {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 50px;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .disclaimer {
+            font-size: 12px;
+            color: #555;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Skull icon -->
+        <svg class="skull" viewBox="0 0 24 24">
+            <path d="M12 2c-5.33 4-8 8.33-8 13 0 4.42 3.58 8 8 8s8-3.58 8-8c0-4.67-2.67-9-8-13zm0 18c-2.76 0-5-2.24-5-5 0-1.12.37-2.16 1-3 0 2.21 1.79 4 4 4s4-1.79 4-4c.63.84 1 1.88 1 3 0 2.76-2.24 5-5 5zm3-8c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3zm-3-1c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm-1.7-3.5c0 .28.22.5.5.5s.5-.22.5-.5-.22-.5-.5-.5-.5.22-.5.5zm3.7.5c.28 0 .5-.22.5-.5s-.22-.5-.5-.5-.5.22-.5.5.22.5.5.5z"/>
+        </svg>
+        
+        <!-- Title and warning -->
+        <h1>SYSTEM COMPROMISED</h1>
+        <div class="warning">
+            <h2>YOUR WEBSITE HAS BEEN HACKED</h2>
+            <p>All your data has been encrypted and copied to our secure servers.</p>
+            <p>You have limited time to comply with our demands or all your information will be erased.</p>
+        </div>
+        
+        <!-- Countdown timer -->
+        <div class="countdown">
+            <h3>TIME REMAINING:</h3>
+            <div class="timer" id="timer">23:59:59</div>
+        </div>
+        
+        <!-- Message from hackers -->
+        <div class="message">
+            <p>$ initializing connection...</p>
+            <p>$ access granted to system admin</p>
+            <p>$ message from DarkShadow Collective:</p>
+            <p style="margin-top: 20px; font-size: 18px;">"We have control now. Your security was pathetic. To recover your data, contact us at darksh4d0w@[redacted].com with subject line: RANSOM-ID:78X92A"</p>
+        </div>
+        
+        <!-- Hacker signature -->
+        <div class="signature">
+            -- DarkShadow Collective --
+        </div>
+        
+        <!-- Small print -->
+        <div class="disclaimer">
+            This is a simulation for demonstration purposes only.
+        </div>
+    </div>
+
+    <script>
+        // Countdown timer functionality
+        function startCountdown() {
+            let hours = 23;
+            let minutes = 59;
+            let seconds = 59;
+            
+            const timerElement = document.getElementById('timer');
+            
+            const interval = setInterval(() => {
+                if (seconds > 0) {
+                    seconds--;
+                } else {
+                    seconds = 59;
+                    if (minutes > 0) {
+                        minutes--;
+                    } else {
+                        minutes = 59;
+                        if (hours > 0) {
+                            hours--;
+                        } else {
+                            clearInterval(interval);
+                            return;
+                        }
+                    }
+                }
+                
+                const formattedHours = String(hours).padStart(2, '0');
+                const formattedMinutes = String(minutes).padStart(2, '0');
+                const formattedSeconds = String(seconds).padStart(2, '0');
+                
+                timerElement.textContent = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+            }, 1000);
+        }
+        
+        // Start the countdown when the page loads
+        window.onload = startCountdown;
+    </script>
+</body>
+</html>
